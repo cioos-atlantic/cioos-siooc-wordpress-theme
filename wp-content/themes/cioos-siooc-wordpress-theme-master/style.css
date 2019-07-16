@@ -20,9 +20,7 @@ Text Domain: CIOOS
 }
 
 #pre-header {
-	/*background-color: grey;	*/
-	background-color: purple;
-
+	background-color: grey;
 }
 
 .elementor-column-gap-default>.elementor-row>.full-section-image>.elementor-element-populated {
@@ -35,8 +33,7 @@ Text Domain: CIOOS
 	padding:10px;
 }
 #header .menu > li.current-menu-item > a span{
-	/*color: #021F30;*/
-	color: #FFF111;	
+	color: #021F30;
 	font-weight: bold;
 }
 #header .menu > li.current-menu-item > a :hover{
