@@ -1,0 +1,160 @@
+/* Arrows */
+
+.slick-prev,
+.slick-next {
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+    display: block;
+    width: 60px;
+    height: 56px;
+    padding: 0;
+    -webkit-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    cursor: pointer;
+    color: transparent;
+    border: none;
+    outline: none;
+    background: $accent-color;
+    z-index: 99;
+}
+
+.slick-prev {
+    &:hover,
+    &:focus {
+        color: transparent;
+        outline: none;
+        background: $accent-color;
+    }
+}
+
+.slick-next {
+    &:hover,
+    &:focus {
+        color: transparent;
+        outline: none;
+        background: $accent-color;
+    }
+}
+
+.slick-prev {
+    &:hover:before,
+    &:focus:before {
+        opacity: 1;
+    }
+}
+
+.slick-next {
+    &:hover:before,
+    &:focus:before {
+        opacity: 1;
+    }
+}
+
+.slick-prev.slick-disabled:before,
+.slick-next.slick-disabled:before {
+    opacity: .25;
+}
+
+.slick-prev:before,
+.slick-next:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 1;
+    opacity: .75;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-prev {
+    left: -30px;
+}
+
+[dir='rtl'] .slick-prev {
+    right: -30px;
+    left: auto;
+}
+
+.slick-prev:before {
+    content: '\f104';
+}
+
+[dir='rtl'] .slick-prev:before {
+    content: '\f105';
+}
+
+.slick-next {
+    right: -30px;
+}
+
+[dir='rtl'] .slick-next {
+    right: auto;
+    left: -30px;
+}
+
+.slick-next:before {
+    content: '\f105';
+}
+
+[dir='rtl'] .slick-next:before {
+    content: '\f104';
+}
+
+/* Dots */
+
+.slick-dotted.slick-slider {
+    margin-bottom: 30px;
+}
+
+.slick-dots {
+    position: absolute;
+    bottom: 30px;
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    text-align: center;
+    li {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        button {
+            font-size: 0;
+            line-height: 0;
+            display: block;
+            width: 16px;
+            height: 16px;
+            margin: 0 7.5px;
+            cursor: pointer;
+            color: transparent;
+            border: 0;
+            border-radius: 50%;
+            outline: none;
+            background: #d0d6db;
+            box-shadow: none;
+            &:hover {
+                background: #2821fc;
+            }
+        }
+        &.slick-active button {
+            background: #2821fc;
+        }
+    }
+}
+
+.light-slider-nav {
+    .slick-prev,
+    .slick-next {
+        background: transparent !important;
+        box-shadow: none;
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+        }
+    }
+}

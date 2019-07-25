@@ -1,0 +1,115 @@
+// Columns gutters
+@media (min-width: 576px) {
+    .large-gutters {
+        margin-right: -25px;
+        margin-left: -25px;
+    }
+    .large-gutters>.col,
+    .large-gutters>[class*='col-'] {
+        padding-right: 25px;
+        padding-left: 25px;
+    }
+}
+
+.small-gutters {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.small-gutters>.col,
+.small-gutters>[class*='col-'] {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.gallery-gutters {
+    margin: -15px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.gallery-gutters>.col,
+.gallery-gutters>[class*='col-'] {
+    padding: 15px;
+}
+
+.small-gallery-gutters {
+    margin: -5px;
+}
+
+.small-gallery-gutters>.col,
+.small-gallery-gutters>[class*='col-'] {
+    padding: 5px;
+}
+
+.xs-gallery-gutters {
+    margin: -2.5px;
+}
+
+.xs-gallery-gutters>.col,
+.xs-gallery-gutters>[class*='col-'] {
+    padding: 2.5px;
+}
+@media (min-width: 992px) {
+    .mx-lg-100 {
+        min-width: 100% !important;
+    }
+}
+// Color
+.all-text-content-white,
+.all-text-content-white a,
+.all-text-content-white h1,
+.all-text-content-white h2,
+.all-text-content-white h3,
+.all-text-content-white h4,
+.all-text-content-white h5,
+.all-text-content-white h6,
+.all-text-content-white .fa {
+    color: #ffffff;
+}
+.text-grey {
+    color: #b6bec5;
+}
+// border list
+.border-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+        border-bottom: 1px solid #dfddd9;
+        padding: 10px 0;
+    }
+    li:last-child {
+        border: none;
+        padding-bottom: 0;
+    }
+}
+
+
+/* Simple hover effect on image */
+
+.hover-opacity-effect img {
+    -webkit-transition: opacity 0.6s;
+    transition: opacity 0.6s;
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  
+/* Background Color */
+
+.bg-color-dark {
+    background-color: #222;
+}
+
+.bg-color-light-dark {
+    background-color: #555;
+}
+
+.primary-bg-color {
+    background-color: $primary-bg-color;
+}
