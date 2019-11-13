@@ -11,8 +11,8 @@ get_header(); ?>
 
 
 
-  <link rel="stylesheet" href="http://206.167.181.89:8008/asset/css/asset.css" type="text/css">
-  <link rel="stylesheet" href="http://206.167.181.89:8008/asset/css/ol.css" type="text/css">
+  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/asset/css/asset.css" type="text/css">
+  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/asset/css/ol.css" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900|Quicksand:400,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
@@ -21,13 +21,13 @@ get_header(); ?>
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-  <script src="http://206.167.181.89:8008/asset/js/asset_i18n.js"></script>
-  <script src="http://206.167.181.89:8008/asset/js/asset_ckan.js"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset_i18n.js"></script>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset_ckan.js"></script>
   <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset.js"></script>
 
   <script>
     // debug scripts, not to be embedded
-
+(function($) {
     function callChangeLanguage()
     {
       var newl = $( "#language option:selected" ).val();
@@ -86,8 +86,7 @@ get_header(); ?>
       $( "#debug_vertical_max" ).val('');
       setVerticalFilters(undefined, undefined);
     }
-
-
+}(jQuery));
   </script>
 
 
@@ -102,8 +101,31 @@ get_header(); ?>
       <div class="panel_search_info" style="text-align:center" id="dataset_search_stats"></div>
     </div>
   </div>
- 
-  <script src="http://206.167.181.89:8008/asset/js/asset_ol.js"></script>
+   <div>
+    <h2>Debug Options</h2><br />
+    language: 
+    <select id="language" oninput="callChangeLanguage();">
+      <option value="fr">Francais</option>
+      <option value="en">English</option>
+    </select><br />
+    Ckan backend:
+    <select id="ckan_instance" oninput="callChangeCKAN();">
+      <option value="opencanada">open.canada.ca</option>
+      <option value="slgo">SLGO</option>
+      <option value="pacific">CIOOS Pacific</option>
+      <option value="ioos">IOOS</option>
+      <option value="Nextgeoss">Nextgeoss</option>
+    </select><br />
+    Minimum time interval: <input type="datetime-local" id="debug_date_min"><br />
+    Maximum time interval: <input type="datetime-local" id="debug_date_max"><br />
+    <button id="bnt_debug_setdate" onclick="changeTimeFilters();">Set Date filters</button>
+    <button id="bnt_debug_cleardate" onclick="clearTimeFilters();">Clear Date filters</button><br />
+    Vertical minimum: <input type="number" id="debug_vertical_min" min="-3000" max="10000"><br />
+    Vertical maximum: <input type="number" id="debug_vertical_max" min="-3000" max="10000"><br />
+    <button id="bnt_debug_setvertical" onclick="changeVerticalFilters();">Set Vertical filters</button>
+    <button id="bnt_debug_clearvertical" onclick="clearVerticalFilters();">Clear Vertical filters</button><br />
+  </div>
+  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset_ol.js"></script>
 
 			
 			<?php while ( have_posts() ) : the_post(); ?>
