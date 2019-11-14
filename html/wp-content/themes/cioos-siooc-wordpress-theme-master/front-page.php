@@ -10,24 +10,8 @@
 get_header(); ?>
 
 
-
-  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/asset/css/asset.css" type="text/css">
-  <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/asset/css/ol.css" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900|Quicksand:400,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
-  <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
-
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset_i18n.js"></script>
-  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset_ckan.js"></script>
-  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset.js"></script>
-
   <script>
     // debug scripts, not to be embedded
-(function($) {
     function callChangeLanguage()
     {
       var newl = $( "#language option:selected" ).val();
@@ -86,7 +70,6 @@ get_header(); ?>
       $( "#debug_vertical_max" ).val('');
       setVerticalFilters(undefined, undefined);
     }
-}(jQuery));
   </script>
 
 
@@ -125,7 +108,7 @@ get_header(); ?>
     <button id="bnt_debug_setvertical" onclick="changeVerticalFilters();">Set Vertical filters</button>
     <button id="bnt_debug_clearvertical" onclick="clearVerticalFilters();">Clear Vertical filters</button><br />
   </div>
-  <script src="<?php echo get_stylesheet_directory_uri(); ?>/asset/js/asset_ol.js"></script>
+
 
 			
 			<?php while ( have_posts() ) : the_post(); ?>

@@ -1,6 +1,4 @@
-(function($) {
-
-    var lg = null;
+var lg = null;
 var ui_str = null;
 var ckan_server = null;
 var i18nStrings = null;
@@ -260,4 +258,3 @@ function setVerticalFilters( minVertical, maxVertical )
             }
         });
     });
-}(jQuery));

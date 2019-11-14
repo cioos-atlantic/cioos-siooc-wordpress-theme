@@ -146,3 +146,8 @@ Text Domain: CIOOS
 .bellows {
 	margin: 0;
 }
+
+#site-header {
+    position: relative;
+    z-index: 9999;
+}

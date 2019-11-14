@@ -288,7 +288,7 @@ function thinkup_frontscripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
-add_action( 'wp_enqueue_scripts', 'thinkup_frontscripts', 10 );
+//add_action( 'wp_enqueue_scripts', 'thinkup_frontscripts', 10 );
 
 
 //----------------------------------------------------------------------------------
