@@ -146,7 +146,7 @@ class MEC_skin_monthly_view extends MEC_skins
     {
         if($this->show_only_expired_events)
         {
-            $start = current_time('Y-m-d');
+            $start = date('Y-m-d H:i:s', current_time('timestamp', 0));
             $end = $this->start_date;
         }
         else
@@ -243,7 +243,8 @@ class MEC_skin_monthly_view extends MEC_skins
         $this->sf = $this->request->getVar('sf', array());
         $apply_sf_date = $this->request->getVar('apply_sf_date', 1);
         $atts = $this->sf_apply($this->request->getVar('atts', array()), $this->sf, $apply_sf_date);
-        
+        $navigator_click = $this->request->getVar('navigator_click', false);
+
         // Initialize the skin
         $this->initialize($atts);
         
@@ -273,8 +274,8 @@ class MEC_skin_monthly_view extends MEC_skins
 
             if($this->show_only_expired_events)
             {
-                $this->start_date = date('Y-m-t', strtotime($this->year.'-'.$this->month.'-01'));
-                $this->active_day = $this->start_date;
+                $this->start_date = date('Y-m-d', strtotime($this->year.'-'.$this->month.'-01'));
+                $this->active_day = date('Y-m-t', strtotime($this->year.'-'.$this->month.'-01'));
             }
             else
             {
@@ -303,7 +304,8 @@ class MEC_skin_monthly_view extends MEC_skins
             }
 
             // Set active day to current day if not resault
-            if(count($this->events))$this->active_day = key($this->events);
+            if(count($this->events)) $this->active_day = key($this->events);
+            if($navigator_click) break;
           
             $c++;
         }

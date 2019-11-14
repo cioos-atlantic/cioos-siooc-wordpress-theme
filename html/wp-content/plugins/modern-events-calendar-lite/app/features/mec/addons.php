@@ -20,15 +20,6 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
         <div class="w-row">
             <div class="w-col-sm-9">
                 <h1> <?php echo __('Addons', 'modern-events-calendar-lite'); ?> </h1>
-                <div class="w-welcome">
-                    <!-- <div class="addons-page-links link-to-purchase"><a href="https://webnus.net/dox/modern-events-calendar/" target="_blank"><?php esc_html_e('How to Purchase' , 'modern-events-calendar-lite'); ?></a></div>
-                    <div class="addons-page-links link-to-install-addons"><a href="https://webnus.net/dox/modern-events-calendar/video-tutorials/" target="_blank"><?php esc_html_e('Install Addons' , 'modern-events-calendar-lite'); ?></a></div> -->
-                    <div class="addons-page-notice">
-                        <p>
-                        <?php echo __( '<strong>Note:</strong> All addons are provided for the Pro version and you cannot install and use them on the Lite version.', 'modern-events-calendar-lite'); ?>
-                        </p>
-                    </div>
-                </div>
             </div>
             <div class="w-col-sm-3">
                 <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w.png'; ?>" />
@@ -40,12 +31,16 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
     <?php if(current_user_can('read')): ?>
         <?php
         $data_url = 'https://webnus.net/modern-events-calendar/addons-api/addons-api.json';
-        $get_data = file_get_contents($data_url);
-
-        if( $get_data !== false AND !empty($get_data) )
+        
+        
+        if( function_exists('file_get_contents') && ini_get('allow_url_fopen') )
         {
-            $obj = json_decode($get_data);
-            $i = count((array)$obj);
+            $get_data = file_get_contents($data_url);
+            if ( $get_data !== false AND !empty($get_data) )
+            {
+                $obj = json_decode($get_data);
+                $i = count((array)$obj);
+            }
         }
         elseif ( function_exists('curl_version') )
         {
@@ -68,7 +63,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                 <div class="w-box addon">
                     <div class="w-box-child mec-addon-box">
                         <div class="mec-addon-box-head">
-                            <div class="mec-addon-box-title"><a href="#"><span><?php esc_html_e($value->name); ?></span></a></div>
+                            <div class="mec-addon-box-title"><img src="<?php esc_html_e($value->img); ?>" /><span><?php esc_html_e($value->name); ?></span></div>
                             <?php if ( $value->comingsoon == 'false' ) : ?> 
                             <div class="mec-addon-box-version"><span><?php esc_html_e('Version' , 'modern-events-calendar-lite'); ?> <strong><?php esc_html_e($value->version); ?></strong></span></div>
                             <?php endif; ?>
@@ -80,10 +75,11 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                         </div>
                         <div class="mec-addon-box-footer">
                             <?php if ( $value->comingsoon == 'false' ) : ?> 
-                            <a class="mec-addon-box-purchase" href="<?php esc_html_e($value->purchase); ?>"><i class="mec-sl-basket-loaded"></i><span>Purchase</span></a>
-                            <a class="mec-addon-box-intro" href="<?php esc_html_e($value->video); ?>" data-lity=""><i class="mec-sl-control-play"></i>Introduction</a>
+                            <a class="mec-addon-box-intro" href="<?php esc_html_e($value->video); ?>" data-lity=""><i class="mec-sl-control-play"></i><div class="wn-p-t-right"><div class="wn-p-t-text-content"><h5>Introduction Video</h5>Watch to learn more about the features</div><i></i></div></a>
+                            <a class="mec-addon-box-purchase" href="<?php esc_html_e($value->page); ?>" target="_blank"><i class="mec-sl-link"></i><div class="wn-p-t-right"><div class="wn-p-t-text-content"><h5>Details</h5>Learn everything about this addon</div><i></i></div></a>
+                            <a class="mec-addon-box-purchase" href="<?php esc_html_e($value->purchase); ?>" target="_blank"><i class="mec-sl-basket"></i><div class="wn-p-t-right"><div class="wn-p-t-text-content"><h5>Add To Cart</h5>Add to cart and continue purchasing</div><i></i></div></a>
                             <?php else : ?>
-                            <div class="mec-addon-box-comingsoon" href="#" data-lity=""><?php esc_html_e('Coming Soon' , 'modern-events-calendar-lite'); ?></div>
+                            <div class="mec-addon-box-comingsoon"><?php esc_html_e('Coming Soon' , 'modern-events-calendar-lite'); ?></div>
                             <?php endif; ?>
                         </div>
                     </div>

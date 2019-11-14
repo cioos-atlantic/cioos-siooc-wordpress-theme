@@ -3,7 +3,7 @@ Contributors: thinkupthemes
 Requires at least: 4.6
 Tested up to: 5.0.3
 Requires PHP: 5.2.4
-Version: 1.8.9
+Version: 1.8.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: black, dark, one-column, two-columns, right-sidebar, left-sidebar, fixed-layout, responsive-layout, fluid-layout, custom-header, custom-menu, full-width-template, theme-options, threaded-comments, featured-images, post-formats, rtl-language-support, sticky-post, grid-layout, footer-widgets, blog, e-commerce, education, entertainment, news, photography, portfolio
@@ -133,6 +133,15 @@ The following opensource projects, graphics, fonts, API's or other files as list
 
 
 == Changelog ==
+
+= 1.8.12
+- New:     Child theme skin Magazine added.
+
+= 1.8.11
+- Updated: Fully compatible with hosting platforms that don't support use of ABSPATH for loading styles / scripts.
+
+= 1.8.10
+- Updated: Fallback verification script enabled. False positives fixed.
 
 = 1.8.9
 - Fixed:   WooCommerce v3.6.2 compatible.

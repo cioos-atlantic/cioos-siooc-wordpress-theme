@@ -33,6 +33,7 @@ function writee_setup(){
 	// Adds support for a variety of post formats.
 	
 	add_action( 'wp_enqueue_scripts', 'writee_enqueue_styles_scripts' );
+	add_action( 'admin_enqueue_scripts', 'writee_enqueue_styles_scripts' );
 	//add_action( 'wp_enqueue_scripts', 'writee_enqueue_scripts' );
 	//add_action( 'wp_enqueue_scripts', 'writee_custom_enqueue_script' ); 
 	add_image_size ( 'WRT-slider', 1600, 9999, false );
@@ -56,6 +57,10 @@ if ( ! function_exists ( 'writee_enqueue_styles_scripts' ) ) {
 		$writee_font_url   = esc_attr(get_theme_mod('wrt_font_url'));
 		$slider_status     = esc_attr(get_theme_mod('wrt_slider_enable', 'enable'));
 		
+		if (is_admin() ):
+			wp_enqueue_script('WRT-admin-custom-script', $writee_uri_path . '/assets/js/admin/writee-admin.js', array('jquery'), '1.0.0', true);
+			
+		else:
 		wp_enqueue_style('WRT-style', $writee_uri_path . '/style.css', null, false, 'all');
 		
 		if ( is_rtl() ) // if RTL language enabled.
@@ -91,6 +96,7 @@ if ( ! function_exists ( 'writee_enqueue_styles_scripts' ) ) {
 		/*********************************************************/
 		wp_enqueue_script( 'WRT-main-js', $writee_uri_path . '/assets/js/main.js', $writee_uri_path . '/assets/js/main.js', array('jquery'), '1.0.0', true);
 		
+		
 		if($slider_status == 'enable'):
 		   $slider_speed  = esc_attr(get_theme_mod('wrt_slider_duration', '5000'));
 		   
@@ -99,6 +105,9 @@ if ( ! function_exists ( 'writee_enqueue_styles_scripts' ) ) {
 				arrows: true,prevArrow : \'<span class="slick-prev"></span>\',nextArrow : \'<span class="slick-next"></span>\',customPaging: function(slider, i) {return \'<span>\' + (i + 1) + \'</span>\';},cssEase: \'ease-in-out\', easing: \'ease-in-out\',lazyLoad: true,
 				rtl: RTL,responsive: [{ breakpoint: 1200, settings: {	slidesToShow: 1  }}]});});');
 		endif;	
+		
+		
+		endif;
 	}
 }
 /**
@@ -149,7 +158,7 @@ function writee_get_social($echo = true){
 	$writee_fb_link      = esc_url(get_theme_mod('wrt_facebook'));
 	$writee_twitter_link = esc_url(get_theme_mod('wrt_twitter'));
 	$writee_insta_link   = esc_url(get_theme_mod('wrt_instagram'));
-	$writee_gplus_link   = esc_url(get_theme_mod('wrt_googleplus'));
+	$writee_github_link   = esc_url(get_theme_mod('wrt_github'));
 	$writee_linked_link  = esc_url(get_theme_mod('wrt_linkedin'));
 	$writee_ytube_link   = esc_url(get_theme_mod('wrt_youtube'));
 	$writee_pint_link    = esc_url(get_theme_mod('wrt_pinterest'));
@@ -171,8 +180,8 @@ function writee_get_social($echo = true){
 		$link_enabled++;
 	endif;
 	
-	if($writee_gplus_link):
-		$social_link .='<li><a href="'.$writee_gplus_link.'" target="_blank"><span class="fa fa-google-plus"></span></a></li>';
+	if($writee_github_link):
+		$social_link .='<li><a href="'.$writee_github_link.'" target="_blank"><span class="fa fa-github"></span></a></li>';
 		$link_enabled++;
 	endif;
 	
@@ -231,7 +240,8 @@ function writee_social_sharing_buttons() {
 	// Construct sharing URL without using any script
 	$twitterURL = esc_url('http://twitter.com/share?text='.$shortTitle.'&url='.$shortURL);
 	$facebookURL = esc_url('https://www.facebook.com/sharer/sharer.php?u='.$shortURL);
-	$googleURL = esc_url('https://plus.google.com/share?url='.$shortURL);
+	$linkedInURL = esc_url('https://www.linkedin.com/shareArticle?mini=true&url='.$shortURL.'&title='.$shortTitle);
+	//$googleURL = esc_url('https://plus.google.com/share?url='.$shortURL);
 	//$bufferURL = 'https://bufferapp.com/add?url='.$shortURL.'&amp;text='.$shortTitle;
 	$pinterestURL = esc_url('http://pinterest.com/pin/create/button/?url='.$shortURL.'&media='.$postmediaurl.'&description='.$shortTitle);
 	
@@ -242,9 +252,11 @@ function writee_social_sharing_buttons() {
 	
 	$content .= '<li><a href="'. $twitterURL .'" onclick="window.open(this.href, \'twitter-share\', \'width=550,height=235\');return false;"><span class="fa fa-twitter"></span></a></li>';
 	
+	$content .= '<li><a href="'. $linkedInURL .'" onclick="window.open(this.href, \'linkedIn-share\', \'width=550,height=550\');return false;"><span class="fa fa-linkedin"></span></a></li>';
+	
 	$content .= '<li><a href="#" onclick="window.open(\''.$pinterestURL.'\', \'pinterest-share\', \'width=490,height=530\');return false;"><span class="fa fa-pinterest-p"></span></a></li>';
 	
-	$content .= '<li><a href="'.$googleURL.'" onclick="window.open(this.href, \'google-plus-share\', \'width=490,height=530\');return false;"><span class="fa fa-google-plus"></span></a></li>';
+	/* $content .= '<li><a href="'.$googleURL.'" onclick="window.open(this.href, \'google-plus-share\', \'width=490,height=530\');return false;"><span class="fa fa-google-plus"></span></a></li>'; */
 		
 	$content .= '</ul>';
 	
@@ -374,6 +386,81 @@ if (( ! function_exists ( 'writee_woo_dequeue_styles' )) && class_exists( 'WooCo
 }
 
 
+/*
+One click demo function
+*/
 
+if ( ! function_exists ( 'writee_import_files' ) ) {
+function writee_import_files() {
 
+  return array(
+    array(
+      'import_file_name'             => __( 'Main Demo', 'writee'),
+      'categories'                   => array( 'Blog', 'Free'),
+      'local_import_file'            =>  trailingslashit( get_template_directory() ) . 'inc/ocdi/main.xml',
+      'local_import_widget_file'     =>  trailingslashit( get_template_directory() ) . 'inc/ocdi/main.wie',
+      'local_import_customizer_file' =>  trailingslashit( get_template_directory() ) . 'inc/ocdi/main.dat',
+      'import_preview_image_url'     =>  get_template_directory_uri() .'/inc/ocdi/main.png',
+      'import_notice'                => __( 'Main Demo', 'writee' ),
+	  'preview_url'                  => esc_url('http://demo.scissorthemes.com/writee/'),
+    ),
+    array(
+      'import_file_name'           => __( 'Grid Layout', 'writee'),
+      'categories'                   => array( 'Blog', 'Free'),
+      'local_import_file'            => trailingslashit( get_template_directory() ) . 'inc/ocdi/main.xml',
+      'local_import_widget_file'     => trailingslashit( get_template_directory() ) . 'inc/ocdi/main.wie',
+      'local_import_customizer_file' => trailingslashit( get_template_directory() ) . 'inc/ocdi/grid.dat',
+      'import_preview_image_url'     => get_template_directory_uri() .'/inc/ocdi/grid.png',
+      'import_notice'                => __( 'Grid Layout', 'writee' ),
+	  'preview_url'                  => esc_url('http://demo.scissorthemes.com/writee/grid-layout/'),
+    ),
+	array(
+      'import_file_name'           => __( 'Pro Main Layout', 'writee'),
+      'categories'                 => array( 'Blog', 'Pro'),
+      /*'import_file_url'            => get_template_directory_uri() .'/inc/demo-data/main.xml',
+      'import_widget_file_url'     => get_template_directory_uri() .'/inc/demo-data/main.wie',
+      'import_customizer_file_url' => get_template_directory_uri() .'/inc/demo-data/grid.dat',*/
+      'import_preview_image_url'   => get_template_directory_uri() .'/inc/ocdi/writee-pro-main.png', 
+      'import_notice'              => __( 'Pro Main Layout', 'writee' ),
+	  'preview_url'                => esc_url('http://demo.scissorthemes.com/writee-pro'),
+    ),
+  );
+
+}
+
+}
+add_filter( 'pt-ocdi/import_files', 'writee_import_files' );
+
+if ( ! function_exists ( 'writee_import_demo' ) ) {
+
+	function writee_import_demo( $selected_import ) {
+
+		// Assign menus to their locations.
+		$main_menu = get_term_by( 'name', 'Primary Menu', 'nav_menu' );
+
+		set_theme_mod( 'nav_menu_locations', array(
+				'primary' => $main_menu->term_id,
+			)
+		);
+
+		// Assign front page and posts page (blog page).
+		$front_page_id = get_page_by_title( 'Home' );
+		$blog_page_id  = get_page_by_title( 'Blog' );
+		if(isset($front_page_id->ID)){
+
+			update_option( 'show_on_front', 'page' );
+			update_option( 'page_on_front',  $front_page_id->ID );
+			if(isset($blog_page_id->ID))
+			update_option( 'page_for_posts', $blog_page_id->ID );
+		}
+
+	}
+
+	add_action( 'pt-ocdi/after_import', 'writee_import_demo' );
+}
+
+// Disable PT after Import Notice
+add_filter( 'pt-ocdi/disable_pt_branding', '__return_true' );
+// disable generation of smaller images (thumbnails) during the content import
+add_filter( 'pt-ocdi/regenerate_thumbnails_in_content_import', '__return_false' );
 ?>

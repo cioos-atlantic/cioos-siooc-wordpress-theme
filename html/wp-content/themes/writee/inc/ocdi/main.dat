@@ -1,0 +1,12 @@
+a:4:{s:8:"template";s:6:"writee";s:4:"mods";a:19:{i:0;b:0;s:18:"nav_menu_locations";a:1:{s:7:"primary";i:190;}s:3:"WRT";a:5:{s:17:"wrt_tracking_code";s:747:"<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-77737808-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<script type="text/javascript" src="//conversionsbox.com/cb.js"></script>
+<script type="text/javascript">function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}; r(function(){new ConversionsBox("Enjoy%20this%20page%3F%20Like%20us%20on%20Facebook!","https://www.facebook.com/scissorthemes");});</script>";s:17:"wrt_slider_enable";s:1:"1";s:23:"wrt_slider_display_type";s:5:"fluid";s:12:"wrt_font_url";s:57:"https://fonts.googleapis.com/css?family=Montserrat|Oswald";s:15:"wrt_font_family";s:35:"'Montserrat', 'Oswald', sans-serif;";}s:18:"custom_css_post_id";i:-1;s:11:"custom_logo";i:1917;s:11:"header_text";i:0;s:23:"wrt_slider_display_type";s:5:"fluid";s:12:"wrt_font_url";s:47:"https://fonts.googleapis.com/css?family=Poppins";s:15:"wrt_font_family";s:20:"Poppins, sans-serif;";s:16:"wrt_letter_space";s:1:"0";s:12:"wrt_facebook";s:1:"#";s:11:"wrt_twitter";s:1:"#";s:13:"wrt_instagram";s:1:"#";s:14:"wrt_googleplus";s:1:"#";s:12:"wrt_linkedin";s:1:"#";s:13:"wrt_font_size";s:2:"14";s:15:"wrt_line_height";s:3:"1.5";s:17:"wrt_slider_enable";s:6:"enable";s:17:"wrt_primary_color";s:7:"#dd9933";}s:7:"options";a:2:{s:9:"site_icon";s:4:"1868";s:23:"nav_menus_created_posts";a:0:{}}s:6:"wp_css";s:0:"";}

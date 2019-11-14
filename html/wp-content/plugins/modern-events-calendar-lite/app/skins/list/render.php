@@ -5,6 +5,7 @@ defined('MECEXEC') or die();
 $styling = $this->main->get_styling();
 $settings = $this->main->get_settings();
 $current_month_divider = $this->request->getVar('current_month_divider', 0);
+$this->include_events_times = isset($this->skin_options['include_events_times']) ? $this->skin_options['include_events_times'] : false;
 
 $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])) ? 'colorskin-custom' : '';
 ?>
@@ -15,10 +16,12 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
             <?php $month_id = date('Ym', strtotime($date)); if($this->month_divider and $month_id != $current_month_divider): $current_month_divider = $month_id; ?>
             <div class="mec-month-divider" data-toggle-divider="mec-toggle-<?php echo date_i18n('Ym', strtotime($date)); ?>-<?php echo $this->id; ?>"><span><?php echo date_i18n('F Y', strtotime($date)); ?></span><i class="mec-sl-arrow-down"></i></div>
             <?php endif; ?>
+
         
             <?php
                 foreach($events as $event)
                 {
+                    $map_events[] = $event;
                     $location = isset($event->data->locations[$event->data->meta['mec_location_id']]) ? $event->data->locations[$event->data->meta['mec_location_id']] : array();
                     $organizer = isset($event->data->organizers[$event->data->meta['mec_organizer_id']]) ? $event->data->organizers[$event->data->meta['mec_organizer_id']] : array();
                     $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
@@ -58,6 +61,8 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
 
                         $speakers = json_encode($speakers);
                     }
+            $schema_settings = isset( $settings['schema'] ) ? $settings['schema'] : '';
+            if($schema_settings == '1' ):
             ?>
             <script type="application/ld+json">
             {
@@ -84,7 +89,8 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                 "url"			: "<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"
             }
             </script>
-            <article data-style="<?php echo $label_style; ?>" class="mec-event-article mec-clear <?php echo $this->get_event_classes($event); ?> mec-divider-toggle mec-toggle-<?php echo date_i18n('Ym', strtotime($date)); ?>-<?php echo $this->id; ?>" itemscope>
+            <?php endif; ?>
+            <article data-style="<?php echo $label_style; ?>" class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-event-article mec-clear <?php echo $this->get_event_classes($event); ?> mec-divider-toggle mec-toggle-<?php echo date_i18n('Ym', strtotime($date)); ?>-<?php echo $this->id; ?>" itemscope>
                 <?php if($this->style == 'modern'): ?>
                     <div class="col-md-2 col-sm-2">
                         <div class="mec-event-date">
@@ -94,8 +100,11 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6">
+                        <?php do_action('list_std_title_hook', $event); ?>
                         <h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="<?php echo $event->data->ID; ?>" href="<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"><?php echo $event->data->title; ?></a><?php echo $event_color; ?><?php if (!empty($label_style)) echo '<span class="mec-fc-style">'.$label_style.'</span>'; ?></h4>
-                        <div class="mec-event-detail"><?php echo (isset($location['name']) ? $location['name'] : '') . (isset($location['address']) ? ' | '.$location['address'] : ''); ?></div>
+                        <div class="mec-event-detail"><?php echo (isset($location['name']) ? $location['name'] : '') . (isset($location['address']) ? ' | '.$location['address'] : ''); ?>
+                        <?php if($this->include_events_times) echo $this->main->mec_include_time_labels($start_time, $end_time); ?>
+                    </div>
                         <ul class="mec-event-sharing"><?php echo $this->main->module('links.list', array('event'=>$event)); ?></ul>
                     </div>
                     <div class="col-md-4 col-sm-4 mec-btn-wrapper">
@@ -108,12 +117,14 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                         <div class="mec-event-date mec-color"><i class="mec-sl-calendar"></i> <?php echo date_i18n($this->date_format_classic_1, strtotime($event->date['start']['date'])); ?></div>
                     <?php else: ?>
                         <div class="mec-event-date mec-color"><i class="mec-sl-calendar"></i> <?php echo $this->main->date_label($event->date['start'], $event->date['end'], $this->date_format_classic_1); ?></div>
+                        <div class="mec-event-time mec-color"><?php if($this->include_events_times) {echo '<i class="mec-sl-clock"></i>'; echo $this->main->mec_include_time_labels($start_time, $end_time); } ?></div>
                     <?php endif; ?>
                     <h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="<?php echo $event->data->ID; ?>" href="<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"><?php echo $event->data->title; ?></a><?php echo $event_color; ?></h4>
                     <?php if(isset($location['name'])): ?><div class="mec-event-detail"><i class="mec-sl-map-marker"></i> <?php echo (isset($location['name']) ? $location['name'] : ''); ?></div><?php endif; ?>
                 <?php elseif($this->style == 'minimal'): ?>
                     <div class="col-md-9 col-sm-9">
                         <div class="mec-event-date mec-bg-color"><span><?php echo date_i18n($this->date_format_minimal_1, strtotime($event->date['start']['date'])); ?></span><?php echo date_i18n($this->date_format_minimal_2, strtotime($event->date['start']['date'])); ?></div>
+                        <?php if($this->include_events_times) echo $this->main->mec_include_time_labels($start_time, $end_time); ?>
                         <h4 class="mec-event-title"><a class="mec-color-hover" data-event-id="<?php echo $event->data->ID; ?>" href="<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"><?php echo $event->data->title; ?></a><?php echo $event_color; ?></h4>
                         <div class="mec-event-detail"><?php echo date_i18n($this->date_format_minimal_3, strtotime($event->date['start']['date'])); ?>, <?php echo (isset($location['name']) ? $location['name'] : ''); ?></div>
                     </div>
@@ -150,14 +161,7 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                                         <span class="mec-event-d"><?php echo $this->main->date_label($event->date['start'], $event->date['end'], $this->date_format_standard_1); ?></span>
                                     <?php endif; ?>
                                 </div>
-                                <?php
-                                    if(trim($start_time))
-                                    {
-                                        echo '<div class="mec-time-details"><span class="mec-start-time">'.$start_time.'</span>';
-                                        if(trim($end_time)) echo ' - <span class="mec-end-time">'.$end_time.'</span>';
-                                        echo '</div>';
-                                    }
-                                ?>
+                                <?php echo $this->main->mec_include_time_labels($start_time, $end_time); ?>
                                 <?php if(isset($location['name'])): ?>
                                 <div class="mec-venue-details">
                                     <span><?php echo (isset($location['name']) ? $location['name'] : ''); ?></span><address class="mec-event-address"><span><?php echo (isset($location['address']) ? $location['address'] : ''); ?></span></address>
@@ -169,11 +173,12 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                                     <span><?php echo (is_numeric($event->data->meta['mec_cost']) ? $this->main->render_price($event->data->meta['mec_cost']) : $event->data->meta['mec_cost']); ?></span>
                                 </div>
                                 <?php endif; ?>
+                                <?php do_action( 'mec_list_standard_right_box', $event); ?>
                             </div>
                         </div>
                     </div>
                     <div class="mec-event-footer">
-                    <?php if($settings['social_network_status'] != '0') : ?>
+                    <?php if(isset($settings['social_network_status']) and $settings['social_network_status'] != '0') : ?>
                         <ul class="mec-event-sharing-wrap">
                             <li class="mec-event-share">
                                 <a href="#" class="mec-event-share-icon">
@@ -187,6 +192,7 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                             </li>
                         </ul>
                     <?php endif; ?>
+                        <?php do_action('mec_standard_booking_button' ,$event ); ?>
                         <a class="mec-booking-button" data-event-id="<?php echo $event->data->ID; ?>" href="<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"><?php echo (is_array($event->data->tickets) and count($event->data->tickets)) ? $this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite')) : $this->main->m('view_detail', __('View Detail', 'modern-events-calendar-lite')); ?></a>
                     </div>
                 <?php elseif($this->style == 'accordion'): ?>
@@ -207,14 +213,7 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
                                     <?php else: ?>
                                         <div class="mec-event-month"><?php echo $this->main->date_label($event->date['start'], $event->date['end'], $this->date_format_acc_1.' '.$this->date_format_acc_2); ?></div>
                                     <?php endif; ?>
-                                    <?php
-                                        if(trim($start_time))
-                                        {
-                                            echo '<div class="mec-event-detail"><span class="mec-start-time">'.$start_time.'</span>';
-                                            if(trim($end_time)) echo ' - <span class="mec-end-time">'.$end_time.'</span>';
-                                            echo '</div>';
-                                        }
-                                    ?>
+                                    <?php echo $this->main->mec_include_time_labels($start_time, $end_time); ?>
                                 </div>
                                 <h3 class="mec-toggle-title"><?php echo $event->data->title; ?><?php echo $event_color ; ?></h3>
                                 <?php if (!empty($label_style)) echo '<span class="mec-fc-style">'.$label_style.'</span>'; ?><i class="mec-sl-arrow-down"></i>
@@ -232,3 +231,35 @@ $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])
 		<?php endforeach; ?>
 	</div>
 </div>
+
+<?php
+if ( isset($this->map_on_top) and $this->map_on_top ) :
+if(isset($map_events) and !empty($map_events))
+{
+    // Include Map Assets such as JS and CSS libraries
+    $this->main->load_map_assets();
+
+    $map_javascript = '<script type="text/javascript">
+    jQuery(document).ready(function()
+    {
+        var jsonPush = gmapSkin('.json_encode($this->render->markers($map_events)).');
+        jQuery("#mec_googlemap_canvas'.$this->id.'").mecGoogleMaps(
+        {
+            id: "'.$this->id.'",
+            atts: "'.http_build_query(array('atts'=>$this->atts), '', '&').'",
+            zoom: '.(isset($settings['google_maps_zoomlevel']) ? $settings['google_maps_zoomlevel'] : 14).',
+            icon: "'.apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png')).'",
+            styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',
+            markers: jsonPush,
+            clustering_images: "'.$this->main->asset('img/cluster1/m').'",
+            getDirection: 0,
+            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+        });
+    });
+    </script>';
+
+    // Include javascript code into the page
+    if($this->main->is_ajax()) echo $map_javascript;
+    else $this->factory->params('footer', $map_javascript);
+}
+endif;

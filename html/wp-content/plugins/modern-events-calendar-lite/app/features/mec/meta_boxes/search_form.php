@@ -145,6 +145,7 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
                         <option value="text_input" <?php if(isset($sf_options_grid['text_search']) and isset($sf_options_grid['text_search']['type']) and $sf_options_grid['text_search']['type'] == 'text_input') echo 'selected="selected"'; ?>><?php _e('Text Input', 'modern-events-calendar-lite'); ?></option>
                     </select>
                 </div>
+                <?php do_action('mec_grid_search_form',$sf_options_grid); ?>
             </div>
 
             <!-- Agenda View -->

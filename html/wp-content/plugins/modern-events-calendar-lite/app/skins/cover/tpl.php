@@ -47,9 +47,14 @@ if ( !empty($event->data->speakers))
     } 
     $speakers = json_encode($speakers);
 }
+do_action('mec_start_skin' , $this->id);
 do_action('mec_cover_skin_head');
 ?>
 <div class="mec-wrap <?php echo $event_colorskin . ' ' . $this->html_class; ?>">
+<?php
+    $schema_settings = isset( $settings['schema'] ) ? $settings['schema'] : '';
+    if($schema_settings == '1' ):
+?>
     <script type="application/ld+json">
     {
         "@context" 		: "http://schema.org",
@@ -75,8 +80,10 @@ do_action('mec_cover_skin_head');
         "url"			: "<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"
     }
     </script>
-    <?php if($this->style == 'modern' and $event_thumb_url): ?>
-    <article class="mec-event-cover-modern <?php echo $this->get_event_classes($event); ?>" style="background: url('<?php echo $event_thumb_url; ?>'); height: 678px;background-size: cover;">
+    <?php
+    endif;
+    if($this->style == 'modern' and $event_thumb_url): ?>
+    <article class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-event-cover-modern <?php echo $this->get_event_classes($event); ?>" style="background: url('<?php echo $event_thumb_url; ?>'); height: 678px;background-size: cover;">
         <a href="<?php echo $event_link; ?>" class="mec-event-cover-a">
         <div class="mec-event-overlay mec-bg-color"></div>
             <div class="mec-event-detail">
@@ -88,7 +95,7 @@ do_action('mec_cover_skin_head');
         </a>
     </article>
     <?php elseif($event_thumb): ?>
-    <article class="mec-event-cover-<?php echo $this->style; ?> <?php echo $this->get_event_classes($event); ?>">
+    <article class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-event-cover-<?php echo $this->style; ?> <?php echo $this->get_event_classes($event); ?>">
         <div class="mec-event-image"><?php echo $event_thumb; ?></div>
         <div class="mec-event-overlay"></div>
         <?php if($this->style == 'classic'): ?>

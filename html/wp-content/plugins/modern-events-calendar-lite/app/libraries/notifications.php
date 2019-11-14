@@ -57,7 +57,6 @@ class MEC_notifications extends MEC_base
         // Auto verification for paid bookings is enabled so don't send the verification email
         if($price > 0 and isset($this->settings['booking_auto_verify_paid']) and $this->settings['booking_auto_verify_paid'] == 1) return false;
         
-        $to = $booker->user_email;
         $subject = isset($this->notif_settings['email_verification']['subject']) ? $this->content(__($this->notif_settings['email_verification']['subject'], 'modern-events-calendar-lite'), $book_id) : __('Please verify your email.', 'modern-events-calendar-lite');
         $headers = array();
         
@@ -72,22 +71,48 @@ class MEC_notifications extends MEC_base
             $headers[] = 'BCC: '.$recipient;
         }
         
-        $message = isset($this->notif_settings['email_verification']['content']) ? $this->content($this->notif_settings['email_verification']['content'], $book_id) : '';
-        
+        // Attendees
+        $attendees = get_post_meta($book_id, 'mec_attendees', true);
+        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+         
+        // Do not send email twice!
+        $done_emails = array();
+ 
         // Book Data
         $key = get_post_meta($book_id, 'mec_verification_key', true);
-        
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
         $link = trim(get_permalink($event_id), '/').'/verify/'.$key.'/';
-        
-        $message = str_replace('%%verification_link%%', $link, $message);
-        $message = str_replace('%%link%%', $link, $message);
-        
+
         // Set Email Type to HTML
         add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
+         
+        // Send the emails
+        foreach($attendees as $attendee)
+        {
+            $to = isset($attendee['email']) ? $attendee['email'] : '';
+            if(!trim($to) or in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
+
+            $message = isset($this->notif_settings['email_verification']['content']) ? $this->content($this->notif_settings['email_verification']['content'], $book_id, $attendee) : '';
+            $message = str_replace('%%verification_link%%', $link, $message);
+            $message = str_replace('%%link%%', $link, $message);
+
+            // Filter the email
+            $mail_arg = array(
+                'to'            => $to,
+                'subject'       => $subject,
+                'message'       => $message,
+                'headers'       => $headers,
+                'attachments'   => array(),
+            );
+
+            $mail_arg = apply_filters('mec_before_send_email_verification', $mail_arg, $book_id, 'email_verification');
+
+            // Send the mail
+            wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
         
-        // Send the mail
-        wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+            // For prevention of email repeat send
+            $done_emails[] = $to;
+        }
         
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
@@ -110,11 +135,10 @@ class MEC_notifications extends MEC_base
 
         // Booking Notification is disabled
         if(isset($this->notif_settings['booking_notification']['status']) and !$this->notif_settings['booking_notification']['status']) return false;
-
-        $to = $booker->user_email;
+        
         $subject = isset($this->notif_settings['booking_notification']['subject']) ? $this->content(__($this->notif_settings['booking_notification']['subject'], 'modern-events-calendar-lite'), $book_id) : __('Your booking is received.', 'modern-events-calendar-lite');
         $headers = array();
-        
+
         $recipients_str = isset($this->notif_settings['booking_notification']['recipients']) ? $this->notif_settings['booking_notification']['recipients'] : '';
         $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
         
@@ -125,7 +149,7 @@ class MEC_notifications extends MEC_base
             
             $headers[] = 'BCC: '.$recipient;
         }
-        
+
         // Send the notification to event organizer
         if(isset($this->notif_settings['booking_notification']['send_to_organizer']) and $this->notif_settings['booking_notification']['send_to_organizer'] == 1)
         {
@@ -133,26 +157,54 @@ class MEC_notifications extends MEC_base
             if($organizer_email !== false) $headers[] = 'BCC: '.trim($organizer_email);
         }
         
-        $message = isset($this->notif_settings['booking_notification']['content']) ? $this->content($this->notif_settings['booking_notification']['content'], $book_id) : '';
+        // Attendees
+        $attendees = get_post_meta($book_id, 'mec_attendees', true);
+        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
-        // Attendee Full Information
-        if(strpos($message, '%%attendee_full_info%%') !== false or strpos($message, '%%attendees_full_info%%') !== false)
-        {
-            $attendees_full_info = $this->get_full_attendees_info($book_id);
+        // Do not send email twice!
+        $done_emails = array();
 
-            $message = str_replace('%%attendee_full_info%%', $attendees_full_info, $message);
-            $message = str_replace('%%attendees_full_info%%', $attendees_full_info, $message);
-        }
-        
         // Set Email Type to HTML
         add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
+        
+        // Send the emails
+        foreach($attendees as $attendee)
+        {       
+            $to = isset($attendee['email']) ? $attendee['email'] : '';
+            if(!trim($to) or in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
 
-        // Send the mail
-        wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+            $message = isset($this->notif_settings['booking_notification']['content']) ? $this->content($this->notif_settings['booking_notification']['content'], $book_id, $attendee) : '';
+            
+            // Attendee Full Information
+            if(strpos($message, '%%attendee_full_info%%') !== false or strpos($message, '%%attendees_full_info%%') !== false)
+            {
+                $attendees_full_info = $this->get_full_attendees_info($book_id);
+
+                $message = str_replace('%%attendee_full_info%%', $attendees_full_info, $message);
+                $message = str_replace('%%attendees_full_info%%', $attendees_full_info, $message);
+            }
+
+            // Filter the email
+            $mail_arg = array(
+                'to'            => $to,
+                'subject'       => $subject,
+                'message'       => $message,
+                'headers'       => $headers,
+                'attachments'   => array(),
+            );
+
+            $mail_arg = apply_filters( 'mec_before_send_booking_notification', $mail_arg, $book_id, 'booking_notification');
+
+            // Send the mail
+            wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+            
+            // For prevention of email repeat send
+            $done_emails[] = $to;
+        }
         
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
-
+        
         return true;
     }
     
@@ -169,7 +221,6 @@ class MEC_notifications extends MEC_base
         
         if(!isset($booker->user_email)) return false;
         
-        $to = $booker->user_email;
         $subject = isset($this->notif_settings['booking_confirmation']['subject']) ? $this->content(__($this->notif_settings['booking_confirmation']['subject'], 'modern-events-calendar-lite'), $book_id) : __('Your booking is confirmed.', 'modern-events-calendar-lite');
         $headers = array();
         
@@ -184,13 +235,41 @@ class MEC_notifications extends MEC_base
             $headers[] = 'BCC: '.$recipient;
         }
         
-        $message = isset($this->notif_settings['booking_confirmation']['content']) ? $this->content($this->notif_settings['booking_confirmation']['content'], $book_id) : '';
-        
+        // Attendees
+        $attendees = get_post_meta($book_id, 'mec_attendees', true);
+        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+
+        // Do not send email twice!
+        $done_emails = array();
+
         // Set Email Type to HTML
         add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
 
-        // Send the mail
-        wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+        // Send the emails
+        foreach($attendees as $attendee)
+        {
+            $to = isset($attendee['email']) ? $attendee['email'] : '';
+            if(!trim($to) or in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
+
+            $message = isset($this->notif_settings['booking_confirmation']['content']) ? $this->content($this->notif_settings['booking_confirmation']['content'], $book_id, $attendee) : '';
+
+            // Filter the email
+            $mail_arg = array(
+                'to'            => $to,
+                'subject'       => $subject,
+                'message'       => $message,
+                'headers'       => $headers,
+                'attachments'   => array(),
+            );
+
+            $mail_arg = apply_filters( 'mec_before_send_booking_confirmation', $mail_arg, $book_id, 'booking_confirmation');
+
+            // Send the mail
+            wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+        
+            // For prevention of email repeat send
+            $done_emails[] = $to;
+        }
         
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
@@ -207,7 +286,7 @@ class MEC_notifications extends MEC_base
     public function booking_cancellation($book_id)
     {
         $booker_id = get_post_field('post_author', $book_id);
-        $booker = get_userdata($booker_id); 
+        $booker = get_userdata($booker_id);
         
         // Cancelling Notification is disabled
         if(!isset($this->notif_settings['cancellation_notification']['status']) or isset($this->notif_settings['cancellation_notification']['status']) and !$this->notif_settings['cancellation_notification']['status']) return;
@@ -230,7 +309,25 @@ class MEC_notifications extends MEC_base
         // Send the notification to event user
         if(isset($this->notif_settings['cancellation_notification']['send_to_user']) and $this->notif_settings['cancellation_notification']['send_to_user'] == 1)
         {
-            if(isset($booker->user_email) and $booker->user_email) $tos[] = trim($booker->user_email);
+            if(isset($booker->user_email) and $booker->user_email)
+            {
+                // Attendees
+                $attendees = get_post_meta($book_id, 'mec_attendees', true);
+                if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+
+                // For When sended email time, And  prevention of email repeat send
+                $done_emails = array();
+
+                // Send the emails
+                foreach($attendees as $attendee)
+                {
+                    if(isset($attendee['email']) and !in_array($attendee['email'], $done_emails))
+                    {
+                        $tos[] = $attendee;
+                        $done_emails[] = $attendee['email'];
+                    }
+                }
+            }
         }
 
         // No Recipient
@@ -250,19 +347,6 @@ class MEC_notifications extends MEC_base
         }
 
         $subject = isset($this->notif_settings['cancellation_notification']['subject']) ? $this->content(__($this->notif_settings['cancellation_notification']['subject'], 'modern-events-calendar-lite'), $book_id) : __('booking canceled.', 'modern-events-calendar-lite');
-        $message = isset($this->notif_settings['cancellation_notification']['content']) ? $this->content($this->notif_settings['cancellation_notification']['content'], $book_id) : '';
-        
-        // Book Data
-        $message = str_replace('%%admin_link%%', $this->link(array('post_type'=>$this->main->get_book_post_type()), $this->main->URL('admin').'edit.php'), $message);
-
-        // Attendee Full Information
-        if(strpos($message, '%%attendee_full_info%%') !== false or strpos($message, '%%attendees_full_info%%') !== false)
-        {
-            $attendees_full_info = $this->get_full_attendees_info($book_id);
-
-            $message = str_replace('%%attendee_full_info%%', $attendees_full_info, $message);
-            $message = str_replace('%%attendees_full_info%%', $attendees_full_info, $message);
-        }
 
         // Set Email Type to HTML
         add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
@@ -271,12 +355,42 @@ class MEC_notifications extends MEC_base
         $i = 1;
         foreach($tos as $to)
         {
+            $mailto = (is_array($to) and isset($to['email'])) ? $to['email'] : $to;
+
+            if(!trim($mailto) or !filter_var($mailto, FILTER_VALIDATE_EMAIL)) continue;
             if($i > 1) $headers = array();
 
-            wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+            $message = isset($this->notif_settings['cancellation_notification']['content']) ? $this->content($this->notif_settings['cancellation_notification']['content'], $book_id, (is_array($to) ? $to : NULL)) : '';
+        
+            // Book Data
+            $message = str_replace('%%admin_link%%', $this->link(array('post_type'=>$this->main->get_book_post_type()), $this->main->URL('admin').'edit.php'), $message);
+
+            // Attendee Full Information
+            if(strpos($message, '%%attendee_full_info%%') !== false or strpos($message, '%%attendees_full_info%%') !== false)
+            {
+                $attendees_full_info = $this->get_full_attendees_info($book_id);
+
+                $message = str_replace('%%attendee_full_info%%', $attendees_full_info, $message);
+                $message = str_replace('%%attendees_full_info%%', $attendees_full_info, $message);
+            }
+
+            // Filter the email
+            $mail_arg = array(
+                'to'            => $mailto,
+                'subject'       => $subject,
+                'message'       => $message,
+                'headers'       => $headers,
+                'attachments'   => array(),
+            );
+
+            $mail_arg = apply_filters( 'mec_before_send_booking_cancellation', $mail_arg, $book_id, 'booking_cancellation');
+            
+            // Send the mail
+            wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+
             $i++;
         }
-        
+
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
     }
@@ -331,8 +445,18 @@ class MEC_notifications extends MEC_base
         // Set Email Type to HTML
         add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
         
+        // Filter the email
+        $mail_arg = array(
+            'to'            => $to,
+            'subject'       => $subject,
+            'message'       => $message,
+            'headers'       => $headers,
+            'attachments'   => array(),
+        );
+        $mail_arg = apply_filters( 'mec_before_send_admin_notification', $mail_arg, $book_id, 'admin_notification');
+
         // Send the mail
-        wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+        wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
         
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
@@ -375,15 +499,27 @@ class MEC_notifications extends MEC_base
         // Send the emails
         foreach($attendees as $attendee)
         {
-            if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) {
-                continue;
-            }
+            if(isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
+
             $to = $attendee['email'];
             $message = isset($this->notif_settings['booking_reminder']['content']) ? $this->content($this->notif_settings['booking_reminder']['content'], $book_id, $attendee) : '';
 
             if(!trim($to)) continue;
 
-            wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+            // Filter the email
+            $mail_arg = array(
+                'to'            => $to,
+                'subject'       => $subject,
+                'message'       => $message,
+                'headers'       => $headers,
+                'attachments'   => array(),
+            );
+
+            $mail_arg = apply_filters('mec_before_send_booking_reminder', $mail_arg, $book_id, 'booking_reminder');
+
+            // Send the mail
+            wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+
         }
 
         // Remove the HTML Email filter
@@ -447,6 +583,8 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%admin_link%%', $this->link(array('post_type'=>$event_PT), $this->main->URL('admin').'edit.php'), $message);
         $message = str_replace('%%event_title%%', get_the_title($event_id), $message);
         $message = str_replace('%%event_link%%', get_post_permalink($event_id), $message);
+        $message = str_replace('%%event_start_date%%', get_post_meta($event_id, 'mec_start_date', true), $message);
+        $message = str_replace('%%event_end_date%%', get_post_meta($event_id, 'mec_end_date', true), $message);
         $message = str_replace('%%event_status%%', $status, $message);
         $message = str_replace('%%event_note%%', get_post_meta($event_id, 'mec_note', true), $message);
         
@@ -465,6 +603,80 @@ class MEC_notifications extends MEC_base
         return true;
     }
     
+    /**
+    * Send new event published notification
+    * @author Webnus <info@webnus.biz>
+    * @param string $new
+    * @param string $old
+    * @param object $post
+    * @return void
+    */
+    public function user_event_publishing($new, $old, $post)
+    {
+        // MEC Event Post Type
+        $event_PT = $this->main->get_main_post_type();
+        
+        // User event publishing notification is disabled
+        if(!isset($this->notif_settings['user_event_publishing']['status']) or (isset($this->notif_settings['user_event_publishing']['status']) and !$this->notif_settings['user_event_publishing']['status'])) return false;
+        
+        if(($new == 'publish') and ($old != 'publish') and ($post->post_type == $event_PT))
+        {
+            $guest_email = get_post_meta($post->ID, 'fes_guest_email', true);
+
+            // Not Set Guest User Email
+            if(!trim($guest_email) or !filter_var($guest_email, FILTER_VALIDATE_EMAIL)) return;
+
+            $guest_name = get_post_meta($post->ID, 'fes_guest_name', true);
+            $status = get_post_status($post->ID);
+            
+            $to = $guest_email;
+            $subject = (isset($this->notif_settings['user_event_publishing']['subject']) and trim($this->notif_settings['user_event_publishing']['subject'])) ? __($this->notif_settings['user_event_publishing']['subject'], 'modern-events-calendar-lite') : __('Your event is published.', 'modern-events-calendar-lite');
+            $headers = array();
+            
+            $recipients_str = isset($this->notif_settings['user_event_publishing']['recipients']) ? $this->notif_settings['user_event_publishing']['recipients'] : '';
+            $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+            
+            foreach($recipients as $recipient)
+            {
+                // Skip if it's not a valid email
+                if(trim($recipient) == '' or !filter_var($recipient, FILTER_VALIDATE_EMAIL)) continue;
+                
+                $headers[] = 'CC: '.$recipient;
+            }
+            
+            $message = (isset($this->notif_settings['user_event_publishing']['content']) and trim($this->notif_settings['user_event_publishing']['content'])) ? $this->notif_settings['user_event_publishing']['content'] : '';
+            
+            // User Data
+            $message = str_replace('%%name%%', $guest_name, $message);
+
+            // Site Data
+            $message = str_replace('%%blog_name%%', get_bloginfo('name'), $message);
+            $message = str_replace('%%blog_url%%', get_bloginfo('url'), $message);
+            $message = str_replace('%%blog_description%%', get_bloginfo('description'), $message);
+            
+            // Event Data
+            $message = str_replace('%%admin_link%%', $this->link(array('post_type'=>$event_PT), $this->main->URL('admin').'edit.php'), $message);
+            $message = str_replace('%%event_title%%', get_the_title($post->ID), $message);
+            $message = str_replace('%%event_link%%', get_post_permalink($post->ID), $message);
+            $message = str_replace('%%event_start_date%%', get_post_meta($post->ID, 'mec_start_date', true), $message);
+            $message = str_replace('%%event_end_date%%', get_post_meta($post->ID, 'mec_end_date', true), $message);
+            $message = str_replace('%%event_status%%', $status, $message);
+            $message = str_replace('%%event_note%%', get_post_meta($post->ID, 'mec_note', true), $message);
+            
+            // Notification Subject
+            $subject = str_replace('%%event_title%%', get_the_title($post->ID), $subject);
+            
+            // Set Email Type to HTML
+            add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
+            
+            // Send the mail
+            wp_mail($to, html_entity_decode(stripslashes($subject), ENT_HTML5), wpautop(stripslashes($message)), $headers);
+            
+            // Remove the HTML Email filter
+            remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
+        }
+    }
+
     /**
      * Generate a link based on parameters
      * @author Webnus <info@webnus.biz>
@@ -528,7 +740,11 @@ class MEC_notifications extends MEC_base
         // Book Data
         $transaction_id = get_post_meta($book_id, 'mec_transaction_id', true);
 
-        $message = str_replace('%%book_date%%', get_the_date('', $book_id), $message);
+        $book_date = get_post_meta($book_id, 'mec_date', true);
+        if(trim($book_date) and strpos($book_date, ':') !== false) $book_date = str_replace(':', ' ' . __('to', 'modern-events-calendar-lite') . ' ', $book_date);
+        else $book_date = get_the_date('', $book_id);
+        
+        $message = str_replace('%%book_date%%', $book_date, $message);
 
         // Book Time
         $start_seconds = get_post_meta($event_id, 'mec_start_day_seconds', true);
@@ -549,26 +765,33 @@ class MEC_notifications extends MEC_base
         $price = get_post_meta($book_id, 'mec_price', true);
         $message = str_replace('%%book_price%%', $this->main->render_price(($price ? $price : 0)), $message);
         $message = str_replace('%%total_attendees%%', $this->book->get_total_attendees($book_id), $message);
-        
+
+        $event_id = get_post_meta($book_id, 'mec_event_id', true);
+        $mec_date = explode(':', get_post_meta($book_id, 'mec_date', true));
+
+        if(count($mec_date) == 2 and isset($mec_date[0]))
+        $message = str_replace('%%amount_tickets%%', $this->book->get_tickets_availability($event_id, current($mec_date), 'reservation'), $message);
+
         // Event Data
         $organizer_id = get_post_meta($event_id, 'mec_organizer_id', true);
         $location_id = get_post_meta($event_id, 'mec_location_id', true);
         $speaker_id = wp_get_post_terms( $event_id, 'mec_speaker', '');
 
         $organizer = get_term($organizer_id, 'mec_organizer');
-        $speaker = get_term($speaker_id, 'mec_speaker');
         $location = get_term($location_id, 'mec_location');
         
         $message = str_replace('%%event_title%%', get_the_title($event_id), $message);
         $message = str_replace('%%event_link%%', get_post_permalink($event_id), $message);
+        $message = str_replace('%%event_start_date%%', get_post_meta($event_id, 'mec_start_date', true), $message);
+        $message = str_replace('%%event_end_date%%', get_post_meta($event_id, 'mec_end_date', true), $message);
         
         $message = str_replace('%%event_organizer_name%%', (isset($organizer->name) ? $organizer->name : ''), $message);
         $message = str_replace('%%event_organizer_tel%%', get_term_meta($organizer_id, 'tel', true), $message);
         $message = str_replace('%%event_organizer_email%%', get_term_meta($organizer_id, 'email', true), $message);
+
         $speaker_name = array();
-        foreach ($speaker_id as $speaker) {
-            $speaker_name[] = isset($speaker->name) ? $speaker->name : null;
-        }
+        foreach($speaker_id as $speaker) $speaker_name[] = isset($speaker->name) ? $speaker->name : null;
+
         $message = str_replace('%%event_speaker_name%%', (isset($speaker_name) ? implode(', ', $speaker_name): ''), $message);
         $message = str_replace('%%event_location_name%%', (isset($location->name) ? $location->name : ''), $message);
         $message = str_replace('%%event_location_address%%', get_term_meta($location_id, 'address', true), $message);
@@ -580,6 +803,9 @@ class MEC_notifications extends MEC_base
 
         $ticket_ids = explode(',', $ticket_ids_str);
         $ticket_ids = array_filter($ticket_ids);
+
+        if(!is_array($ticket_ids)) $ticket_ids = array();
+        if(!is_array($tickets)) $tickets = array();
 
         foreach($ticket_ids as $get_ticket_id=>$value)
         {
@@ -612,11 +838,25 @@ class MEC_notifications extends MEC_base
 
         $message = str_replace('%%ticket_name%%', $ticket_name, $message);
         $message = str_replace('%%ticket_time%%', $ticket_time, $message);
+
+        $ticket_start_time_info = ' '.sprintf("%02d", $ticket_start_hour).':'.sprintf("%02d", $ticket_start_minute).' '.$ticket_start_ampm;
+        $ticket_end_time_info = ' '.sprintf("%02d", $ticket_end_hour).':'.sprintf("%02d", $ticket_end_minute).' '.$ticket_end_ampm;
+
+        $start_time = strtotime(get_the_date('Y-m-d', $book_id) . $ticket_start_time_info);
+        $end_time = strtotime(get_the_date('Y-m-d', $book_id). $ticket_end_time_info);
         
-        $start_time = strtotime(get_the_date('Y-m-d', $book_id).' '.sprintf("%02d", $ticket_start_hour).':'.sprintf("%02d", $ticket_start_minute).' '.$ticket_start_ampm);
-        $end_time = strtotime(get_the_date('Y-m-d', $book_id).' '.sprintf("%02d", $ticket_end_hour).':'.sprintf("%02d", $ticket_end_minute).' '.$ticket_end_ampm);
-        
-        $gmt_offset_seconds = $this->main->get_gmt_offset_seconds();
+        if(isset($book_date) and strpos($book_date, __('to', 'modern-events-calendar-lite')) !== false)
+        {
+            $explode_time = explode(__('to', 'modern-events-calendar-lite'), $book_date);
+
+            if(isset($explode_time) and count($explode_time) == 2)
+            {
+                $start_time = strtotime(trim($explode_time[0]) . $ticket_start_time_info);
+                $end_time = strtotime(trim($explode_time[1]) . $ticket_end_time_info);
+            }
+        }
+
+        $gmt_offset_seconds = $this->main->get_gmt_offset_seconds($start_time);
         $event_title = get_the_title($event_id);
         $event_info = get_post($event_id);
         $event_content = trim($event_info->post_content) ? strip_shortcodes(strip_tags($event_info->post_content)) : $event_title;
@@ -660,37 +900,37 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $reg_fields = $this->main->get_reg_fields($event_id);
-        foreach($attendees as $key => $attendee)
+        foreach($attendees as $key=>$attendee)
         {
-            if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) {
-                continue;
-            }
-            if ( $key === 'attachments' ) {
-                continue;
-            }
+            if(isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
+            if($key === 'attachments') continue;
+
             $reg_form = isset($attendee['reg']) ? $attendee['reg'] : array();
 
             $attendees_full_info .= __('Name', 'modern-events-calendar-lite').': '.((isset($attendee['name']) and trim($attendee['name'])) ? $attendee['name'] : '---')."\r\n";
             $attendees_full_info .= __('Email', 'modern-events-calendar-lite').': '.((isset($attendee['email']) and trim($attendee['email'])) ? $attendee['email'] : '---')."\r\n";
 
-            foreach($reg_form as $field_id=>$value)
+            if(count($reg_form))
             {
-                // Placeholder Keys
-                if(!is_numeric($field_id)) continue;
-
-                $type = $reg_fields[$field_id]['type'];
-
-                $label = isset($reg_fields[$field_id]) ? $reg_fields[$field_id]['label'] : '';
-                if(trim($label) == '') continue;
-
-                if($type == 'agreement')
+                foreach($reg_form as $field_id=>$value)
                 {
-                    $label = sprintf(__($label, 'modern-events-calendar-lite'), '<a href="'.get_the_permalink($reg_fields[$field_id]['page']).'">'.get_the_title($reg_fields[$field_id]['page']).'</a>');
-                    $attendees_full_info .= $label.': '.($value == '1' ? __('Yes', 'modern-events-calendar-lite') : __('No', 'modern-events-calendar-lite'))."\r\n";
-                }
-                else
-                {
-                    $attendees_full_info .= __($label, 'modern-events-calendar-lite').': '.(is_string($value) ? $value : (is_array($value) ? implode(', ', $value) : '---'))."\r\n";
+                    // Placeholder Keys
+                    if(!is_numeric($field_id)) continue;
+
+                    $type = $reg_fields[$field_id]['type'];
+
+                    $label = isset($reg_fields[$field_id]) ? $reg_fields[$field_id]['label'] : '';
+                    if(trim($label) == '') continue;
+
+                    if($type == 'agreement')
+                    {
+                        $label = sprintf(__($label, 'modern-events-calendar-lite'), '<a href="'.get_the_permalink($reg_fields[$field_id]['page']).'">'.get_the_title($reg_fields[$field_id]['page']).'</a>');
+                        $attendees_full_info .= $label.': '.($value == '1' ? __('Yes', 'modern-events-calendar-lite') : __('No', 'modern-events-calendar-lite'))."\r\n";
+                    }
+                    else
+                    {
+                        $attendees_full_info .= __($label, 'modern-events-calendar-lite').': '.(is_string($value) ? $value : (is_array($value) ? implode(', ', $value) : '---'))."\r\n";
+                    }
                 }
             }
 

@@ -23,5 +23,4 @@ $wrt_layout_style	= esc_attr(get_theme_mod('wrt_layout_settings','un-boxed'));
 <body id="site-body" <?php body_class(); ?>>
 <div class="site-mobile-navigation"></div>
 <div class="site-wrapper <?php if($wrt_layout_style == 'boxed'): echo 'boxed-wrapper ';endif; ?> shadow-wrapper">
-
 	<?php get_template_part('inc/theme/headers/header1'); ?>

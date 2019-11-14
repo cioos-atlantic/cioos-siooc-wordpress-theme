@@ -122,7 +122,7 @@ class WRT_aboutme_widget extends WP_Widget {
 	public function scripts() {
 		wp_enqueue_script( 'media-upload' );
 		wp_enqueue_media();
-		wp_enqueue_script('writee_widget_admin', WRT_TEMPLATE_DIRECTORY_URI . '/assets/js/admin/writee_about_widget.js', array('jquery'));
+		wp_enqueue_script('writee_widget_admin', WRT_TEMPLATE_DIRECTORY_URI . '/assets/js/admin/writee-about-widget.js', array('jquery'));
 	}
 } /* class end */
 

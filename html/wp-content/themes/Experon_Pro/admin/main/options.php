@@ -5307,6 +5307,7 @@
 					'exbusiness' => 'exBusiness',
 					'exmas'      => 'exMas',
 					'exminimal'  => 'exMinimal',
+					'magazine'   => 'Magazine',
 					'minimal'    => 'Minimal',
 				),
 			),

@@ -2,12 +2,12 @@
 /*========= About Theme =========*/
 
 Theme Name: Writee
-Theme URI: http://www.scissorthemes.com/theme/writee
-Version: 1.5.1
-Tested up to: WP 4.9.4
+Theme URI: https://www.scissorthemes.com/themes/writee-free/
+Version: 2.0.2
+Tested up to: WP 5.9.4
 
 Author: Scissor Themes
-Author URI: http://www.scissorthemes.com/
+Author URI: https://www.scissorthemes.com/
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl.html
 -------------------------------------------------------
@@ -51,15 +51,13 @@ Source: https://unsplash.com/
 
 /*========= Description =========*/
 
-Writee is a creatively bold and visually stunning, free personal WordPress blog theme. Write is fully responsive and mobile friendly. The theme features pixel perfect design and comes with several custom widgets, Customizer Options, full-width/boxed slider to showcase your content with style.
+Writee is an elegant free personal WordPress blog theme. Write is fully responsive and mobile friendly. The theme features pixel perfect design and comes with 3 custom widgets, Customizer Options, and full-width/boxed slider to showcase your content with style.
 
-Writee is very flexible and well suited free blogging WordPress theme for personal, food, travel, fashion, corporate, photography, technical or any other amazing blog.
+Writee is very flexible and well suited free WordPress blog theme for personal, food, travel, fashion, corporate, photography, technical or any other amazing blog.
 
-Writee Support all the free and premium WordPress plugins.
+Writee Support all the free and premium WordPress plugins. It's speed optimized, fully responsive and SEO friendly theme, developed strictly using WordPress guidelines.
 
-Writee is fast loading, fully responsive and SEO friendly theme developed using WordPress guidelines which you will love.
-
-Checkout out the live demo(http://www.scissorthemes.com/demo/writee) and theme documentation(http://www.scissorthemes.com/writee-documentation/) to explore WRITE features.
+Checkout out the Writee demos at http://www..scissorthemes.com/writee-free-demo/
 
 
 
@@ -67,9 +65,6 @@ Checkout out the live demo(http://www.scissorthemes.com/demo/writee) and theme d
 
 You can install the theme through the WordPress installer under "Themes" > "Install themes" by searching for "Writee".
 
-Alternatively you can download the file, unzip it and move the unzipped contents to the "wp-content/themes" folder of your WordPress installation. You will then be able to activate the theme.
-
-Afterwards you can continue theme setup and customization via WordPress Dashboard - Appearance - Customize. For detailed theme documentation, please visit http://www.scissorthemes.com/writee-documentation/
 
 /*========= Theme Features =========*/
 
@@ -87,81 +82,110 @@ Afterwards you can continue theme setup and customization via WordPress Dashboar
 
 /*========= Documentation =========*/
 
-Theme documentation is available on http://www.scissorthemes.com/writee-documentation/
+Theme documentation is available on http://support.scissorthemes.com/
 
 /*========= Changelog =========*/
 
-= 1.2.2 - 05.01.2017
+Version 2.0.2 - 16.9.2019
 
-* Typography Bug Fix
-* Removed static values for social on installation
-* Hyperlink Color Settings
+* Italian Translation file update 
+* Mail chimp plugin Field inactive issue Fixed
 
-= 1.2.3
+Version 2.0.1 - 29.7.2019
 
-* .mo files included for AR_ARABIC, DE_GERMAN, ES_spanish, FR_french, IT_itnalian, RU_Russian, ZH_CHINES.
-* Comment area spacing bug
+* Plugin set to Recommended as per WordPress guidelines 
 
-= 1.2.4
+Version 2.0 - 3.6.2019
 
-* Few text updates
-* A file CSS issues fixed
+* Once Click Demo Import Feature Added 
+* Back ground Color and image Customizer Settings added to Writee Options 
+* 
 
-= 1.2.5
+Version 1.5.1 - 14.7.2018
 
-* Tags updated as per WordPres guidelines 
+* Gird Layout Added
+* Author page: Author Info Content Duplication fixed
 
-= 1.3.0
+Version 1.5 - 14.7.2018
 
-* A Tag misspelled corrected
+* Gird Layout Added
+* Author page: Author Info Content Duplication fixed
 
-= 1.3.1
+Version 1.4.6 - 30.03.2018
 
-* Inner site tittle H1 tag updated 
+* Added Boxed and Unboxed Website layout Feature
+* Fixed JS issue
 
-= 1.3.4
+Version 1.4.5
+
+* Fixed EMPTY function issue for PHP version below 5.6
+
+Version 1.4.4
+
+* Site Brand CSS updated
+
+Version 1.4.3
+
+* Footer CSS Fixed
+* Header Layout Fixed(site-brand)
+* WordPress.org Theme Info Url Updated
+
+Version 1.4.2
+
+* Woo Commerce Design Bugs Fixes
+
+Version 1.4.1
+
+* Design Bugs Fixes
+
+Version 1.4
+
+* Woo commerce Compatible
+* Line Height and Letter spacing fixed
+* Pinterest share button Fixed
+* Anchor Hovering Fixed
+* REM units working (Set font-size for html tag)
+
+Version 1.3.6
+
+* Toogle Menu Fixed
+* Mobile CSS Updates
+
+Version 1.3.5
+
+* Related post design fixed
+
+Version 1.3.4
 
 * Mobile navigation fixed
 * Social icon position fixed
 * Footer fixed
 
-= 1.3.5
+Version 1.3.1
 
-* Related post design fixed
+* Inner site tittle H1 tag updated
 
-= 1.3.6
+Version 1.3.0
 
-* Toogle Menu Fixed
-* Mobile CSS Updates
+* A Tag misspelled corrected
 
-= 1.4
-* Woo commerce Compatible
-* Line Height and Letter spacing fixed
-* Pinterest share button Fixed
-* Anchor Hovering Fixed 
-* REM units working (Set font-size for html tag) 
+Version 1.2.5
 
-= 1.4.1
-* Design Bugs Fixes
+* Tags updated as per WordPres guidelines
 
-= 1.4.2
-* Woo Commerce Design Bugs Fixes
+Version 1.2.4
 
-= 1.4.3
-* Footer CSS Fixed
-* Header Layout Fixed(site-brand)
-* WordPress.org Theme Info Url Updated
+* Few text updates
+* A file CSS issues fixed
 
-= 1.4.4
-* Site Brand CSS updated
+Version 1.2.3
 
-= 1.4.5
-* Fixed EMPTY function issue for PHP version below 5.6
+* .mo files included for AR_ARABIC, DE_GERMAN, ES_spanish, FR_french, IT_itnalian, RU_Russian, ZH_CHINES.
+* Comment area spacing bug
 
-= 1.4.6 - 30.03.2018
-* Added Boxed and Unboxed Website layout Feature
-* Fixed JS issue
+Version 1.2.2 - 05.01.2017
 
-= 1.5.1 - 19.07.2018
-* Added : Grid Layout Feature
-* Fixed : Author box content duplication 
+* Typography Bug Fix
+* Removed static values for social on installation
+* Hyperlink Color Settings
+          

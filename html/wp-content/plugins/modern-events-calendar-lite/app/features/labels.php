@@ -76,6 +76,7 @@ class MEC_feature_labels extends MEC_base
                     'new_item_name'=>sprintf(__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
                     'popular_items'=>sprintf(__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
                     'search_items'=>sprintf(__('Search %s', 'modern-events-calendar-lite'), $plural_label),
+                    'back_to_items'=>sprintf(__('← Back to  %s', 'modern-events-calendar-lite'), $plural_label),
                 ),
                 'rewrite'=>array('slug'=>'events-label'),
                 'public'=>false,

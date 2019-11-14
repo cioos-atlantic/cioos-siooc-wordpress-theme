@@ -3,8 +3,8 @@ Theme Name: Writee
 Theme URI: https://www.scissorthemes.com/theme/writee
 Author: Scissor Themes
 Author URI: https://www.scissorthemes.com
-Description: Writee is very flexible and well suited free blogging WordPress theme for personal, food, travel, fashion, corporate, or any other amazing blog. Writee is fully responsive and mobile friendly. The theme features pixel perfect design and includes custom widgets, Customizer Options, full-width/boxed slider to showcase your content with style. Writee includes .mo file for the following languages AR_ARABIC, DE_GERMAN, ES_spanish, FR_french, IT_itnalian, RU_Russian, ZH_CHINES. Writee is Now Woo-commerce Compatible. 
-Version: 1.5.1
+Description: Writee is an elegant free personal WordPress blog theme and well suited for personal, food, travel, fashion, corporate, or any other amazing blog. Writee is fully responsive and mobile friendly. The theme features pixel perfect design and includes 3 custom widgets, Customizer Options, full-width/boxed slider to showcase your content with style. Writee is translation ready and supports the following languages AR_ARABIC, DE_GERMAN, ES_spanish, FR_french, IT_itnalian, RU_Russian, ZH_CHINES.
+Version: 2.0.2
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: writee
@@ -119,4 +119,8 @@ a img.aligncenter {
 	top: 5px;
 	width: auto;
 	z-index: 100000; /* Above WP toolbar. */
+}
+/* wordpress mailchimp plugin widget css conflict */
+.widget.widget-line .mc4wp-form{
+	position:relative;
 }

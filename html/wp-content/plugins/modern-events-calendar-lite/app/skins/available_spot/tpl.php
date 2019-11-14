@@ -16,11 +16,18 @@ $event_link = (isset($event->data->permalink) and trim($event->data->permalink))
 $event_title = $event->data->title;
 $event_thumb_url = $event->data->featured_image['large'];
 $start_date = (isset($event->date['start']) and isset($event->date['start']['date'])) ? $event->date['start']['date'] : date('Y-m-d H:i:s');
+$end_date = (isset($event->date['end']) and isset($event->date['end']['date'])) ? $event->date['end']['date'] : date('Y-m-d H:i:s');
 
 $event_time = '';
 $event_time .= sprintf("%02d", (isset($event->data->meta['mec_date']['start']['hour']) ? $event->data->meta['mec_date']['start']['hour'] : 8)).':';
 $event_time .= sprintf("%02d", (isset($event->data->meta['mec_date']['start']['minutes']) ? $event->data->meta['mec_date']['start']['minutes'] : 0));
 $event_time .= (isset($event->data->meta['mec_date']['start']['ampm']) ? $event->data->meta['mec_date']['start']['ampm'] : 'AM');
+
+$event_etime = '';
+$event_etime .= sprintf("%02d", (isset($event->data->meta['mec_date']['end']['hour']) ? $event->data->meta['mec_date']['end']['hour'] : 6)).':';
+$event_etime .= sprintf("%02d", (isset($event->data->meta['mec_date']['end']['minutes']) ? $event->data->meta['mec_date']['end']['minutes'] : 0));
+$event_etime .= (isset($event->data->meta['mec_date']['end']['ampm']) ? $event->data->meta['mec_date']['end']['ampm'] : 'PM');
+
 $label_style = '';
 if ( !empty($event->data->labels) ):
 foreach( $event->data->labels as $label)
@@ -38,12 +45,18 @@ foreach( $event->data->labels as $label)
 endif;
 
 $start_time = date('D M j Y G:i:s', strtotime($start_date.' '.date('H:i:s', strtotime($event_time))));
+$end_time = date('D M j Y G:i:s', strtotime($end_date.' '.date('H:i:s', strtotime($event_etime))));
 
 $d1 = new DateTime($start_time);
-$d2 = new DateTime(date("D M j Y G:i:s"));
+$d2 = new DateTime(current_time("D M j Y G:i:s"));
+$d3 = new DateTime($end_time);
+
+$ongoing = (isset($settings['hide_time_method']) and trim($settings['hide_time_method']) == 'end') ? true : false;
 
 // Skip if event is expired
-if($d1 < $d2) return;
+if($ongoing) if($d3 < $d2) $ongoing = false;
+
+if($d1 < $d2 and !$ongoing) return;
 
 $gmt_offset = $this->main->get_gmt_offset();
 if(isset($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') === false) $gmt_offset = ' : '.$gmt_offset;
@@ -55,7 +68,7 @@ jQuery(document).ready(function()
 {
     jQuery("#mec_skin_available_spot'.$this->id.'").mecCountDown(
     {
-        date: "'.$start_time.$gmt_offset.'",
+        date: "'.(($ongoing and (isset($event->data->meta['mec_repeat_status']) and $event->data->meta['mec_repeat_status'] == 0)) ? $end_time : $start_time).$gmt_offset.'",
         format: "off"
     },
     function()
@@ -99,10 +112,15 @@ if ( !empty($event->data->speakers))
     } 
     $speakers = json_encode($speakers);
 }
+do_action('mec_start_skin' , $this->id);
 do_action('mec_available_spot_skin_head');
 ?>
 <div class="mec-wrap <?php echo $event_colorskin; ?> <?php echo $this->html_class; ?>" id="mec_skin_<?php echo $this->id; ?>">
     <div class="mec-av-spot-wrap">
+    <?php
+        $schema_settings = isset( $settings['schema'] ) ? $settings['schema'] : '';
+        if($schema_settings == '1' ):
+    ?>
         <script type="application/ld+json">
         {
             "@context" 		: "http://schema.org",
@@ -128,8 +146,9 @@ do_action('mec_available_spot_skin_head');
             "url"			: "<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"
         }
         </script>
+        <?php endif; ?>        
         <div class="mec-av-spot">
-            <article data-style="<?php echo $label_style; ?>" class="mec-event-article mec-clear <?php echo $this->get_event_classes($event); ?>">
+            <article data-style="<?php echo $label_style; ?>" class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-event-article mec-clear <?php echo $this->get_event_classes($event); ?>">
 
                 <?php if($event_thumb_url): ?>
                 <div class="mec-av-spot-img" style="background: url('<?php echo $event_thumb_url; ?>');"></div>

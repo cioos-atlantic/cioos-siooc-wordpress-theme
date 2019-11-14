@@ -58,6 +58,8 @@ class MEC_feature_update extends MEC_base
         if(version_compare($version, '3.5.0', '<')) $this->version350();
         if(version_compare($version, '4.0.0', '<')) $this->version400();
         if(version_compare($version, '4.3.0', '<')) $this->version430();
+        if(version_compare($version, '4.4.6', '<')) $this->version446();
+        if(version_compare($version, '4.6.1', '<')) $this->version461();
 
         // Update to latest version to prevent running the code twice
         update_option('mec_version', $this->main->get_version());
@@ -248,6 +250,41 @@ class MEC_feature_update extends MEC_base
             'content'=>"Hi %%name%%,
 
             For your information, your booking for %%event_title%% at %%book_date%% is canceled.
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        // Update it only if options already exists.
+        if(get_option('mec_options') !== false)
+        {
+            // Save new options
+            update_option('mec_options', $current);
+        }
+    }
+
+    public function version446()
+    {
+        if(!wp_next_scheduled('mec_syncScheduler')) wp_schedule_event(time(), 'daily', 'mec_syncScheduler');
+    }
+
+    public function version461()
+    {
+        // Get current MEC options
+        $current = get_option('mec_options', array());
+        if(is_string($current) and trim($current) == '') $current = array();
+
+        // Merge new options with previous options
+        $current['notifications']['user_event_publishing'] = array
+        (
+            'status'=>'0',
+            'subject'=>'Your event gets published!',
+            'recipients'=>'',
+            'content'=>"Hello %%name%%,
+
+            Your event gets published. You can check it below:
+
+            <a href=\"%%event_link%%\">%%event_title%%</a>
 
             Regards,
             %%blog_name%%"

@@ -1,4 +1,202 @@
-﻿v 4.4.0 - 15 July 2019
+﻿v 4.8.1 - 13 November 2019
+- Fixed: Monthly view (clean style)
+- Fixed: Datepicker
+- Fixed: Google Map view in single event page
+
+v 4.8.0 - 12 November 2019
+- Added: Import events from Event Espresso Plugin
+- Added: Importevents from Events Manager Plugin
+- Added: An option to show event start/end time in list skin
+- Added: Thank you page for Front-end Event Submission
+- Added: Event start/end date to notifications (pro)
+- Added: Newsletter box in MEC dashboard and support page for subscription to MEC news
+- Added: Premium support box in support page
+- Added: Čeština (translated by Michal Spielmann)
+- Added: French (translated by Jean Ghislain)
+- Improved: MS Excel export (pro)
+- Fixed: Week start in repeating tab for "Certain Weekdays" repeat
+- Fixed: Multi-booking through multiple clicks on the Booking button (pro)
+- Fixed: An empty page issue in category archive page
+- Fixed: Event name in profile shortcode (pro)
+- Fixed: Book date and Google Calendar link in notifications (pro)
+- Fixed: Some PHP notices
+- Fixed: Some minor issues
+
+v 4.7.7 - 30 October 2019
+- Compatibility: WordPress 5.2.4
+- Added: An option to manage waiting time before redirecting to Thank You Page (pro)
+- Added: Display the total amount of purchased tickets in confirmation email (pro)
+- Added: A note to speakers' tab after adding a speaker
+- Fixed: Paypal Express (pro)
+- Fixed: Filtering options in timetable skin (pro)
+- Fixed: Disable invoice link when booking is not confirmed (pro)
+- Fixed: "Show only Expired Events" in all skins
+- Fixed: Advanced days
+- Fixed: Some minor issues
+
+v 4.7.6 - 22 October 2019
+- Added: A guide message in "Show Only Expired Events" section in shortcode builder
+- Added: A new message for booking verification (pro)
+- Improved: Select organizers/locations in add event section
+- Improved: Select organizers/locations/categories/label/author in add shortcode section
+- Improved: Select organizers/locations in Front-end Event Submission section
+- Improved: Category hierarchy in Front-end Event Submission
+- Fixed: Monthly repeating
+- Fixed: Select day color in yearly view
+- Fixed: Change label of the fields of the form from messages options
+- Fixed: User Profile responsive on mobile/tablet (pro)
+- Fixed: Speaker module in accordion skin
+- Fixed: Saving other locations in Front-end Event Submission
+- Fixed: Featured image in Front-end Event Submission
+- Fixed: Showing booking module (pro)
+- Fixed: Cancellation page (pro)
+- Fixed: Selected time zone for showing upcoming events
+- Fixed: some PHP notices
+- Fixed: Some minor issues
+
+v 4.7.5 - 15 October 2019
+- Added: Name field for Stripe gateways (pro)
+- Added: Cancel links and map view to the profile shortcode (pro)
+- Added: Booking fields to the translatable strings for WPML (pro)
+- Added: Show cancellation time for canceled bookings (pro)
+- Updated: Facebook documentation <a href="https://bit.ly/33xOQHS" target="_blank">link</a>
+- Fixed: Disabled once to fix some issues on servers with cache (pro)
+- Fixed: Showing dates in grid skin
+- Fixed: Event title has special characters on email
+- Fixed: Referred date option of weekdays and weekend events recurring
+- Fixed: Showing ongoing events on shortcode
+- Fixed: Number of tickets available (pro)
+- Fixed: Hide event feature
+- Fixed: Sorting dates on custom days
+- Fixed: YouTube video on modal view
+- Fixed: Cancelation notification (pro)
+- Fixed: Categories icons view
+- Fixed: Settings fields animations on Firefox
+- Fixed: Some minor issues
+
+v 4.7.1 - 02 October 2019
+- Fixed: Register button when booking for ongoing events is disable (pro)
+
+v 4.7.0 - 01 October 2019
+- Added: CSV Export for Bookings in "Frontend Event Submission" (pro)
+- Added: MS Excel Export for Bookings in "Frontend Event Submission" (pro)
+- Removed: Nonce for iCal export button to be compatible with search engines
+- Improved: Front-end event submission form and list style - hard-refresh is required
+- Fixed: Booking limit message (pro)
+- Fixed: Showing booking module for ongoing events (pro)
+- Fixed: Warnings in RSS feed of events
+- Fixed: Booking verification and booking cancelation pages
+- Fixed: Disable booking button action when is loading - several bookings (pro)
+- Fixed: Exceptional days added actions
+- Fixed: Search in published events
+- Fixed: Full calendar archive filters
+- Fixed: Double click to open popup in map view on mobile/tablet (pro)
+- Fixed: Long title in list view > Accordion style
+- Fixed: Ticket availability (pro)
+- Fixed: Countdown module in Available Spot shortcode (pro)
+- Fixed: PHP errors
+
+v 4.6.5 - 24 September 2019
+- Added: Add mec-past-event for expired events in different skins
+- Added: Event publishing notification for frontend event submission system with guest users 
+- Added: An interval option to display booking module at certain times before the start of the event (pro)
+- Added: Countdown module enhancement for considering the event end time when "Hide Event" method is set to "On Event End"
+- Changed: Moving the frontend event submission message from bottom to top
+- Fixed: No displaying Modal Booking on mobile and tablet (pro)
+- Fixed: Modal booking style on mobile and tablet (pro)
+- Fixed: Flip Countdown on mobile and tablet
+- Fixed: Full width archive events page
+- Fixed: Search bar in settings menu
+- Fixed: Conflict between Ultimate GDPR Plugin and niceSelect
+- Fixed: Toggle Messages in settings
+- Fixed: Some minor issues
+
+v 4.6.0 - 18 September 2019
+- Added: Billing info to booking details page in backend (pro)
+- Added: An option to enable booking while event is on going (pro)
+- Added: Ticket time compatibility for 24 hours (pro)
+- Improved: Admin dashboard styles (Settings, Shortcodes, Add event - hard-refresh required)
+- Changed: Modern Events calendar icon in backend
+- Fixed: NiceSelect on frontend event submission
+- Fixed: ACF plugin conflict on shortcode page
+- Fixed: Event bulk edit
+- Fixed: Time dropdown in search form
+- Fixed: Some minor issues
+
+v 4.5.1 - 11 September 2019
+- Compatibility: WordPress 5.2.3
+- Fixed: Showing multiple names and emails in backend booking form (pro)
+- Fixed: Date field in backend of booking form (pro)
+- Fixed: Local time module regarding hour
+- Fixed: Maximum year number in date fields in frontend and backend forms (pro)
+- Fixed: Location, saving latitude and longitude
+- Fixed: Send emails to all attendees instead of main attendees (pro)
+- Fixed: Displaying Google Recaptcha in modals
+- Fixed: Showing registration form data in backend (pro)
+- Fixed: Ticket filter in booking management menu (pro)
+
+v 4.5.0 - 4 September 2019
+- Added: SCA compatibility for Stripe Payment Gateways (pro)
+- Added: Google Maps option in list and Grid skins (pro)
+- Added: A feature to update booking dates when event date is updated (pro)
+- Updated: Stripe API to the latest version (pro)
+- Upgraded: Stripe Element (pro)
+- Fixed: Global limit for bookers (pro)
+- Fixed: Twin search strings in backend
+
+v 4.4.9 - 27 August 2019
+- Fixed: Ajax live search
+- Fixed: Some minor issue
+
+v 4.4.8 - 22 August 2019
+- Fixed: Disabling Schema option
+- Fixed: Some minor issue
+
+v 4.4.7 - 21 August 2019
+- Added: Modern style search bar
+- Added: Auto set cronjobs for synchronization
+- Added: An option to not open current day in MEC widget
+- Added: ID column and sort by ID in booking menu
+- Added: Filter by ticket name in bookings menu
+- Added: Advanced clustering feature for Google Maps
+- Added: Duplicate link in event action links
+- Added: An option for disabling Schema
+- Fixed: Double tap feature for monthly calendar (simple skin)
+- Fixed: Advanced repeat type
+- Fixed: Countdown in module view and Countdown skin
+- Fixed: Carousel view and "load more" button in Internet explorer
+
+v 4.4.6 - 13 August 2019
+- Added: Ajax live search to search bar
+- Added: Filter before wp_mail (Booking Notification) for developers
+- Fixed: Simple monthly calendar style
+- Fixed: Daylight saving
+- Fixed: Multiple days events
+- Fixed: A two-year limit for filtering events
+- Fixed: Yearly view search filter
+- Fixed: Displaying total attendees in Booking Confirmation email
+- Fixed: Displaying invoice link in booking when the invoice is disabled
+- Fixed: Booking module in some themes (Lity popup)
+- Fixed: Some minor issues
+
+v 4.4.5 - 3 August 2019
+- Added: Stripe Connect gateway to divide the booking payment between organizer and site owner
+- Added: Ability to insert new speakers from "Frontend Event Submission"
+- Improved: Only the role of administrators can see the license
+- Fixed: Agreement field type
+- Fixed: Booking Limit per user email option 
+- Fixed: General search function in WordPress Media, Pages, Posts and all custom post types caused by Search Bar feature
+- Fixed: Show "Sold Out" badge in monthly skin when an occurence is sold out completely
+- Fixed "Load More" button at the bottom of the events page
+- Fixed: Import from EventOn (when organizer "tel" field contains an email)
+- Fixed: The mec_button and tiny_mce in FES form (JS error)
+- Fixed: Popup image src on some of the themes
+- Fixed: Back to Taxonomy Items when editing items (Organizers, Labels, Locations, Speaker)
+- Fixed: Unclickable settings menus
+- Fixed: Slider and Carousel view when events don't have featured images
+- Fixed: Some minor issues
+
+v 4.4.0 - 15 July 2019
 - Added: Search bar shortcode
 - Added: Organizer payment options
 - Added: MEC shortcode element for the Divi builder

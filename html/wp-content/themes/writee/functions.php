@@ -22,7 +22,7 @@ if ( version_compare( $GLOBALS['wp_version'], '4.5', '<' ) ) {
 	return;
 }
 
-
+require_once(WRT_INC_DIR.'/functions/tgm-activation.php');
 require_once(WRT_INC_DIR.'/functions/customizer.php');
 require_once(WRT_INC_DIR.'/functions/theme-functions.php');
 require_once(WRT_INC_DIR.'/functions/navigations.php');

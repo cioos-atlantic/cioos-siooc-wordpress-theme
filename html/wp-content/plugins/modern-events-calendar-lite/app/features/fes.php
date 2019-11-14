@@ -57,6 +57,9 @@ class MEC_feature_fes extends MEC_base
         $this->factory->action('wp_ajax_mec_fes_upload_featured_image', array($this, 'fes_upload'));
         $this->factory->action('wp_ajax_nopriv_mec_fes_upload_featured_image', array($this, 'fes_upload'));
         
+        // Export the event
+        $this->factory->action('wp_ajax_mec_fes_csv_export', array($this, 'mec_fes_csv_export'));
+
         // Remove the event
         $this->factory->action('wp_ajax_mec_fes_remove', array($this, 'fes_remove'));
     }
@@ -192,6 +195,114 @@ class MEC_feature_fes extends MEC_base
         $this->main->response(array('success'=>1, 'message'=>__('The event removed!', 'modern-events-calendar-lite')));
     }
     
+    public function mec_fes_csv_export()
+    {
+        if((!isset($_POST['mec_event_id'])) or (!isset($_POST['booking_ids'])) or (!isset($_POST['fes_nonce'])) or (!wp_verify_nonce($_POST['fes_nonce'], 'mec_fes_nonce'))) die(json_encode(array('ex' => "error")));
+
+        $event_id = intval($_POST['mec_event_id']);
+        $booking_ids = sanitize_text_field($_POST['booking_ids']);
+        
+        ob_start();
+        header('Content-Type: text/csv; charset=utf-8');
+
+        $post_ids = trim($booking_ids) ? explode(',', $booking_ids) : array();
+        
+        if(!count($post_ids))
+        {
+            $books = $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_event_id' AND `meta_value`={$event_id}", 'loadAssocList');
+            foreach ($books as $book) if(isset($book['post_id'])) $post_ids[] = $book['post_id'];
+        }
+
+        $event_ids = array();
+        foreach($post_ids as $post_id) $event_ids[] = get_post_meta($post_id, 'mec_event_id', true);
+        $event_ids = array_unique($event_ids);
+
+        $main_event_id = NULL;
+        if(count($event_ids) == 1) $main_event_id = $event_ids[0];
+
+        $columns = array(__('ID', 'modern-events-calendar-lite'), __('Event', 'modern-events-calendar-lite'), __('Date', 'modern-events-calendar-lite'), $this->main->m('ticket', __('Ticket', 'modern-events-calendar-lite')), __('Transaction ID', 'modern-events-calendar-lite'), __('Total Price', 'modern-events-calendar-lite'), __('Name', 'modern-events-calendar-lite'), __('Email', 'modern-events-calendar-lite'), __('Confirmation', 'modern-events-calendar-lite'), __('Verification', 'modern-events-calendar-lite'));
+        $columns = apply_filters('mec_csv_export_columns', $columns);
+        $reg_fields = $this->main->get_reg_fields($main_event_id);
+        foreach($reg_fields as $reg_field_key=>$reg_field)
+        {
+            // Placeholder Keys
+            if(!is_numeric($reg_field_key)) continue;
+
+            $type = isset($reg_field['type']) ? $reg_field['type'] : '';
+            $label = isset($reg_field['label']) ? __($reg_field['label'], 'modern-events-calendar-lite') : '';
+
+            if(trim($label) == '') continue;
+            if($type == 'agreement') $label = sprintf($label, get_the_title($reg_field['page']));
+
+            $columns[] = $label;
+        }
+        $columns[] = 'Attachments';
+        $output = fopen('php://output', 'w');
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        fputcsv($output, $columns);
+        
+        foreach($post_ids as $post_id)
+        {
+            $post_id = (int) $post_id;
+
+            $event_id = get_post_meta($post_id, 'mec_event_id', true);
+            $booker_id = get_post_field('post_author', $post_id);
+            $transaction_id = get_post_meta($post_id, 'mec_transaction_id', true);
+
+            $tickets = get_post_meta($event_id, 'mec_tickets', true);
+
+            $attendees = get_post_meta($post_id, 'mec_attendees', true);
+            if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($post_id, 'mec_attendee', true));
+
+            $price = get_post_meta($post_id, 'mec_price', true);
+            $booker = get_userdata($booker_id);
+            
+            $confirmed = $this->main->get_confirmation_label(get_post_meta($post_id, 'mec_confirmed', true));
+            $verified = $this->main->get_verification_label(get_post_meta($post_id, 'mec_verified', true));
+            
+            $attachments = '';
+            if( isset( $attendees['attachments'] ) ) 
+            {
+                foreach ($attendees['attachments'] as $attachment) {
+                    $attachments .= @$attachment['url'] . "\n";
+                }
+            }
+
+            foreach($attendees as $key => $attendee)
+            {
+                if ($key === 'attachments') {
+                    continue;
+                }
+                if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) {
+                    continue;
+                }
+                
+                $ticket_id = isset($attendee['id']) ? $attendee['id'] : get_post_meta($post_id, 'mec_ticket_id', true);
+                $booking = array($post_id, get_the_title($event_id), get_the_date('', $post_id), (isset($tickets[$ticket_id]['name']) ? $tickets[$ticket_id]['name'] : __('Unknown', 'modern-events-calendar-lite')), $transaction_id, $this->main->render_price(($price ? $price : 0)), (isset($attendee['name']) ? $attendee['name'] : (isset($booker->first_name) ? trim($booker->first_name.' '.$booker->last_name) : '')), (isset($attendee['email']) ? $attendee['email'] : @$booker->user_email), $confirmed, $verified);
+                $booking = apply_filters('mec_csv_export_booking', $booking, $post_id, $event_id);
+
+                $reg_form = isset($attendee['reg']) ? $attendee['reg'] : array();
+                foreach($reg_fields as $field_id=>$reg_field)
+                {
+                    // Placeholder Keys
+                    if(!is_numeric($field_id)) continue;
+
+                    $label = isset($reg_field['label']) ? __($reg_field['label'], 'modern-events-calendar-lite') : '';
+                    if(trim($label) == '') continue;
+
+                    $booking[] = isset($reg_form[$field_id]) ? ((is_string($reg_form[$field_id]) and trim($reg_form[$field_id])) ? $reg_form[$field_id] : (is_array($reg_form[$field_id]) ? implode(' | ', $reg_form[$field_id]) : '---')) : '';
+                }
+                    if ($attachments) {
+                    $booking[]  = $attachments;
+                    $attachments = '';
+                }
+                fputcsv($output, $booking);
+            }
+        }
+        
+        die(json_encode(array('name' => md5(time().mt_rand(100, 999)), 'ex' => "data:text/csv; charset=utf-8;base64,".base64_encode(ob_get_clean()))));
+    }
+    
     public function fes_upload()
     {
         // Check if our nonce is set.
@@ -252,8 +363,24 @@ class MEC_feature_fes extends MEC_base
             $g_recaptcha_response = isset($_POST['g-recaptcha-response']) ? sanitize_text_field($_POST['g-recaptcha-response']) : NULL;
             if(!$this->main->get_recaptcha_response($g_recaptcha_response)) $this->main->response(array('success'=>0, 'message'=>__('Captcha is invalid! Please try again.', 'modern-events-calendar-lite'), 'code'=>'CAPTCHA_IS_INVALID'));
         }
-        
+
         $post_id = isset($mec['post_id']) ? sanitize_text_field($mec['post_id']) : -1;
+
+        $start_date = (isset($mec['date']['start']['date']) and trim($mec['date']['start']['date'])) ? $mec['date']['start']['date'] : date('Y-m-d');
+        $end_date = (isset($mec['date']['end']['date']) and trim($mec['date']['end']['date'])) ? $mec['date']['end']['date'] : date('Y-m-d');
+
+        $event = $this->db->select("SELECT * FROM `#__mec_events` WHERE `post_id` = {$post_id}", 'loadAssoc');
+        if(!is_array($event)) $event = array();
+
+        $booking_date_update = false;
+        if(count($event))
+        {
+            $past_start_date = (isset($event['start']) and trim($event['start'])) ? $event['start'] : '';
+            $past_end_date = (isset($event['end']) and trim($event['end'])) ? $event['end'] : '';
+
+            if(trim($start_date) != trim($past_start_date) or trim($end_date) != trim($past_end_date)) $booking_date_update = true;
+        }
+
         $post_title = isset($mec['title']) ? sanitize_text_field($mec['title']) : '';
         $post_content = isset($mec['content']) ? $mec['content'] : '';
         $post_tags = isset($mec['tags']) ? sanitize_text_field($mec['tags']) : '';
@@ -446,10 +573,17 @@ class MEC_feature_fes extends MEC_base
         foreach($additional_organizer_ids as $additional_organizer_id) wp_set_object_terms($post_id, (int) $additional_organizer_id, 'mec_organizer', true);
         update_post_meta($post_id, 'mec_additional_organizer_ids', $additional_organizer_ids);
         
+         // Additional locations
+         $additional_location_ids = isset($mec['additional_location_ids']) ? $mec['additional_location_ids'] : array();
+
+         foreach ($additional_location_ids as $additional_location_id) {
+             wp_set_object_terms($post_id, (int)$additional_location_id, 'mec_location', true);
+         }
+         update_post_meta($post_id, 'mec_additional_location_ids', $additional_location_ids);
+
         // Date Options
         $date = isset($mec['date']) ? $mec['date'] : array();
-        
-        $start_date = (isset($date['start']) and trim($date['start']['date'])) ? $date['start']['date'] : date('Y-m-d');
+
         $start_date = date('Y-m-d', strtotime($start_date));
         
         // Set the date if it's empty
@@ -458,8 +592,7 @@ class MEC_feature_fes extends MEC_base
         $start_time_hour = isset($date['start']) ? $date['start']['hour'] : '8';
         $start_time_minutes = isset($date['start']) ? $date['start']['minutes'] : '00';
         $start_time_ampm = (isset($date['start']) and isset($date['start']['ampm'])) ? $date['start']['ampm'] : 'AM';
-        
-        $end_date = (isset($date['end']) and trim($date['end']['date'])) ? $date['end']['date'] : date('Y-m-d');
+
         $end_date = date('Y-m-d', strtotime($end_date));
 
         // Fix end_date if it's smaller than start_date
@@ -821,6 +954,59 @@ class MEC_feature_fes extends MEC_base
         update_post_meta($post_id, 'mec_op', $op);
         update_user_meta(get_post_field('post_author', $post_id), 'mec_op', $op);
 
+        if($booking_date_update)
+        {
+            $render_date = $past_start_date . ':' . $past_end_date;
+            $new_date = $start_date . ':' . $end_date;
+
+            $books_query = new WP_Query(array(
+                'post_type' => 'mec-books',
+                'nopaging' => true,
+                'post_status' => array('publish','pending','draft','future','private'),
+                'meta_query' => array(
+                    'relation' => 'AND',
+                    array(
+                        'key'     => 'mec_event_id',
+                        'value'   => $post_id.'',
+                        'type'    => 'numeric',
+                        'compare' => '='
+                    ),
+                    array(
+                        'key'     => 'mec_date',
+                        'value'   => $render_date,
+                        'compare' => '=',
+                    )
+                )
+            ));
+
+            if($books_query->have_posts())
+            {
+                $book = $this->getBook();
+
+                while($books_query->have_posts())
+                {
+                    $books_query->the_post();
+                    $booking_id = get_the_ID();
+
+                    // Update Booking
+                    update_post_meta($booking_id, 'mec_date', trim($new_date));
+                    wp_update_post(array(
+                        'ID' => $booking_id,
+                        'post_date' => $start_date
+                    ));
+
+                    // Update Transaction
+                    $transaction_id = get_post_meta($booking_id, 'mec_transaction_id', true);
+                    $transaction = $book->get_transaction($transaction_id);
+
+                    $transaction['date'] = trim($new_date);
+                    $book->update_transaction($transaction_id, $transaction);
+                }
+
+                wp_reset_postdata();
+            }
+        }
+
         $message = '';
         if($status == 'pending') $message = __('The event submitted. It will publish as soon as possible.', 'modern-events-calendar-lite');
         elseif($status == 'publish') $message = __('The event published.', 'modern-events-calendar-lite');
@@ -829,7 +1015,14 @@ class MEC_feature_fes extends MEC_base
         if($method == 'updated') do_action('mec_fes_updated', $post_id , 'update');
         else do_action('mec_fes_added', $post_id , '');
         
-        $this->main->response(array('success'=>1, 'message'=>$message, 'data'=>array('post_id'=>$post_id)));
+        $this->main->response(array(
+            'success' => 1,
+            'message' => $message,
+            'data'=> array(
+                'post_id' => $post_id,
+                'redirect_to' => isset($this->settings['fes_thankyou_page']) and trim($this->settings['fes_thankyou_page']) ? get_permalink(intval($this->settings['fes_thankyou_page'])) : '',
+            ),
+        ));
     }
     
     public function link_add_event()
@@ -848,5 +1041,48 @@ class MEC_feature_fes extends MEC_base
     {
         if(isset($this->settings['fes_list_page']) and trim($this->settings['fes_list_page'])) return get_permalink($this->settings['fes_list_page']);
         else return $this->main->add_qs_var('vlist', 1, $this->main->remove_qs_var('post_id'));
+    }
+}
+
+// FES Categories Custom Walker
+class FES_Custom_Walker extends Walker_Category 
+{
+    /**
+     * This class is a custom walker for front end event submission hierarchical categories customizing
+     */
+    private $post_id;
+
+    function __construct($post_id)
+    {
+        $this->post_id = $post_id;
+    }
+
+    function start_lvl(&$output, $depth = 0, $args = array())
+    {
+        $indent  = str_repeat("\t", $depth);
+        $output .= "$indent<div class='mec-fes-category-children'>";
+    }
+
+    function end_lvl(&$output, $depth = 0, $args = array())
+    {
+        $indent  = str_repeat("\t", $depth);
+        $output .= "$indent</div>";
+    }
+
+    function start_el(&$output, $category, $depth = 0, $args = array(), $id = 0)
+    {
+        $post_categories = get_the_terms($this->post_id, 'mec_category');
+
+        $categories = array();
+        if($post_categories) foreach($post_categories as $post_category) $categories[] = $post_category->term_id;
+
+        $output .= '<label for="mec_fes_categories' . $category->term_id . '">
+        <input type="checkbox" name="mec[categories][' . $category->term_id . ']"
+        id="mec_fes_categories' . $category->term_id .'" value="1"' . (in_array($category->term_id, $categories) ? 'checked="checked"' : '') . '/>' . $category->name;
+    }
+
+    function end_el(&$output, $page, $depth = 0, $args = array())
+    {
+        $output .= '</label>';
     }
 }

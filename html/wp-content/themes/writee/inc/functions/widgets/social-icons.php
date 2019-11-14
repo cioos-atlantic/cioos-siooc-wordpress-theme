@@ -22,7 +22,7 @@ class WRT_socialicon_widget extends WP_Widget {
 		$writee_fb_link      = isset($instance['wrt_fb_url']) ? esc_url($instance['wrt_fb_url']) : '';
 		$writee_twitter_link = isset($instance['wrt_twitter_url']) ? esc_url($instance['wrt_twitter_url']) : '';
 		$writee_insta_link   = isset($instance['wrt_instagram_url']) ? esc_url($instance['wrt_instagram_url']) : '';
-		$writee_gplus_link   = isset($instance['wrt_google_url']) ? esc_url($instance['wrt_google_url']) : '';
+		$writee_github_link   = isset($instance['wrt_github_url']) ? esc_url($instance['wrt_github_url']) : '';
 		$writee_linked_link  = isset($instance['wrt_linkedin_url']) ? esc_url($instance['wrt_linkedin_url']) : '';
 		$writee_ytube_link   = isset($instance['wrt_youtube_url']) ? esc_url($instance['wrt_youtube_url']) : '';
 		$writee_pint_link    = isset($instance['wrt_pinterest_url']) ? esc_url($instance['wrt_pinterest_url']) : '';
@@ -46,8 +46,8 @@ class WRT_socialicon_widget extends WP_Widget {
 			
 		endif;
 		
-		if($writee_gplus_link):
-			$social_link_output .='<li><a href="'.$writee_gplus_link.'"><span class="fa fa-google-plus"></span></a></li>';
+		if($writee_github_link):
+			$social_link_output .='<li><a href="'.$writee_github_link.'"><span class="fa fa-github"></span></a></li>';
 			
 		endif;
 		
@@ -92,7 +92,7 @@ class WRT_socialicon_widget extends WP_Widget {
 		$writee_fb_link      = isset($instance['wrt_fb_url']) ? esc_url($instance['wrt_fb_url']) : '';
 		$writee_twitter_link = isset($instance['wrt_twitter_url']) ? esc_url($instance['wrt_twitter_url']) : '';
 		$writee_insta_link   = isset($instance['wrt_instagram_url']) ? esc_url($instance['wrt_instagram_url']) : '';
-		$writee_gplus_link   = isset($instance['wrt_google_url']) ? esc_url($instance['wrt_google_url']) : '';
+		$writee_github_link   = isset($instance['wrt_github_url']) ? esc_url($instance['wrt_github_url']) : '';
 		$writee_linked_link  = isset($instance['wrt_linkedin_url']) ? esc_url($instance['wrt_linkedin_url']) : '';
 		$writee_ytube_link   = isset($instance['wrt_youtube_url']) ? esc_url($instance['wrt_youtube_url']) : '';
 		$writee_pint_link    = isset($instance['wrt_pinterest_url']) ? esc_url($instance['wrt_pinterest_url']) : '';
@@ -136,8 +136,8 @@ class WRT_socialicon_widget extends WP_Widget {
 	
 	
 	<p>
-		<label for="<?php echo esc_attr($this->get_field_id( 'wrt_google_url' )); ?>"><?php esc_html_e( 'Google+ URL', 'writee' ); ?></label> 
-		<input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'wrt_google_url')); ?>" name="<?php echo esc_attr($this->get_field_name( 'wrt_google_url')); ?>" type="text" value="<?php echo $writee_gplus_link; ?>" />
+		<label for="<?php echo esc_attr($this->get_field_id( 'wrt_github_url' )); ?>"><?php esc_html_e( 'GitHub URL', 'writee' ); ?></label> 
+		<input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'wrt_github_url')); ?>" name="<?php echo esc_attr($this->get_field_name( 'wrt_github_url')); ?>" type="text" value="<?php echo $writee_github_link; ?>" />
 	</p>
 	
 	<p>
@@ -174,7 +174,7 @@ class WRT_socialicon_widget extends WP_Widget {
 		
 		$instance['wrt_twitter_url'] = ( ! empty( $new_instance['wrt_twitter_url'] ) ) ? esc_url( $new_instance['wrt_twitter_url'] ) : '';
 		
-		$instance['wrt_google_url'] = ( ! empty( $new_instance['wrt_google_url'] ) ) ? esc_url( $new_instance['wrt_google_url'] ) : '';
+		$instance['wrt_github_url'] = ( ! empty( $new_instance['wrt_github_url'] ) ) ? esc_url( $new_instance['wrt_github_url'] ) : '';
 		
 		$instance['wrt_instagram_url'] = ( ! empty( $new_instance['wrt_instagram_url'] ) ) ? esc_url( $new_instance['wrt_instagram_url'] ) : '';
 		

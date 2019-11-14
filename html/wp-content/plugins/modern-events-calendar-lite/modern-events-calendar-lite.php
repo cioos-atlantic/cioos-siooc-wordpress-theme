@@ -1,13 +1,13 @@
 <?php
 /**
-	Plugin Name: Modern Events Calendar Lite
-	Plugin URI: http://webnus.net/modern-events-calendar/
-	Description: An awesome plugin for events calendar
-	Author: Webnus Team
-	Version: 4.4.0
-    Text Domain: modern-events-calendar-lite
-    Domain Path: /languages
-	Author URI: http://webnus.net
+*	Plugin Name: Modern Events Calendar Lite
+*	Plugin URI: http://webnus.net/modern-events-calendar/
+*	Description: An awesome plugin for events calendar
+*	Author: Webnus Team
+*	Version: 4.8.1
+*   Text Domain: modern-events-calendar-lite
+*   Domain Path: /languages
+*	Author URI: http://webnus.net
 **/
 
 if(!defined('MECEXEC'))
@@ -31,12 +31,12 @@ if(!defined('MECEXEC'))
     define('MEC_BASENAME', plugin_basename(__FILE__)); // modern-events-calendar/mec.php
 
     /** Plugin Version **/
-    define('MEC_VERSION', '4.4.0');
+    define('MEC_VERSION', '4.8.1');
 
     /** Include Webnus MEC class if not included before **/
     if(!class_exists('MEC')) require_once MEC_ABSPATH.'mec-init.php';
 
-    /** Initialize Webnus MEC **/
+    /** Initialize Webnus MEC Plugin **/
     $MEC = MEC::instance();
     $MEC->init();
 }

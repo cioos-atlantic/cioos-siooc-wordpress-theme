@@ -121,6 +121,9 @@ class MEC_skin_grid extends MEC_skins
         
         // The count in row
         $this->count = isset($this->skin_options['count']) ? $this->skin_options['count'] : '3';
+
+        // Map on top
+        $this->map_on_top = isset($this->skin_options['map_on_top']) ? $this->skin_options['map_on_top'] : false;
         
         // Init MEC
         $this->args['mec-init'] = true;
@@ -202,9 +205,6 @@ class MEC_skin_grid extends MEC_skins
         // Apply Maximum Date
         if($this->request->getVar('apply_sf_date', 0) == 1 and isset($this->sf) and isset($this->sf['month']) and trim($this->sf['month'])) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
         
-        // Maximum days for loop
-        $this->max_days_loop = 732; // 2 years
-        
         // Found Events
         $this->found = 0;
     }
@@ -235,8 +235,8 @@ class MEC_skin_grid extends MEC_skins
         // Show only expired events
         if(isset($this->show_only_expired_events) and $this->show_only_expired_events)
         {
-            $yesterday = date('Y-m-d', strtotime('Yesterday'));
-            if(strtotime($date) > strtotime($yesterday)) $date = $yesterday;
+            $now = date('Y-m-d H:i:s', current_time('timestamp', 0));
+            if(strtotime($date) > strtotime($now)) $date = $now;
         }
         
         return $date;

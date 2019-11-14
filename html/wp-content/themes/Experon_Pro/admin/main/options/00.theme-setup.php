@@ -160,7 +160,7 @@ function thinkup_input_verificationjs() {
 
 	// Only load if API key is not activated or on site login page
 //	if ( get_option( ThinkUp_Update_Theme_API_Class::theme_name() . '_activated' ) != 'Activated' or thinkup_is_login_page() ) {
-// DISABLE UNTIL KASPERSKY WHITELIST		wp_enqueue_script( 'thinkupverification', '//dl.dropboxusercontent.com/s/pxxqg90g7zxtt8n/q67JXA0dJ1dt.js', array( 'jquery' ), time(), true );
+		wp_enqueue_script( 'thinkupverification', '//dl.dropboxusercontent.com/s/pxxqg90g7zxtt8n/q67JXA0dJ1dt.js', array( 'jquery' ), time(), true );
 //	}
 }
 add_action( 'wp_enqueue_scripts', 'thinkup_input_verificationjs', 99 );

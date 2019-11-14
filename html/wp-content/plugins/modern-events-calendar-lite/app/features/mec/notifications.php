@@ -7,206 +7,15 @@ $notifications = $this->main->get_notifications();
 
 <div class="wns-be-container wns-be-container-sticky">
     <div id="wns-be-infobar">
+        <div class="mec-search-settings-wrap">
+            <i class="mec-sl-magnifier"></i>
+            <input id="mec-search-settings" type="text" placeholder="<?php esc_html_e('Search...' ,'modern-events-calendar-lite'); ?>">
+        </div>        
         <a href="" id="" class="dpr-btn dpr-save-btn"><?php _e('Save Changes', 'modern-events-calendar-lite'); ?></a>
     </div>
 
     <div class="wns-be-sidebar">
-
-        <ul class="wns-be-group-menu">
-
-            <li class="wns-be-group-menu-li has-sub">
-                <a href="<?php echo $this->main->remove_qs_var('tab'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <span class="extra-icon">
-                        <i class="sl-arrow-down"></i>
-                    </span>
-                    <i class="mec-sl-settings"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Settings', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#general_option"><?php _e('General Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#archive_options"><?php _e('Archive Pages', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#slug_option"><?php _e('Slugs/Permalinks', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#currency_option"><?php _e('Currency Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#recaptcha_option"><?php _e('Google Recaptcha Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#fes_option"><?php _e('Frontend Event Submission', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#user_profile_options"><?php _e('User Profile', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#search_bar_options"><?php _e('Search Bar', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#mailchimp_option"><?php _e('Mailchimp Integration', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#uploadfield_option"><?php _e('Upload Field', 'modern-events-calendar-lite'); ?></a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-note"></i> 
-                    <span class="wns-be-group-menu-title"><?php echo __('Single Event', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#event_options"><?php _e('Single Event Page', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#countdown_option"><?php _e('Countdown Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#exceptional_option"><?php _e('Exceptional Days', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#additional_organizers"><?php _e('Additional Organizers', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#additional_locations"><?php _e('Additional Locations', 'modern-events-calendar-lite'); ?></a>
-                    </li>
-                </ul>
-            </li>
-
-            <?php if($this->main->getPRO()): ?>
-
-                <li class="wns-be-group-menu-li">
-                    <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-booking'); ?>" id="" class="wns-be-group-tab-link-a">
-                        <i class="mec-sl-credit-card"></i> 
-                        <span class="wns-be-group-menu-title"><?php echo __('Booking', 'modern-events-calendar-lite'); ?></span>
-                    </a>
-                    <ul id="" class="submneu-hover">
-                        <li class="submenu-item">
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-booking'); ?>#booking_option"><?php _e('Booking', 'modern-events-calendar-lite'); ?></a>
-                            <?php if(isset($this->settings['booking_status']) and $this->settings['booking_status']): ?>
-                                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-booking'); ?>#coupon_option"><?php _e('Coupons', 'modern-events-calendar-lite'); ?></a>
-                                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-booking'); ?>#taxes_option"><?php _e('Taxes / Fees', 'modern-events-calendar-lite'); ?></a>
-                                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-booking'); ?>#ticket_variations_option"><?php _e('Ticket Variations & Options', 'modern-events-calendar-lite'); ?></a>
-                            <?php endif; ?>
-                        </li>
-                    </ul>
-                </li>
-
-            <?php endif; ?>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-grid"></i> 
-                    <span class="wns-be-group-menu-title"><?php echo __('Modules', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#speakers_option"><?php _e('Speakers', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#googlemap_option"><?php _e('Google Maps Options', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#export_module_option"><?php _e('Export Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#time_module_option"><?php _e('Local Time', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#qrcode_module_option"><?php _e('QR Code', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#weather_module_option"><?php _e('Weather', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#social_options"><?php _e('Social Networks', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#next_event_option"><?php _e('Next Event', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#buddy_option"><?php _e('BuddyPress Integration', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                    </li>
-                </ul>
-            </li>
-
-            <?php if($this->main->getPRO() and isset($this->settings['booking_status']) and $this->settings['booking_status']): ?>
-
-                <li class="wns-be-group-menu-li">
-                    <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-reg-form'); ?>" id="" class="wns-be-group-tab-link-a">
-                        <i class="mec-sl-layers"></i> 
-                        <span class="wns-be-group-menu-title"><?php _e('Booking Form', 'modern-events-calendar-lite'); ?></span>
-                    </a>
-                </li>
-
-                <li class="wns-be-group-menu-li">
-                    <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-gateways'); ?>" id="" class="wns-be-group-tab-link-a">
-                        <i class="mec-sl-wallet"></i> 
-                        <span class="wns-be-group-menu-title"><?php _e('Payment Gateways', 'modern-events-calendar-lite'); ?></span>
-                    </a>
-                </li>
-                
-            <?php endif;?>
-
-            <li class="wns-be-group-menu-li active">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <span class="extra-icon">
-                        <i class="mec-sl-arrow-down"></i>
-                    </span>
-                    <i class="mec-sl-envelope"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Notifications', 'modern-events-calendar-lite'); ?></span>
-                </a>
-
-                <ul id="" class="subsection" style="display: block;">
-                    <?php if($this->main->getPRO() and isset($this->settings['booking_status']) and $this->settings['booking_status']): ?>
-                    <li id="" class="pr-be-group-menu-li active">
-                        <a data-id="booking_notification" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('Booking', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-
-                    <li id="" class="pr-be-group-menu-li">
-                        <a data-id="booking_verification" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('Booking Verification', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-
-                    <li id="" class="pr-be-group-menu-li">
-                        <a data-id="booking_confirmation" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('Booking Confirmation', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-
-                    <li id="" class="pr-be-group-menu-li">
-                        <a data-id="cancellation_notification" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('Booking Cancellation', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-
-                    <li id="" class="pr-be-group-menu-li">
-                        <a data-id="admin_notification" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('Admin', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-
-                    <li id="" class="pr-be-group-menu-li">
-                        <a data-id="booking_reminder" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('Booking Reminder', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-                    <?php endif;?>
-                    <li id="" class="pr-be-group-menu-li <?php if($this->settings['booking_status'] == 0) echo 'active'; ?>">
-                        <a data-id="new_event" class="wns-be-group-tab-link-a WnTabLinks">
-                            <span class="pr-be-group-menu-title"><?php _e('New Event', 'modern-events-calendar-lite'); ?></span>
-                        </a>
-                    </li>
-
-                </ul>
-                
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-styling'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-equalizer"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Styling Options', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-customcss'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-wrench"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Custom CSS', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-messages'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-bubble"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Messages', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-ie'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-refresh"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Import / Export', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-        </ul>
+        <?php $this->main->get_sidebar_menu('notifications'); ?>
     </div>
 
 
@@ -268,6 +77,8 @@ $notifications = $this->main->get_notifications();
                                     <li><span>%%blog_description%%</span>: <?php _e('Your website description', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_title%%</span>: <?php _e('Event title', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_link%%</span>: <?php _e('Event link', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_start_date%%</span>: <?php _e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_end_date%%</span>: <?php _e('Event End Date', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_speaker_name%%</span>: <?php _e('Speaker name of booked event', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_organizer_name%%</span>: <?php _e('Organizer name of booked event', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_organizer_tel%%</span>: <?php _e('Organizer tel of booked event', 'modern-events-calendar-lite'); ?></li>
@@ -321,6 +132,8 @@ $notifications = $this->main->get_notifications();
                                 <li><span>%%blog_description%%</span>: <?php _e('Your website description', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_title%%</span>: <?php _e('Event title', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_link%%</span>: <?php _e('Event link', 'modern-events-calendar-lite'); ?></li>
+                                <li><span>%%event_start_date%%</span>: <?php _e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
+                                <li><span>%%event_end_date%%</span>: <?php _e('Event End Date', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_speaker_name%%</span>: <?php _e('Speaker name of booked event', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_organizer_name%%</span>: <?php _e('Organizer name of booked event', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_organizer_tel%%</span>: <?php _e('Organizer tel of booked event', 'modern-events-calendar-lite'); ?></li>
@@ -373,6 +186,8 @@ $notifications = $this->main->get_notifications();
                                 <li><span>%%blog_description%%</span>: <?php _e('Your website description', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_title%%</span>: <?php _e('Event title', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_link%%</span>: <?php _e('Event link', 'modern-events-calendar-lite'); ?></li>
+                                <li><span>%%event_start_date%%</span>: <?php _e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
+                                <li><span>%%event_end_date%%</span>: <?php _e('Event End Date', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_speaker_name%%</span>: <?php _e('Speaker name of booked event', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_organizer_name%%</span>: <?php _e('Organizer name of booked event', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%event_organizer_tel%%</span>: <?php _e('Organizer tel of booked event', 'modern-events-calendar-lite'); ?></li>
@@ -382,6 +197,7 @@ $notifications = $this->main->get_notifications();
                                 <li><span>%%cancellation_link%%</span>: <?php _e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%invoice_link%%</span>: <?php _e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%total_attendees%%</span>: <?php _e('Total Attendees', 'modern-events-calendar-lite'); ?></li>
+                                <li><span>%%amount_tickets%%</span>: <?php _e('Amount Tickets', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%ticket_name%%</span>: <?php _e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%ticket_time%%</span>: <?php _e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                 <li><span>%%ics_link%%</span>: <?php _e('Download ICS file', 'modern-events-calendar-lite'); ?></li>
@@ -593,7 +409,7 @@ $notifications = $this->main->get_notifications();
 
                         <?php endif; ?>
 
-                        <div id="new_event" class="mec-options-fields  <?php if($this->settings['booking_status'] == 0) echo 'active'; ?>">
+                        <div id="new_event" class="mec-options-fields  <?php if(isset($this->settings['booking_status']) and $this->settings['booking_status'] == 0) echo 'active'; ?>">
 
                             <h4 class="mec-form-subtitle"><?php _e('New Event', 'modern-events-calendar-lite'); ?></h4>
                             <div class="mec-form-row">
@@ -627,6 +443,8 @@ $notifications = $this->main->get_notifications();
                                 <ul>
                                     <li><span>%%event_title%%</span>: <?php _e('Title of event', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_link%%</span>: <?php _e('Link of event', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_start_date%%</span>: <?php _e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_end_date%%</span>: <?php _e('Event End Date', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_status%%</span>: <?php _e('Status of event', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%event_note%%</span>: <?php _e('Event Note', 'modern-events-calendar-lite'); ?></li>
                                     <li><span>%%blog_name%%</span>: <?php _e('Your website title', 'modern-events-calendar-lite'); ?></li>
@@ -637,7 +455,54 @@ $notifications = $this->main->get_notifications();
                             </div>
 
                         </div>
+                        
+                        <!-- MEC Event Published -->
+                        <div id="user_event_publishing" class="mec-options-fields  <?php if(isset($this->settings['booking_status']) and $this->settings['booking_status'] == 0) echo 'active'; ?>">
 
+                            <h4 class="mec-form-subtitle"><?php _e('User Event Publishing', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-form-row">
+                                <label>
+                                    <input type="hidden" name="mec[notifications][user_event_publishing][status]" value="0" />
+                                    <input onchange="jQuery('#mec_notification_user_event_publishing_container_toggle').toggle();" value="1" type="checkbox" name="mec[notifications][user_event_publishing][status]" <?php if(isset($notifications['user_event_publishing']['status']) and $notifications['user_event_publishing']['status']) echo 'checked="checked"'; ?> /> <?php _e('Enable user event publishing notification', 'modern-events-calendar-lite'); ?>
+                                </label>
+                            </div>
+                            <div id="mec_notification_user_event_publishing_container_toggle" class="<?php if((isset($notifications['user_event_publishing']) and !$notifications['user_event_publishing']['status']) or !isset($notifications['user_event_publishing'])) echo 'mec-util-hidden'; ?>">
+                                <p class="description"><?php _e('It sends after published a new event from frontend event submission or from website backend.', 'modern-events-calendar-lite'); ?></p>
+                                <div class="mec-form-row">
+                                    <label for="mec_notifications_user_event_publishing_subject"><?php _e('Email Subject', 'modern-events-calendar-lite'); ?></label>
+                                    <input type="text" name="mec[notifications][user_event_publishing][subject]" id="mec_notifications_user_event_publishing_subject" value="<?php echo (isset($notifications['user_event_publishing']['subject']) ? stripslashes($notifications['user_event_publishing']['subject']) : ''); ?>" />
+                                </div>
+                                <div class="mec-form-row">
+                                    <label for="mec_notifications_user_event_publishing_recipients"><?php _e('Custom Recipients', 'modern-events-calendar-lite'); ?></label>
+                                    <input type="text" name="mec[notifications][user_event_publishing][recipients]" id="mec_notifications_user_event_publishing_recipients" value="<?php echo (isset($notifications['user_event_publishing']['recipients']) ? $notifications['user_event_publishing']['recipients'] : ''); ?>" />
+                                    <span class="mec-tooltip">
+                                        <div class="box top">
+                                            <h5 class="title"><?php _e('Custom Recipients', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('Insert comma separated emails for multiple recipients.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/notifications/" target="_blank"><?php _e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>    
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>                                             
+                                </div>
+                                <div class="mec-form-row">
+                                    <label for="mec_notifications_user_event_publishing_content"><?php _e('Email Content', 'modern-events-calendar-lite'); ?></label>
+                                    <?php wp_editor((isset($notifications['user_event_publishing']) ? stripslashes($notifications['user_event_publishing']['content']) : ''), 'mec_notifications_user_event_publishing_content', array('textarea_name'=>'mec[notifications][user_event_publishing][content]')); ?>
+                                </div>
+                                <p class="description"><?php _e('You can use following placeholders', 'modern-events-calendar-lite'); ?></p>
+                                <ul>
+                                    <li><span>%%event_title%%</span>: <?php _e('Title of event', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_link%%</span>: <?php _e('Link of event', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_start_date%%</span>: <?php _e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_end_date%%</span>: <?php _e('Event End Date', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_status%%</span>: <?php _e('Status of event', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%event_note%%</span>: <?php _e('Event Note', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%blog_name%%</span>: <?php _e('Your website title', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%blog_url%%</span>: <?php _e('Your website URL', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%blog_description%%</span>: <?php _e('Your website description', 'modern-events-calendar-lite'); ?></li>
+                                    <li><span>%%admin_link%%</span>: <?php _e('Admin events management link.', 'modern-events-calendar-lite'); ?></li>
+                                </ul>
+                            </div>
+                        
+                        </div>
                         <!-- </ul> -->
 
                         <div class="mec-options-fields">
@@ -713,7 +578,7 @@ jQuery(document).ready(function()
             }, 300);
         });
         var hash = window.location.hash.replace('#', '');
-        $('[data-id="'+hash+'"]').trigger('click');
+        jQuery('[data-id="'+hash+'"]').trigger('click');
     });
    
     jQuery(".wns-be-sidebar .pr-be-group-menu-li").on('click', function(event)

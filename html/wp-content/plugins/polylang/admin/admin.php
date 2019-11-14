@@ -137,10 +137,6 @@ class PLL_Admin extends PLL_Admin_Base {
 			$this->share_term_slug = new PLL_Admin_Share_Term_Slug( $this );
 		}
 
-		if ( class_exists( 'PLL_Sync_Content' ) ) {
-			$this->sync_content = new PLL_Sync_Content( $this );
-		}
-
 		// Duplicate content
 		if ( class_exists( 'PLL_Duplicate' ) ) {
 			$this->duplicate = new PLL_Duplicate( $this );
@@ -154,6 +150,13 @@ class PLL_Admin extends PLL_Admin_Base {
 		if ( pll_use_block_editor_plugin() ) {
 			$this->block_editor_plugin = new PLL_Block_Editor_Plugin( $this );
 		}
+
+		// FIXME: Specific for WP CRON and WP CLI as the action admin_init is not fired.
+		// Waiting for a better way to handle the cases without loading the complete admin.
+		if ( wp_doing_cron() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			$this->maybe_load_sync_post();
+		}
+
 	}
 
 	/**
@@ -178,14 +181,16 @@ class PLL_Admin extends PLL_Admin_Base {
 	 *
 	 * @since 2.6
 	 *
-	 * @param bool $is_block_editor Whether to use the block editor or not
+	 * @param bool $is_block_editor Whether to use the block editor or not.
 	 * @return bool
 	 */
 	public function _maybe_load_sync_post( $is_block_editor ) {
-		if ( class_exists( 'PLL_Sync_Post_REST' ) && pll_use_block_editor_plugin() && $is_block_editor ) {
-			$this->sync_post = new PLL_Sync_Post_REST( $this );
-		} elseif ( class_exists( 'PLL_Sync_Post' ) ) {
-			$this->sync_post = new PLL_Sync_Post( $this );
+		if ( ! isset( $this->sync_post ) ) { // Make sure to instantiate the class only once, as the function may be called from a filter.
+			if ( class_exists( 'PLL_Sync_Post_REST' ) && pll_use_block_editor_plugin() && $is_block_editor ) {
+				$this->sync_post = new PLL_Sync_Post_REST( $this );
+			} elseif ( class_exists( 'PLL_Sync_Post' ) ) {
+				$this->sync_post = new PLL_Sync_Post( $this );
+			}
 		}
 
 		return $is_block_editor;

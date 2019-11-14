@@ -4,8 +4,16 @@ defined('MECEXEC') or die();
 $single = new MEC_skin_single();
 wp_enqueue_style('mec-lity-style', $this->main->asset('packages/lity/lity.min.css'));
 wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.js'));
+
+$booking_options = get_post_meta(get_the_ID(), 'mec_booking', true);
+if (!is_array($booking_options)) {
+    $booking_options = array();
+}
+
+$bookings_limit_for_users = isset($booking_options['bookings_limit_for_users']) ? $booking_options['bookings_limit_for_users'] : 0;
 ?>
 <div class="mec-wrap <?php echo $event_colorskin; ?> clearfix <?php echo $this->html_class; ?>" id="mec_skin_<?php echo $this->uniqueid; ?>">
+    <?php do_action('mec_top_single_event' , get_the_ID()); ?>
     <article class="row mec-single-event">
         <!-- start breadcrumbs -->
         <?php
@@ -14,7 +22,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
             <div class="mec-breadcrumbs">
                 <?php  $single->display_breadcrumb_widget( get_the_ID() ); ?>
             </div>
-        <?php endif ;?>
+        <?php endif; ?>
         <!-- end breadcrumbs --> 
         <div class="col-md-8">
             <div class="mec-events-event-image"><?php echo $event->data->thumbnails['full']; ?></div>
@@ -38,14 +46,22 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
             <?php $this->display_hourly_schedules_widget($event); ?>
 
             <!-- Booking Module -->
-            <?php if($this->main->is_sold($event, (trim($occurrence) ? $occurrence : $event->date['start']['date'])) and count($event->dates) <= 1): ?>
+            <?php if ( !empty($event->date) ): if($this->main->is_sold($event, (trim($occurrence) ? $occurrence : $event->date['start']['date'])) and count($event->dates) <= 1): ?>
             <div class="mec-sold-tickets warning-msg"><?php _e('Sold out!', 'wpl'); ?></div>
             <?php elseif($this->main->can_show_booking_module($event)): ?>
             <?php $data_lity_class = ''; if( isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ) $data_lity_class = 'lity-hide '; ?>
             <div id="mec-events-meta-group-booking-<?php echo $this->uniqueid; ?>" class="<?php echo $data_lity_class; ?>mec-events-meta-group mec-events-meta-group-booking">
-                <?php echo $this->main->module('booking.default', array('event'=>$this->events)); ?>
+                <?php
+                if( isset($settings['booking_user_login']) and $settings['booking_user_login'] == '1' and !is_user_logged_in() ) {
+                    echo do_shortcode('[MEC_login]');
+                } elseif ( isset($settings['booking_user_login']) and $settings['booking_user_login'] == '0' and !is_user_logged_in() and isset($booking_options['bookings_limit_for_users']) and $booking_options['bookings_limit_for_users'] == '1' ) {
+                    echo do_shortcode('[MEC_login]');
+                } else {
+                    echo $this->main->module('booking.default', array('event'=>$this->events)); 
+                }
+                ?>
             </div>
-            <?php endif ?>
+            <?php endif; endif; ?>
 
             <!-- Tags -->
             <div class="mec-events-meta-group mec-events-meta-group-tags">
@@ -65,7 +81,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                         <div class="mec-single-event-date">
                             <i class="mec-sl-calendar"></i>
                             <h3 class="mec-date"><?php _e('Date', 'modern-events-calendar-lite'); ?></h3>
-                            <dd><abbr class="mec-events-abbr"><?php echo $this->main->date_label((trim($occurrence) ? array('date'=>$occurrence) : $event->date['start']), (trim($occurrence_end_date) ? array('date'=>$occurrence_end_date) : (isset($event->date['end']) ? $event->date['end'] : NULL)), $this->date_format1); ?></abbr></dd>
+                            <dd><abbr class="mec-events-abbr"><?php if (!empty($event->date)): echo $this->main->date_label((trim($occurrence) ? array('date'=>$occurrence) : $event->date['start']), (trim($occurrence_end_date) ? array('date'=>$occurrence_end_date) : (isset($event->date['end']) ? $event->date['end'] : NULL)), $this->date_format1); endif; ?></abbr></dd>
                         </div>
 
                         <?php  
@@ -141,7 +157,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
 
                 <?php
                     // Event Location
-                    if(isset($event->data->locations[$event->data->meta['mec_location_id']]) and !empty($event->data->locations[$event->data->meta['mec_location_id']]))
+                    if(isset($event->data->meta['mec_location_id']) and isset($event->data->locations[$event->data->meta['mec_location_id']]) and !empty($event->data->locations[$event->data->meta['mec_location_id']]))
                     {
                         $location = $event->data->locations[$event->data->meta['mec_location_id']];
                         ?>
@@ -180,7 +196,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                         <?php
                     }
                 ?>
-
+                <?php do_action('mec_single_event_under_category' , $event); ?>
                 <?php
                     // Event Organizer
                     if(isset($event->data->organizers[$event->data->meta['mec_organizer_id']]) && !empty($event->data->organizers[$event->data->meta['mec_organizer_id']]))
@@ -217,6 +233,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                                 <i class="mec-sl-sitemap"></i>
                                 <h6><?php _e('Website', 'modern-events-calendar-lite'); ?></h6>
                                 <span><a href="<?php echo (strpos($organizer['url'], 'http') === false ? 'http://'.$organizer['url'] : $organizer['url']); ?>" class="mec-color-hover" target="_blank"><?php echo $organizer['url']; ?></a></span>
+                                <?php do_action( 'mec_single_default_organizer', $organizer ); ?>
                             </dd>
                             <?php endif; ?>
                         </div>
@@ -227,8 +244,8 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
 
                 <!-- Register Booking Button -->
                 <?php if($this->main->can_show_booking_module($event)): ?>
-                    <?php $data_lity = ''; if( isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ) $data_lity = 'data-lity'; ?>
-                    <a class="mec-booking-button mec-bg-color <?php if( isset($settings['single_booking_style']) and $settings['single_booking_style'] != 'modal' ) echo 'simple-booking'; ?>" href="#mec-events-meta-group-booking-<?php echo $this->uniqueid; ?>" <?php echo $data_lity; ?>><?php echo esc_html($this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite'))); ?></a>
+                    <?php $data_lity = $data_lity_class =  ''; if( isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ){ $data_lity = 'onclick="openBookingModal();"'; $data_lity_class = 'mec-booking-data-lity'; }  ?>
+                    <a class="mec-booking-button mec-bg-color <?php echo $data_lity_class; ?> <?php if( isset($settings['single_booking_style']) and $settings['single_booking_style'] != 'modal' ) echo 'simple-booking'; ?>" href="#mec-events-meta-group-booking-<?php echo $this->uniqueid; ?>"  <?php echo $data_lity;?>><?php echo esc_html($this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite'))); ?></a>
                 <?php elseif(isset($event->data->meta['mec_more_info']) and trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] != 'http://'): ?>
                     <a class="mec-booking-button mec-bg-color" href="<?php echo $event->data->meta['mec_more_info']; ?>"><?php if(isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) echo esc_html(trim($event->data->meta['mec_more_info_title']), 'modern-events-calendar-lite'); else echo esc_html($this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite')));
                      ?>
@@ -391,11 +408,11 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                     <?php
                 }
                 ?>
-
+                <?php do_action('mec_single_event_under_category' , $event); ?>
                 <?php
                 // Event Organizer
                 if(isset($event->data->organizers[$event->data->meta['mec_organizer_id']]) && !empty($event->data->organizers[$event->data->meta['mec_organizer_id']]) and $single->found_value('event_orgnizer', $settings) == 'on')
-                { 
+                {
                     $organizer = $event->data->organizers[$event->data->meta['mec_organizer_id']];
                     ?>
                     <div class="mec-single-event-organizer">
@@ -428,6 +445,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                             <i class="mec-sl-sitemap"></i>
                             <h6><?php _e('Website', 'modern-events-calendar-lite'); ?></h6>
                             <span><a href="<?php echo (strpos($organizer['url'], 'http') === false ? 'http://'.$organizer['url'] : $organizer['url']); ?>" class="mec-color-hover" target="_blank"><?php echo $organizer['url']; ?></a></span>
+                            <?php do_action( 'mec_single_default_organizer', $organizer ); ?>
                         </dd>
                         <?php endif; ?>
                     </div>
@@ -438,8 +456,8 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
 
                 <!-- Register Booking Button -->
                 <?php if($this->main->can_show_booking_module($event) and $single->found_value('register_btn', $settings) == 'on'): ?>
-                    <?php $data_lity = ''; if( isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ) $data_lity = 'data-lity'; ?>
-                    <a class="mec-booking-button mec-bg-color <?php if( isset($settings['single_booking_style']) and $settings['single_booking_style'] != 'modal' ) echo 'simple-booking'; ?>" href="#mec-events-meta-group-booking-<?php echo $this->uniqueid; ?>" <?php echo $data_lity; ?>><?php echo esc_html($this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite'))); ?></a>
+                    <?php $data_lity = $data_lity_class =  ''; if( isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ){ $data_lity = 'onclick="openBookingModal();"'; $data_lity_class = 'mec-booking-data-lity'; }  ?>
+                    <a class="mec-booking-button mec-bg-color <?php echo $data_lity_class; ?> <?php if( isset($settings['single_booking_style']) and $settings['single_booking_style'] != 'modal' ) echo 'simple-booking'; ?>" href="#mec-events-meta-group-booking-<?php echo $this->uniqueid; ?>"  <?php echo $data_lity; ?>><?php echo esc_html($this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite'))); ?></a>
                 <?php elseif($single->found_value('register_btn', $settings) == 'on' and isset($event->data->meta['mec_more_info']) and trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] != 'http://'): ?>
                     <a class="mec-booking-button mec-bg-color" target="<?php echo (isset($event->data->meta['mec_more_info_target']) ? $event->data->meta['mec_more_info_target'] : '_self'); ?>" href="<?php echo $event->data->meta['mec_more_info']; ?>"><?php if(isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) echo esc_html(trim($event->data->meta['mec_more_info_title']), 'modern-events-calendar-lite'); else echo esc_html($this->main->m('register_button', __('REGISTER', 'modern-events-calendar-lite')));
                      ?></a>
@@ -476,9 +494,9 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
             <?php dynamic_sidebar('mec-single-sidebar'); ?>
 
         </div>
-
         <?php endif; ?>
     </article>
+    <?php $this->display_related_posts_widget($event->ID); ?>
 </div>
 <?php
 $speakers = '""';
@@ -495,6 +513,9 @@ if(!empty($event->data->speakers))
     } 
     $speakers = json_encode($speakers);
 }
+
+$schema_settings = isset( $settings['schema'] ) ? $settings['schema'] : '';
+if($schema_settings == '1' ):
 ?>
 <script type="application/ld+json">
 {
@@ -521,10 +542,23 @@ if(!empty($event->data->speakers))
 	"url"			: "<?php the_permalink(); ?>"
 }
 </script>
+<?php endif; ?>
 <script>
+// Fix modal speaker in some themes
 jQuery( ".mec-speaker-avatar a" ).click(function(e) {
     e.preventDefault();
     var id =  jQuery(this).attr('href');
     lity(id);
 });
+
+// Fix modal booking in some themes
+function openBookingModal()
+{
+    jQuery( ".mec-booking-button.mec-booking-data-lity" ).on('click',function(e) {
+        e.preventDefault();
+        var book_id =  jQuery(this).attr('href');
+        lity(book_id);
+    });
+}
+
 </script>

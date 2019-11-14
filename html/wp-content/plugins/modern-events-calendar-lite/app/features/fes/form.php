@@ -50,6 +50,15 @@ jQuery(document).ready(function()
                     
                     // Set the event id
                     jQuery(".mec-fes-post-id").val(response.data.post_id);
+
+                    // Redirect Currnet Page
+                    if(response.data.redirect_to != "")
+                    {
+                        setTimeout(function()
+                        {
+                            window.location.href = response.data.redirect_to;
+                        },' . ((isset($this->settings['fes_thankyou_page_time']) and trim($this->settings['fes_thankyou_page_time']) != '') ? (int) $this->settings['fes_thankyou_page_time'] : 2000) . ');
+                    }
                 }
                 else
                 {
@@ -156,7 +165,8 @@ $this->factory->params('footer', $javascript);
 <div class="mec-fes-form">
     <?php if(is_user_logged_in()): ?>
     <div class="mec-fes-form-top-actions">
-        <a href="<?php echo $this->link_list_events(); ?>"><?php echo __('Go back to events list.', 'modern-events-calendar-lite'); ?></a>
+        <?php do_action('mec_fes_form_top_actions'); ?>
+        <a class="mec-fes-form-back-to" href="<?php echo $this->link_list_events(); ?>"><?php echo __('Go back to events list', 'modern-events-calendar-lite'); ?></a>
         <?php $status = $this->main->get_event_label_status(get_post_status($post_id)); ?>
         <?php if(trim($status['label']) != "Empty"): ?>
         <span class="post-status <?php echo $status['status_class'];  ?>"><?php echo $status['label'];  ?></span>
@@ -164,8 +174,8 @@ $this->factory->params('footer', $javascript);
     </div>
     <?php endif; ?>
     
+    <div class="mec-util-hidden" id="mec_fes_form_message"></div>
     <form id="mec_fes_form" enctype="multipart/form-data">
-
         <?php
             $allday = get_post_meta($post_id, 'mec_allday', true);
             $comment = get_post_meta($post_id, 'mec_comment', true);
@@ -723,7 +733,7 @@ $this->factory->params('footer', $javascript);
                 <h4><?php _e('Featured Image', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
                     <span id="mec_fes_thumbnail_img"><?php echo (trim($featured_image) ? '<img src="'.$featured_image.'" />' : ''); ?></span>
-                    <input type="hidden" id="mec_fes_thumbnail" name="mec[featured_image]" value="<?php echo (trim($featured_image) ? $featured_image : ''); ?>" />
+                    <input type="hidden" id="mec_fes_thumbnail" name="mec[featured_image]" value="<?php if(isset($attachment_id) and intval($attachment_id)) the_guid($attachment_id); ?>" />
                     <input type="file" id="mec_featured_image_file" onchange="mec_fes_upload_featured_image();" />
                     <span id="mec_fes_remove_image_button" class="<?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php _e('Remove Image', 'modern-events-calendar-lite'); ?></span>
                 </div>
@@ -732,27 +742,19 @@ $this->factory->params('footer', $javascript);
             
             <!-- Event Category Section -->
             <?php if(!isset($this->settings['fes_section_categories']) or (isset($this->settings['fes_section_categories']) and $this->settings['fes_section_categories'])): ?>
-            <?php
-                $post_categories = get_the_terms($post_id, 'mec_category');
-
-                $categories = array();
-                if($post_categories) foreach($post_categories as $post_category) $categories[] = $post_category->term_id;
-                
-                $category_terms = get_terms(array('taxonomy'=>'mec_category', 'hide_empty'=>false));
-            ?>
-            <?php if(count($category_terms)): ?>
             <div class="mec-meta-box-fields" id="mec-categories">
                 <h4><?php echo $this->main->m('taxonomy_categories', __('Categories', 'modern-events-calendar-lite')); ?></h4>
                 <div class="mec-form-row">
-                    <?php foreach($category_terms as $category_term): ?>
-                    <label for="mec_fes_categories<?php echo $category_term->term_id; ?>">
-                        <input type="checkbox" name="mec[categories][<?php echo $category_term->term_id; ?>]" id="mec_fes_categories<?php echo $category_term->term_id; ?>" value="1" <?php echo (in_array($category_term->term_id, $categories) ? 'checked="checked"' : ''); ?> />
-                        <?php echo $category_term->name; ?>
-                    </label>
-                    <?php endforeach; ?>
+                    <?php 
+                        wp_list_categories(array(
+                            'taxonomy'    => 'mec_category',
+                            'hide_empty' => false,
+                            'title_li'           => '',
+                            'walker'          => new FES_Custom_Walker($post_id),
+                        ));
+                    ?>
                 </div>
             </div>
-            <?php endif; ?>
             <?php endif; ?>
             
             <!-- Event Label Section -->
@@ -834,19 +836,24 @@ $this->factory->params('footer', $javascript);
 
                 $speaker_terms = get_terms(array('taxonomy'=>'mec_speaker', 'hide_empty'=>false));
                 ?>
-                <?php if(count($speaker_terms)): ?>
                     <div class="mec-meta-box-fields" id="mec-speakers">
                         <h4><?php echo $this->main->m('taxonomy_speakers', __('Speakers', 'modern-events-calendar-lite')); ?></h4>
                         <div class="mec-form-row">
+                            <input type="text" name="mec[speakers][datas][names]" id="mec_speaker_input_names" placeholder="<?php _e('Speakers Names', 'modern-events-calendar-lite'); ?>" class="" />
+                            <p><?php _e('Separate names with commas Similar Justin, Cris', 'modern-events-calendar-lite'); ?></p>
+                            <button class="button" type="button" id="mec_add_speaker_button"><?php _e('Add', 'modern-events-calendar-lite'); ?></button>
+                        </div>
+                        <div class="mec-form-row" id="mec-fes-speakers-list">
+                        <?php if(count($speaker_terms)): ?>
                             <?php foreach($speaker_terms as $speaker_term): ?>
                                 <label for="mec_fes_speakers<?php echo $speaker_term->term_id; ?>">
                                     <input type="checkbox" name="mec[speakers][<?php echo $speaker_term->term_id; ?>]" id="mec_fes_speakers<?php echo $speaker_term->term_id; ?>" value="1" <?php echo (in_array($speaker_term->term_id, $speakers) ? 'checked="checked"' : ''); ?> />
                                     <?php echo $speaker_term->name; ?>
                                 </label>
                             <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
-                <?php endif; ?>
             <?php endif; ?>
         </div>
         <div class="mec-form-row mec-fes-submit-wide">
@@ -858,6 +865,5 @@ $this->factory->params('footer', $javascript);
                 <?php wp_nonce_field('mec_fes_form'); ?>
             </div>
         </div>
-        <div class="mec-util-hidden" id="mec_fes_form_message"></div>
     </form>
 </div>

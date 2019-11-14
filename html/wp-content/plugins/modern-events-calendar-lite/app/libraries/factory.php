@@ -153,7 +153,7 @@ class MEC_factory extends MEC_base
      */
     public function load_menus()
     {
-        add_menu_page(__('M.E. Calendar', 'modern-events-calendar-lite'), __('M.E. Calendar', 'modern-events-calendar-lite'), 'edit_posts', 'mec-intro', array($this->main, 'dashboard'), 'dashicons-calendar', 26);
+        add_menu_page(__('M.E. Calendar', 'modern-events-calendar-lite'), __('M.E. Calendar', 'modern-events-calendar-lite'), 'edit_posts', 'mec-intro', array($this->main, 'dashboard'), plugin_dir_url(__FILE__ ) . '../../assets/img/mec.svg', 26);
     }
 
     /**
@@ -236,6 +236,13 @@ class MEC_factory extends MEC_base
 
         // Include MEC typekit script file
         wp_enqueue_script('mec-typekit-script', $this->main->asset('js/jquery.typewatch.js'));
+        
+        //Include the nice-select
+        wp_enqueue_script('mec-niceselect-script', $this->main->asset('js/jquery.nice-select.min.js'));
+
+        //Include Select2
+        wp_enqueue_script('mec-select2-script', $this->main->asset('packages/select2/select2.full.min.js'));
+        wp_enqueue_style('mec-select2-style', $this->main->asset('packages/select2/select2.min.css'));
 
         // Backend Dependencies
         $dependencies = array('wp-color-picker', 'jquery-ui-datepicker');
@@ -291,6 +298,9 @@ class MEC_factory extends MEC_base
 
         // Google Fonts Status
         $gfonts_status = (isset($styling['disable_gfonts']) and $styling['disable_gfonts']) ? false : true;
+
+        
+        
         
         // Include WordPress jQuery
         wp_enqueue_script('jquery');
@@ -299,7 +309,17 @@ class MEC_factory extends MEC_base
         wp_enqueue_script('jquery-ui-datepicker');
         
         // Load Isotope
+
         if(class_exists('ET_Builder_Element')) $this->main->load_isotope_assets();
+        include_once(ABSPATH.'wp-admin/includes/plugin.php');
+        if(is_plugin_active( 'elementor/elementor.php' ) && \Elementor\Plugin::$instance->preview->is_preview_mode()) $this->main->load_isotope_assets();
+        
+        wp_enqueue_script('mec-typekit-script', $this->main->asset('js/jquery.typewatch.js'));
+        wp_enqueue_script('mec-featherlight-script', $this->main->asset('packages/featherlight/featherlight.js'));
+
+        //Include Select2
+        wp_enqueue_script('mec-select2-script', $this->main->asset('packages/select2/select2.full.min.js'));
+        wp_enqueue_style('mec-select2-style', $this->main->asset('packages/select2/select2.min.css'));
 
         // Include MEC frontend script files
         wp_enqueue_script('mec-frontend-script', $this->main->asset('js/frontend.js'));
@@ -322,6 +342,10 @@ class MEC_factory extends MEC_base
             $elementor_edit_mode = 'no';
         }
         
+         // Settings
+         $settings = $this->main->get_settings();
+         $grecaptcha_key = isset($settings['google_recaptcha_sitekey']) ? trim($settings['google_recaptcha_sitekey']) : '';
+
         // Localize Some Strings
         wp_localize_script('mec-frontend-script', 'mecdata', array
         (
@@ -334,6 +358,9 @@ class MEC_factory extends MEC_base
             'second'=>__('second', 'modern-events-calendar-lite'),
             'seconds'=>__('seconds', 'modern-events-calendar-lite'),
             'elementor_edit_mode'=>$elementor_edit_mode,
+            'recapcha_key'=>$grecaptcha_key,
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'fes_nonce' => wp_create_nonce('mec_fes_nonce'),
         ));
         
         // Include Google Recaptcha Javascript API
@@ -345,6 +372,7 @@ class MEC_factory extends MEC_base
         wp_enqueue_style('mec-frontend-style', $this->main->asset('css/frontend.min.css'));
         wp_enqueue_style('mec-tooltip-style', $this->main->asset('packages/tooltip/tooltip.css'));
         wp_enqueue_style('mec-tooltip-shadow-style', $this->main->asset('packages/tooltip/tooltipster-sideTip-shadow.min.css'));
+        wp_enqueue_style('mec-featherlight-style', $this->main->asset('packages/featherlight/featherlight.css'));
         
         // Include "Right to Left" CSS file
         if(is_rtl()) wp_enqueue_style('mec-frontend-rtl-style', $this->main->asset('css/mecrtl.min.css'));
@@ -621,6 +649,7 @@ class MEC_factory extends MEC_base
 
         // Clear Scheduler Cronjob
         wp_clear_scheduled_hook('mec_scheduler');
+        wp_clear_scheduled_hook('mec_syncScheduler');
 	}
     
     /**
@@ -791,6 +820,20 @@ class MEC_factory extends MEC_base
 
                     Regards,
                     %%blog_name%%"
+                ),
+                'user_event_publishing'=>array
+                (
+                    'status'=>'1',
+                    'subject'=>'Your event gets published',
+                    'recipients'=>'',
+                    'content'=>"Hello %%name%%,
+
+                    Your event gets published. You can check it below:
+
+                    <a href=\"%%event_link%%\">%%event_title%%</a>
+
+                    Regards,
+                    %%blog_name%%"
                 )
             ),
         );
@@ -839,7 +882,7 @@ class MEC_factory extends MEC_base
             foreach($calendars as $calendar)
             {
                 // Calendar exists
-                if(post_exists($calendar['title'], 'MEC')) continue;
+                if(post_exists($calendar['title'], 'modern-events-calendar-lite')) continue;
 
                 $post = array('post_title'=>$calendar['title'], 'post_content'=>'MEC', 'post_type'=>'mec_calendars', 'post_status'=>'publish');
                 $post_id = wp_insert_post($post);
@@ -857,6 +900,7 @@ class MEC_factory extends MEC_base
 
         // Scheduler Cron job
         if(!wp_next_scheduled('mec_scheduler')) wp_schedule_event(time(), 'hourly', 'mec_scheduler');
+        if(!wp_next_scheduled('mec_syncScheduler')) wp_schedule_event(time(), 'daily', 'mec_syncScheduler');
         
         // Mark this blog as installed
         update_option('mec_installed', 1);

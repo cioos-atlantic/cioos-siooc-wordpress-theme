@@ -17,195 +17,63 @@ if($this->getPRO())
     $envato = $this->getEnvato();
     $verify = $envato->get_MEC_info('dl');
 }
+
+
+// Booking form
+$mec_email  = false;
+$mec_name   = false;
+$reg_fields = $this->main->get_reg_fields();
+if(!is_array($reg_fields)) $reg_fields = array();
+
+foreach($reg_fields as $field)
+{
+	if(isset($field['type']))
+	{
+		if($field['type'] == 'name') $mec_name = true;
+		if($field['type'] == 'mec_email') $mec_email = true;
+	}
+	else break;
+}
+
+if(!$mec_name)
+{
+	array_unshift(
+		$reg_fields,
+		array(
+			'mandatory' => '0',
+			'type'      => 'name',
+			'label'     => esc_html__('Name', 'modern-events-calendar-lite'),
+        )
+	);
+}
+
+if(!$mec_email)
+{
+	array_unshift(
+		$reg_fields,
+		array(
+			'mandatory' => '0',
+			'type'      => 'mec_email',
+			'label'     => esc_html__('Email', 'modern-events-calendar-lite'),
+        )
+	);
+}
+
+// gateways
+$gateways = $this->main->get_gateways();
+$gateways_options = $this->main->get_gateways_options();
 ?>
 <div class="wns-be-container wns-be-container-sticky">
     <div id="wns-be-infobar">
-        <input id="mec-search-settings" type="text" placeholder="Search..">
+        <div class="mec-search-settings-wrap">
+            <i class="mec-sl-magnifier"></i>
+            <input id="mec-search-settings" type="text" placeholder="<?php esc_html_e('Search...' ,'modern-events-calendar-lite'); ?>">
+        </div>
         <a id="" class="dpr-btn dpr-save-btn"><?php _e('Save Changes', 'modern-events-calendar-lite'); ?></a>
     </div>
 
     <div class="wns-be-sidebar">
-        <ul class="wns-be-group-menu">
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->remove_qs_var('tab'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-settings"></i> 
-                    <span class="wns-be-group-menu-title"><?php echo __('Settings', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#general_option"><?php _e('General Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#archive_options"><?php _e('Archive Pages', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#slug_option"><?php _e('Slugs/Permalinks', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#currency_option"><?php _e('Currency Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#recaptcha_option"><?php _e('Google Recaptcha Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#fes_option"><?php _e('Frontend Event Submission', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#user_profile_options"><?php _e('User Profile', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#search_bar_options"><?php _e('Search Bar', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#mailchimp_option"><?php _e('Mailchimp Integration', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->remove_qs_var('tab'); ?>#uploadfield_option"><?php _e('Upload Field', 'modern-events-calendar-lite'); ?></a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-note"></i> 
-                    <span class="wns-be-group-menu-title"><?php echo __('Single Event', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#event_options"><?php _e('Single Event Page', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#countdown_option"><?php _e('Countdown Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#exceptional_option"><?php _e('Exceptional Days', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#additional_organizers"><?php _e('Additional Organizers', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-single'); ?>#additional_locations"><?php _e('Additional Locations', 'modern-events-calendar-lite'); ?></a>
-                    </li>
-                </ul>
-            </li>
-
-            <?php if($this->main->getPRO()): ?>
-
-                <li class="wns-be-group-menu-li has-sub active">
-
-                    <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-booking'); ?>" id="" class="wns-be-group-tab-link-a">
-                        <span class="extra-icon">
-                            <i class="mec-sl-arrow-down"></i>
-                        </span>
-                        <i class="mec-sl-credit-card"></i> 
-                        <span class="wns-be-group-menu-title"><?php echo __('Booking', 'modern-events-calendar-lite'); ?></span>
-                    </a>
-
-                    <ul id="" class="subsection" style="display: block;">
-
-                        <li id="" class="pr-be-group-menu-li active">
-                            <a data-id="booking_option" class="wns-be-group-tab-link-a WnTabLinks">
-                                <span class="pr-be-group-menu-title"><?php _e('Booking', 'modern-events-calendar-lite'); ?></span>
-                            </a>
-                        </li>
-
-                        <?php if(isset($this->settings['booking_status']) and $this->settings['booking_status']): ?>
-
-                            <li id="" class="pr-be-group-menu-li">
-                                <a data-id="coupon_option" class="wns-be-group-tab-link-a WnTabLinks">
-                                    <span class="pr-be-group-menu-title"><?php _e('Coupons', 'modern-events-calendar-lite'); ?></span>
-                                </a>
-                            </li>
-
-                            <li id="" class="pr-be-group-menu-li">
-                                <a data-id="taxes_option" class="wns-be-group-tab-link-a WnTabLinks">
-                                    <span class="pr-be-group-menu-title"><?php _e('Taxes / Fees', 'modern-events-calendar-lite'); ?></span>
-                                </a>
-                            </li>
-
-                            <li id="" class="pr-be-group-menu-li">
-                                <a data-id="ticket_variations_option" class="wns-be-group-tab-link-a WnTabLinks">
-                                    <span class="pr-be-group-menu-title"><?php _e('Ticket Variations & Options', 'modern-events-calendar-lite'); ?></span>
-                                </a>
-                            </li>
-
-                        <?php endif; ?>
-
-                    </ul>
-                </li>
-
-            <?php endif; ?>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-grid"></i> 
-                    <span class="wns-be-group-menu-title"><?php echo __('Modules', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#speakers_option"><?php _e('Speakers', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#googlemap_option"><?php _e('Google Maps Options', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#export_module_option"><?php _e('Export Options', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#time_module_option"><?php _e('Local Time', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#qrcode_module_option"><?php _e('QR Code', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#weather_module_option"><?php _e('Weather', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#social_options"><?php _e('Social Networks', 'modern-events-calendar-lite'); ?></a>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#next_event_option"><?php _e('Next Event', 'modern-events-calendar-lite'); ?></a>
-                        <?php if($this->main->getPRO()): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-modules'); ?>#buddy_option"><?php _e('BuddyPress Integration', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                    </li>
-                </ul>
-            </li>
-
-            <?php if($this->main->getPRO() and isset($this->settings['booking_status']) and $this->settings['booking_status']): ?>
-
-                <li class="wns-be-group-menu-li">
-                      <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-reg-form'); ?>" id="" class="wns-be-group-tab-link-a">
-                        <i class="mec-sl-layers"></i> 
-                        <span class="wns-be-group-menu-title"><?php _e('Booking Form', 'modern-events-calendar-lite'); ?></span>
-                    </a>
-                </li>
-
-                <li class="wns-be-group-menu-li">
-                    <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-gateways'); ?>" id="" class="wns-be-group-tab-link-a">
-                        <i class="mec-sl-wallet"></i> 
-                        <span class="wns-be-group-menu-title"><?php _e('Payment Gateways', 'modern-events-calendar-lite'); ?></span>
-                    </a>
-                </li>
-
-            <?php endif;?>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-envelope"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Notifications', 'modern-events-calendar-lite'); ?></span>
-                </a>
-                <ul id="" class="submneu-hover">
-                    <li class="submenu-item">
-                        <?php if(isset($this->settings['booking_status']) and $this->settings['booking_status']): ?>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#booking_notification"><?php _e('Booking', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#booking_verification"><?php _e('Booking Verification', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#booking_confirmation"><?php _e('Booking Confirmation', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#cancellation_notification"><?php _e('Booking Cancellation', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#admin_notification"><?php _e('Admin', 'modern-events-calendar-lite'); ?></a>
-                            <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#booking_reminder"><?php _e('Booking Reminder', 'modern-events-calendar-lite'); ?></a>
-                        <?php endif; ?>
-                        <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>#new_event"><?php _e('New Event', 'modern-events-calendar-lite'); ?></a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-styling'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-equalizer"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Styling Options', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-customcss'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-wrench"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Custom CSS', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-messages'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-bubble"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Messages', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-            <li class="wns-be-group-menu-li">
-                <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-ie'); ?>" id="" class="wns-be-group-tab-link-a">
-                    <i class="mec-sl-refresh"></i> 
-                    <span class="wns-be-group-menu-title"><?php _e('Import / Export', 'modern-events-calendar-lite'); ?></span>
-                </a>
-            </li>
-
-        </ul>
+        <?php $this->main->get_sidebar_menu('booking'); ?>
     </div>
 
     <div class="wns-be-main">
@@ -226,7 +94,7 @@ if($this->getPRO())
                                 <label>
                                     <input type="hidden" name="mec[settings][booking_status]" value="0" />
                                     <input onchange="jQuery('#mec_booking_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][booking_status]" <?php if(isset($settings['booking_status']) and $settings['booking_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable booking module', 'modern-events-calendar-lite'); ?>
-                                    <p><?php esc_attr_e("After enable it, you should reloading this page to see Payment Gateways on settings and see a new menu on Dashboard", 'modern-events-calendar-lite'); ?></p>
+                                    <p><?php esc_attr_e("After enabling and saving the settings, reloading the page will add 'payment Gateways' to the settings and a new menu item on the Dashboard", 'modern-events-calendar-lite'); ?></p>
                                 </label>
                             </div>
                             <div id="mec_booking_container_toggle" class="<?php if((isset($settings['booking_status']) and !$settings['booking_status']) or !isset($settings['booking_status'])) echo 'mec-util-hidden'; ?>">
@@ -263,6 +131,19 @@ if($this->getPRO())
                                     </div>
                                 </div>
                                 <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_show_booking_form_interval"><?php _e('Show Booking Form Interval', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-4">
+                                        <input type="number" id="mec_settings_show_booking_form_interval" name="mec[settings][show_booking_form_interval]" value="<?php echo ((isset($settings['show_booking_form_interval']) and trim($settings['show_booking_form_interval']) != '0') ? $settings['show_booking_form_interval'] : '0'); ?>" placeholder="<?php esc_attr_e('Minutes (e.g 5)', 'modern-events-calendar-lite'); ?>" />
+                                        <span class="mec-tooltip">
+                                            <div class="box">
+                                                <h5 class="title"><?php _e('Show Booking Form Interval', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("You can show booking form only at certain time before event start. If you set this option to 30 then booking form will open only 30 minutes before starting the event!", 'modern-events-calendar-lite'); ?></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
                                     <label class="mec-col-3" for="mec_settings_booking_thankyou_page"><?php _e('Thank You Page', 'modern-events-calendar-lite'); ?></label>
                                     <div class="mec-col-4">
                                         <select id="mec_settings_booking_thankyou_page" name="mec[settings][booking_thankyou_page]">
@@ -272,12 +153,25 @@ if($this->getPRO())
                                             <?php endforeach; ?>
                                         </select>
                                         <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php _e('Thank You Page', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e("User redirects to this page after booking. Leave it empty if you want to disable it.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/booking/" target="_blank"><?php _e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>    
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>                                         
+                                            <div class="box top">
+                                                <h5 class="title"><?php _e('Thank You Page', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("User redirects to this page after booking. Leave it empty if you want to disable it.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/booking/" target="_blank"><?php _e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_booking_thankyou_page_time"><?php _e('Thank You Page Time Interval', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-4">
+                                        <input type="number" id="mec_settings_booking_thankyou_page_time" name="mec[settings][booking_thankyou_page_time]" value="<?php echo ((isset($settings['booking_thankyou_page_time']) and trim($settings['booking_thankyou_page_time']) != '0') ? $settings['booking_thankyou_page_time'] : '2000'); ?>" placeholder="<?php esc_attr_e('2000 mean 2 seconds', 'modern-events-calendar-lite'); ?>" />
+                                        <span class="mec-tooltip">
+                                            <div class="box top">
+                                                <h5 class="title"><?php _e('Thank You Page Time Interval', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("Waiting time before redirecting to thank you page. It's in miliseconds so 2000 means 2 seconds.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/booking/" target="_blank"><?php _e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="mec-form-row">
@@ -307,6 +201,18 @@ if($this->getPRO())
                                         </label>
                                     </div>
                                 </div>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <label for="mec_settings_booking_ongoing">
+                                            <input type="hidden" name="mec[settings][booking_ongoing]" value="0" />
+                                            <input type="checkbox" name="mec[settings][booking_ongoing]" id="mec_settings_booking_ongoing"
+                                                <?php echo ((isset($settings['booking_ongoing']) and $settings['booking_ongoing'] == '1') ? 'checked="checked"' : ''); ?>
+                                                value="1" />
+                                            <?php _e('Enable Booking for Ongoing Events', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+                                <?php do_action('add_booking_variables', $settings); ?>
                                 <h5 class="mec-form-subtitle"><?php _e('Email verification', 'modern-events-calendar-lite'); ?></h5>
                                 <div class="mec-form-row">
                                     <div class="mec-col-12">
@@ -362,7 +268,7 @@ if($this->getPRO())
                                     <input type="hidden" name="mec[settings][coupons_status]" value="0" />
                                     <input onchange="jQuery('#mec_coupons_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][coupons_status]" <?php if(isset($settings['coupons_status']) and $settings['coupons_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable coupons module', 'modern-events-calendar-lite'); ?>
                                 </label>
-                                <p><?php esc_attr_e("After enable it, you should reloading this page to see a new menu on Dashboard > Booking", 'modern-events-calendar-lite'); ?></p>
+                                <p><?php esc_attr_e("After enabling and saving the settings,, you should reload the page to see a new menu on the Dashboard > Booking", 'modern-events-calendar-lite'); ?></p>
                             </div>
                             <div id="mec_coupons_container_toggle" class="<?php if((isset($settings['coupons_status']) and !$settings['coupons_status']) or !isset($settings['coupons_status'])) echo 'mec-util-hidden'; ?>">
                             </div>
@@ -529,6 +435,158 @@ if($this->getPRO())
                             <?php endif; ?>
                         </div>
 
+                        <div id="booking_form_option" class="mec-options-fields">
+                            <h4 class="mec-form-subtitle"><?php _e('Booking Form', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-container">
+                                <?php do_action( 'before_mec_reg_fields_form' ); ?>
+                                <?php do_action( 'mec_reg_fields_form_start' ); ?>
+                                <div class="mec-form-row" id="mec_reg_form_container">
+                                    <?php /** Don't remove this hidden field **/ ?>
+                                    <input type="hidden" name="mec[reg_fields]" value="" />
+
+                                    <ul id="mec_reg_form_fields">
+                                        <?php
+                                        $i = 0;
+                                        foreach ( $reg_fields as $key => $reg_field ) {
+                                            if ( ! is_numeric( $key ) ) {
+                                                continue;
+                                            }
+                                            $i = max( $i, $key );
+
+                                            if ( $reg_field['type'] == 'text' ) {
+                                                echo $this->main->field_text( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'name' ) {
+                                                echo $this->main->field_name( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'mec_email' ) {
+                                                echo $this->main->field_mec_email( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'email' ) {
+                                                echo $this->main->field_email( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'date' ) {
+                                                echo $this->main->field_date( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'file' ) {
+                                                echo $this->main->field_file( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'tel' ) {
+                                                echo $this->main->field_tel( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'textarea' ) {
+                                                echo $this->main->field_textarea( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'p' ) {
+                                                echo $this->main->field_p( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'checkbox' ) {
+                                                echo $this->main->field_checkbox( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'radio' ) {
+                                                echo $this->main->field_radio( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'select' ) {
+                                                echo $this->main->field_select( $key, $reg_field );
+                                            } elseif ( $reg_field['type'] == 'agreement' ) {
+                                                echo $this->main->field_agreement( $key, $reg_field );
+                                            }
+                                        }
+                                        ?>
+                                    </ul>
+                                    <div id="mec_reg_form_field_types">
+                                        <button type="button" class="button red" data-type="name"><?php _e( 'MEC Name', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button red" data-type="mec_email"><?php _e( 'MEC Email', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="text"><?php _e( 'Text', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="email"><?php _e( 'Email', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="date"><?php _e( 'Date', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="tel"><?php _e( 'Tel', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="file"><?php _e( 'File', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="textarea"><?php _e( 'Textarea', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="checkbox"><?php _e( 'Checkboxes', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="radio"><?php _e( 'Radio Buttons', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="select"><?php _e( 'Dropdown', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="agreement"><?php _e( 'Agreement', 'modern-events-calendar-lite' ); ?></button>
+                                        <button type="button" class="button" data-type="p"><?php _e( 'Paragraph', 'modern-events-calendar-lite' ); ?></button>
+                                    </div>
+                                    <?php do_action( 'mec_reg_fields_form_end' ); ?>
+                                </div>
+                                <div class="mec-form-row">
+                                    <?php wp_nonce_field( 'mec_options_form' ); ?>
+                                    <button  style="display: none;" id="mec_reg_fields_form_button" class="button button-primary mec-button-primary" type="submit"><?php _e( 'Save Changes', 'modern-events-calendar-lite' ); ?></button>
+                                </div>
+                                <?php do_action( 'after_mec_reg_fields_form' ); ?>
+                            </div>
+                            <input type="hidden" id="mec_new_reg_field_key" value="<?php echo $i + 1; ?>" />
+                            <div class="mec-util-hidden">
+                                <div id="mec_reg_field_text">
+                                    <?php echo $this->main->field_text( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_email">
+                                    <?php echo $this->main->field_email( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_mec_email">
+                                    <?php echo $this->main->field_mec_email( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_name">
+                                    <?php echo $this->main->field_name( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_tel">
+                                    <?php echo $this->main->field_tel( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_date">
+                                    <?php echo $this->main->field_date( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_file">
+                                    <?php echo $this->main->field_file( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_textarea">
+                                    <?php echo $this->main->field_textarea( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_checkbox">
+                                    <?php echo $this->main->field_checkbox( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_radio">
+                                    <?php echo $this->main->field_radio( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_select">
+                                    <?php echo $this->main->field_select( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_agreement">
+                                    <?php echo $this->main->field_agreement( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_p">
+                                    <?php echo $this->main->field_p( ':i:' ); ?>
+                                </div>
+                                <div id="mec_reg_field_option">
+                                    <?php echo $this->main->field_option( ':fi:', ':i:' ); ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="payment_gateways_option" class="mec-options-fields">
+                            <h4 class="mec-form-subtitle"><?php _e('Payment Gateways', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-container">
+                                <div class="mec-form-row" id="mec_gateways_form_container">
+                                    <ul>
+                                        <?php foreach($gateways as $gateway): ?>
+                                            <li id="mec_gateway_id<?php echo $gateway->id(); ?>">
+                                                <?php $gateway->options_form(); ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                                <div class="mec-form-row" style="margin-top: 30px;">
+                                    <div class="mec-col-4">
+                                        <label>
+                                            <input type="hidden" name="mec[gateways][op_status]" value="0" />
+                                            <input id="mec_gateways_op_status" value="1" type="checkbox" name="mec[gateways][op_status]" <?php if(isset($gateways_options['op_status']) and $gateways_options['op_status']) echo 'checked="checked"'; ?> /> <?php _e('Enable Organizer Payment Module', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                        <span class="mec-tooltip">
+                                            <div class="box">
+                                                <h5 class="title"><?php _e('Organizer Payment', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("By enabling this module, organizers are able to insert their own payment credentials for enabled gateways per event and receive the payments directly!", 'modern-events-calendar-lite'); ?></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <?php wp_nonce_field('mec_options_form'); ?>
+                                    <button style="display: none;" id="mec_gateways_form_button" class="button button-primary mec-button-primary" type="submit"><?php _e('Save Changes', 'modern-events-calendar-lite'); ?></button>
+                                </div>
+                            </div>
+                        </div>
+
                         <?php endif; ?>
 
                         <div class="mec-options-fields">
@@ -551,35 +609,10 @@ if($this->getPRO())
 <script type="text/javascript">
 jQuery(document).ready(function()
 {   
-    jQuery('.WnTabLinks').each(function()
-    {
-        var ContentId = jQuery(this).attr('data-id');
-         jQuery(this).click(function()
-         {
-            jQuery('.pr-be-group-menu-li').removeClass('active');
-            jQuery(this).parent().addClass('active');
-            jQuery(".mec-options-fields").hide();
-            jQuery(".mec-options-fields").removeClass('active');
-            jQuery("#"+ContentId+"").show();
-            jQuery("#"+ContentId+"").addClass('active');
-            jQuery('html, body').animate({
-                scrollTop: jQuery("#"+ContentId+"").offset().top - 140
-            }, 300);
-        });
-        var hash = window.location.hash.replace('#', '');
-        $('[data-id="'+hash+'"]').trigger('click');        
-    });
-   
     jQuery(".dpr-save-btn").on('click', function(event)
     {
         event.preventDefault();
         jQuery("#mec_booking_form_button").trigger('click');
-    });    
-
-    jQuery(".wns-be-sidebar .pr-be-group-menu-li").on('click', function(event)
-    {
-        jQuery(".wns-be-sidebar .pr-be-group-menu-li").removeClass('active');
-        jQuery(this).addClass('active');
     });
 });
 

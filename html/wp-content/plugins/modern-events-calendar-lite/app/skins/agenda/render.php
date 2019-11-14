@@ -56,7 +56,9 @@ $settings = $this->main->get_settings();
                         } 
                         $speakers = json_encode($speakers);
                     }
-            ?>
+                    $schema_settings = isset( $settings['schema'] ) ? $settings['schema'] : '';
+                    if($schema_settings == '1' ):
+                    ?>
                     <script type="application/ld+json">
                     {
                         "@context" 		: "http://schema.org",
@@ -82,8 +84,10 @@ $settings = $this->main->get_settings();
                         "url"			: "<?php echo $this->main->get_event_date_permalink($event->data->permalink, $event->date['start']['date']); ?>"
                     }
                     </script>
-                <?php if($this->style == 'clean'): ?>
-                    <div class="mec-agenda-event <?php echo $this->get_event_classes($event); ?>">
+                    <?php
+                    endif;
+                    if($this->style == 'clean'): ?>
+                    <div class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-agenda-event <?php echo $this->get_event_classes($event); ?>">
                         <i class="mec-sl-clock "></i>
                         <span class="mec-agenda-time">
                             <?php
@@ -99,6 +103,7 @@ $settings = $this->main->get_settings();
                             <?php echo $event_color; ?>
                             <?php if ( !empty($label_style) ) echo '<span class="mec-fc-style">'.$label_style.'</span>'; ?>
                         </span>
+                        <?php do_action( 'mec_agenda_skin_attribute', $organizer, $location ); ?>
                     </div>
                 <?php endif; ?>
             <?php } ?>

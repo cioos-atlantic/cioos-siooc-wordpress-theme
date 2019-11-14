@@ -29,12 +29,6 @@ class MEC_skins extends MEC_base
      */
     public $maximum_dates = 6;
     
-    /**
-     * Maximum days for loop
-     * @var int
-     */
-    public $max_days_loop = 366;
-    
 	/**
      * Offset for don't load duplicated events in list/grid views on load more action
      * @var int
@@ -101,6 +95,8 @@ class MEC_skins extends MEC_base
     public $month_divider;
     public $toggle_month_divider;
     public $image_popup;
+    public $map_on_top;
+    public $include_events_times;
 
     /**
      * Constructor method
@@ -483,7 +479,7 @@ class MEC_skins extends MEC_base
         }
         elseif($this->show_ongoing_events)
         {
-            $now = time();
+            $now = current_time('timestamp', 0);
             $where_OR = "(`tstart`<='".$now."' AND `tend`>='".$now."')";
         }
 
@@ -500,7 +496,7 @@ class MEC_skins extends MEC_base
 
         // Today and Now
         $today = current_time('Y-m-d');
-        $now = time();
+        $now = current_time('timestamp', 0);
 
         $dates = array();
         foreach($mec_dates as $mec_date)
@@ -552,7 +548,7 @@ class MEC_skins extends MEC_base
                                 $not_in_day =  $this->db->select($query);
                             }
 
-                            if(array_key_exists($mec_date->post_id, $not_in_day) and trim($not_in_day[$mec_date->post_id]->not_in_days) and $current_id != $mec_date->post_id)
+                            if(array_key_exists($mec_date->post_id, $not_in_day) and trim($not_in_day[$mec_date->post_id]->not_in_days))
                             {
                                 $days =  $not_in_day[$mec_date->post_id]->not_in_days;
                                 $current_id = $mec_date->post_id;
@@ -586,12 +582,12 @@ class MEC_skins extends MEC_base
         if($this->show_only_expired_events)
         {
             $start = $this->start_date;
-            $end = date('Y-m-01', strtotime('-2 Year', strtotime($start)));
+            $end = date('Y-m-01', strtotime('-10 Year', strtotime($start)));
         }
         else
         {
             $start = $this->start_date;
-            $end = date('Y-m-t', strtotime('+2 Year', strtotime($start)));
+            $end = date('Y-m-t', strtotime('+10 Year', strtotime($start)));
         }
 
         // Date Events
@@ -669,6 +665,13 @@ class MEC_skins extends MEC_base
             $i++;
         }
 
+        // Set Offset for Last Page
+        if($found < $this->limit)
+        {
+            // Next Offset
+            $this->next_offset = $found;
+        }
+
         // Set found events
         $this->found = $found;
 
@@ -737,7 +740,7 @@ class MEC_skins extends MEC_base
         // If no fields specified
         if(!count($this->sf_options)) return '';
         
-        $fields = $end_div = '';
+        $display_style = $fields = $end_div = '';
         $first_row = 'not-started';
         $display_form = array();
         foreach($this->sf_options as $field=>$options)
@@ -746,22 +749,23 @@ class MEC_skins extends MEC_base
             $display_form[] = $options['type'];
             $fields_array = array('category', 'location', 'organizer', 'speaker', 'tag', 'label');
             $fields_array = apply_filters( 'mec_filter_fields_search_array', $fields_array );
-            if(in_array($field,$fields_array) and $first_row == 'not-started')
-            {
-                $first_row = 'started';
-                $fields .= '<div class="mec-dropdown-wrap">';
-                $end_div = '</div>';
-            }
-            
-            if(!in_array($field, $fields_array) and $first_row == 'started')
-            {
-                $first_row = 'finished';
-                $fields .= '</div>';
-            }
-            
-            $fields .= $this->sf_search_field($field, $options);
+                if(in_array($field,$fields_array) and $first_row == 'not-started')
+                {
+                    $first_row = 'started';
+                    if ( $this->sf_options['category']['type'] != 'dropdown' and $this->sf_options['location']['type'] != 'dropdown' and $this->sf_options['organizer']['type'] != 'dropdown' and  (isset($this->sf_options['speaker']['type']) && $this->sf_options['speaker']['type'] != 'dropdown') and  (isset($this->sf_options['tag']['type']) && $this->sf_options['tag']['type'] != 'dropdown') and  $this->sf_options['label']['type'] != 'dropdown' )
+                    {
+                        $display_style = 'style="display: none;"';
+                    }
+                    $fields .= '<div class="mec-dropdown-wrap" ' . $display_style . '>';
+                    $end_div = '</div>';
+                }
+                if(!in_array($field, $fields_array) and $first_row == 'started')
+                {
+                    $first_row = 'finished';
+                    $fields .= '</div>';
+                }
+                $fields .= $this->sf_search_field($field, $options);
         }
-        
         $form = '';
         if(trim($fields) && ( in_array('dropdown', $display_form ) || in_array('text_input', $display_form ) ) ) $form .= '<div id="mec_search_form_'.$this->id.'" class="mec-search-form mec-totalcal-box">'.$fields.'</div>';
         

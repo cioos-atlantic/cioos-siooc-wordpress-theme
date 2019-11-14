@@ -29,7 +29,7 @@ class MEC_feature_speakers extends MEC_base
     }
     
     /**
-     * Initialize organizers feature
+     * Initialize speakers feature
      * @author Webnus <info@webnus.biz>
      */
     public function init()
@@ -42,6 +42,11 @@ class MEC_feature_speakers extends MEC_base
         $this->factory->action('mec_speaker_add_form_fields', array($this, 'add_form'));
         $this->factory->action('edited_mec_speaker', array($this, 'save_metadata'));
         $this->factory->action('created_mec_speaker', array($this, 'save_metadata'));
+
+        $this->factory->action('wp_ajax_speaker_adding', array($this, 'fes_speaker_adding'));
+        $this->factory->action('wp_ajax_nopriv_speaker_adding', array($this, 'fes_speaker_adding'));
+
+        $this->factory->action('current_screen', array($this, 'show_notics'));
 
         $this->factory->filter('manage_edit-mec_speaker_columns', array($this, 'filter_columns'));
         $this->factory->filter('manage_mec_speaker_custom_column', array($this, 'filter_columns_content'), 10, 3);
@@ -72,6 +77,7 @@ class MEC_feature_speakers extends MEC_base
                     'new_item_name'=>sprintf(__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
                     'popular_items'=>sprintf(__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
                     'search_items'=>sprintf(__('Search %s', 'modern-events-calendar-lite'), $plural_label),
+                    'back_to_items'=>sprintf(__('← Back to  %s', 'modern-events-calendar-lite'), $plural_label),                    
                 ),
                 'rewrite'=>array('slug'=>'events-speaker'),
                 'public'=>false,
@@ -158,6 +164,7 @@ class MEC_feature_speakers extends MEC_base
                 <button type="button" class="mec_remove_image_button button <?php echo (!trim($thumbnail) ? 'mec-util-hidden' : ''); ?>"><?php echo __('Remove image', 'modern-events-calendar-lite'); ?></button>
             </td>
         </tr>
+        <?php do_action( 'mec_edit_speaker_extra_fields' , $term ); ?>
     <?php
     }
     
@@ -174,11 +181,11 @@ class MEC_feature_speakers extends MEC_base
         </div>
         <div class="form-field">
             <label for="mec_tel"><?php _e('Tel', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="tel" placeholder="<?php esc_attr_e('Insert organizer phone number.', 'modern-events-calendar-lite'); ?>" id="mec_tel" value="" />
+            <input type="text" name="tel" placeholder="<?php esc_attr_e('Insert speaker phone number.', 'modern-events-calendar-lite'); ?>" id="mec_tel" value="" />
         </div>
         <div class="form-field">
             <label for="mec_email"><?php _e('Email', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="email" placeholder="<?php esc_attr_e('Insert organizer email address.', 'modern-events-calendar-lite'); ?>" id="mec_email" value="" />
+            <input type="text" name="email" placeholder="<?php esc_attr_e('Insert speaker email address.', 'modern-events-calendar-lite'); ?>" id="mec_email" value="" />
         </div>
         <div class="form-field">
             <label for="mec_facebook"><?php _e('Facebook Page', 'modern-events-calendar-lite'); ?></label>
@@ -199,6 +206,7 @@ class MEC_feature_speakers extends MEC_base
             <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo __('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
             <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo __('Remove image', 'modern-events-calendar-lite'); ?></button>
         </div>
+        <?php do_action( 'mec_add_speaker_extra_fields' ); ?>
     <?php
     }
     
@@ -224,6 +232,9 @@ class MEC_feature_speakers extends MEC_base
         update_term_meta($term_id, 'twitter', $twitter);
         update_term_meta($term_id, 'instagram', $instagram);
         update_term_meta($term_id, 'thumbnail', $thumbnail);
+
+
+        do_action( 'mec_save_speaker_extra_fields' , $term_id );
     }
     
     /**
@@ -245,7 +256,7 @@ class MEC_feature_speakers extends MEC_base
         $columns['tel'] = __('Tel', 'modern-events-calendar-lite');
         $columns['posts'] = __('Count', 'modern-events-calendar-lite');
 
-        return $columns;
+        return apply_filters('speaker_filter_column', $columns);
     }
     
     /**
@@ -281,6 +292,85 @@ class MEC_feature_speakers extends MEC_base
                 break;
         }
 
-        return $content;
+        return apply_filters('speaker_filter_column_content', $content , $column_name, $term_id);
+    }
+
+    /**
+     * Adding new speaker
+     * @author Webnus <info@webnus.biz>
+     * @return string json
+     */
+    public function fes_speaker_adding()
+    {
+        $request = $this->getRequest();
+        $content = $request->getVar('content', NULL);
+        $key = $request->getVar('key', NULL);
+
+        $content = wp_strip_all_tags($content);
+        $content = sanitize_text_field($content);
+        $key = intval($key);
+
+        if(!trim($content))
+        {
+            echo '<p class="mec-error" id="mec-speaker-error-' . $key . '">' . __('Sorry, You must insert speaker name!', 'modern-events-calendar-lite') . '</p>';
+            exit;
+        }
+
+        $content = explode(',', $content);
+
+        foreach($content as $term)
+        {
+            if(term_exists($term, 'mec_speaker'))
+            {
+                echo '<p class="mec-error" id="mec-speaker-error-' . $key . '">' . __("Sorry, {$term} already exists!", 'modern-events-calendar-lite') . '</p>';
+                exit;
+            }
+        }
+
+        foreach($content as $term) wp_insert_term(trim($term), 'mec_speaker');
+
+        $speakers = '';
+        $speaker_terms = get_terms(array('taxonomy'=>'mec_speaker', 'hide_empty'=>false));
+        foreach($speaker_terms as $speaker_term)
+        {
+            $speakers .= '<label for="mec_fes_speakers'.$speaker_term->term_id.'">
+                <input type="checkbox" name="mec[speakers]['.$speaker_term->term_id.']" id="mec_fes_speakers'.$speaker_term->term_id.'" value="1">
+                '.$speaker_term->name.'
+            </label>';
+        }
+
+        echo $speakers;
+        exit;
+    }
+
+    public function show_notics($screen)
+    {
+        if(isset($screen->id) and $screen->id == 'edit-mec_speaker')
+        {
+            add_action('admin_footer', function ()
+            {
+                echo "<script>
+                            var xhrObject = window.XMLHttpRequest;
+                             function ajaxXHR()
+                             {
+                                 var xmlHttp = new xhrObject();
+                                 xmlHttp.addEventListener('readystatechange', function (xhr)
+                                 {
+                                     if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                                     {
+                                         if(xhr.currentTarget.responseText.indexOf('tr') != -1)
+                                         {
+                                             jQuery('.form-wrap').find('.warning-msg').remove();
+                                             jQuery('.form-wrap').append('<div class=\"warning-msg\"><p>" . __('Note: You can use the speakers in your event edit/add page > hourly schedule section and speaker widget section!', 'modern-events-calendar-lite') . "</p></div>');
+                                         }
+                                     }
+                                 });
+            
+                                 return xmlHttp;
+                             }
+                             window.XMLHttpRequest = ajaxXHR;
+                         </script>";
+            });
+        }
     }
 }

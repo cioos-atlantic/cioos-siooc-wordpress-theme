@@ -13,18 +13,17 @@
 			'title'    => __( 'About Theme', 'writee' ),
 			'priority' => 9
 		) );
-	
-		
-		$wp_customize->add_setting( 'upgrade_text', array(
-			'default' => '',
-			'sanitize_callback' => '__return_false'
-		) );
-		
-		$wp_customize->add_control( new Writee_Customize_Static_Text_Control( $wp_customize, 'upgrade_text', array(
-			'section'     => 'theme_detail',
-			'label'       => __( 'Upgrade to PRO', 'writee' ),
-			'description' => array('')
-		) ) );
+			
+			$wp_customize->add_setting( 'upgrade_text', array(
+				'default' => '',
+				'sanitize_callback' => '__return_false'
+			) );
+			
+			$wp_customize->add_control( new Writee_Customize_Static_Text_Control( $wp_customize, 'upgrade_text', array(
+				'section'     => 'theme_detail',
+				'label'       => __( 'Upgrade to PRO', 'writee' ),
+				'description' => array('')
+			) ) );
 		
 		$wp_customize->add_section( 'theme_review_detail', array(
 			'title'    => __( 'Add Your Review', 'writee' ),
@@ -32,16 +31,16 @@
 		) );
 	
 		
-		$wp_customize->add_setting( 'add_review_text', array(
-			'default' => '',
-			'sanitize_callback' => '__return_false'
-		) );
-		
-		$wp_customize->add_control( new Writee_Customize_Static_Text_Review_Control( $wp_customize, 'add_review_text', array(
-			'section'     => 'theme_review_detail',
-			'label'       => __( 'Add Your Review', 'writee' ),
-			'description' => array('')
-		) ) );
+			$wp_customize->add_setting( 'add_review_text', array(
+				'default' => '',
+				'sanitize_callback' => '__return_false'
+			) );
+			
+			$wp_customize->add_control( new Writee_Customize_Static_Text_Review_Control( $wp_customize, 'add_review_text', array(
+				'section'     => 'theme_review_detail',
+				'label'       => __( 'Add Your Review', 'writee' ),
+				'description' => array('')
+			) ) );
 		
 		/* Main option Settings Panel */
 
@@ -267,6 +266,8 @@
 		));
 		
 		/* color section setting */
+		$wp_customize->remove_section("colors");
+		$wp_customize->remove_section("background_image");
 		
 		$wp_customize->add_section('wrt_color_settinges', array(
 			'title'    => __('Theme Colors Section', 'writee'),
@@ -278,13 +279,20 @@
 		$wp_customize->add_setting('wrt_primary_color', array(
 			'default' => '#bf9e3b',
 			'transport'   => 'refresh',
-			'sanitize_callback' => 'writee_sanitize_hexcolor'
+			'sanitize_callback' => 'writee_sanitize_hexcolor',
+			'priority' => 10
 		));
 	
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'wrt_primary_color', array(
 			'label' => __('Primary Color', 'writee'), 
 			'section' => 'wrt_color_settinges',
 		)));
+		
+		$wp_customize->get_control( 'background_color' )->section = 'wrt_color_settinges';
+		$wp_customize->get_control( 'background_color' )->priority = 11;
+		$wp_customize->get_control( 'background_image' )->section = 'wrt_color_settinges';
+		$wp_customize->get_control( 'background_image' )->priority = 12;
+		
 		
 		/* Typography settings */
 		
@@ -323,7 +331,11 @@
 			 'label' => __('Font Family', 'writee'),
 			 'section' => 'wrt_typography_options',
 			 'type'    => 'text',
-			 'description' => __( 'Insert Font Family.', 'writee' ),
+			  'description' => sprintf('%1$s <a href="%2$s" target="_blank">%3$s</a>',
+				__( 'Insert Font Family.', 'writee' ),
+				esc_url('http://support.scissorthemes.com/documentation/writee-customization/writee-typography-settings/'),
+				__('Typography Settings' , 'writee')
+				),
 			
 		));
 		
@@ -444,14 +456,14 @@
 			'type'    => 'text'
 		));
 		
-		$wp_customize->add_setting('wrt_googleplus', array(
+		$wp_customize->add_setting('wrt_github', array(
 			'default' => '',
 			'transport'   => 'refresh',
 			'sanitize_callback' => 'esc_url_raw'
 		));
 		
-		$wp_customize->add_control('wrt_googleplus', array(
-			'label'   => __('Google+', 'writee'),
+		$wp_customize->add_control('wrt_github', array(
+			'label'   => __('GitHub', 'writee'),
 			'section' => 'wrt_social_options',
 			'type'    => 'text'
 		));
@@ -741,50 +753,30 @@ class Writee_Customize_Static_Text_Control extends WP_Customize_Control {
 
 			?>
 			<h2><?php esc_html_e('Writee Pro', 'writee') ?></h2>
-			<p style="text-align:left;">
-				<a href="<?php echo esc_url('http://www.scissorthemes.com/theme/writee-pro/?ref=wordpress'); ?>" target="_blank"><?php esc_html_e( 'Upgrade To Writee Pro', 'writee' ); ?></a>
-			</p>
+			
 			<p>
 			<?php esc_html_e('Upgrade to Writee Pro to unlock the awesome features and support. Check out the Writee Pro Demos to see the additional features and options available in PRO and what you can achieve using the Writee Pro for you Blog.', 'writee' ); ?>
 			</p>
-			<h3><?php esc_html_e('Pro Features:', 'writee') ?></h3>
-			<ul class="feature-list">
-			<li><?php esc_html_e('Slider options: Custom and Post slider', 'writee')?></li>
-			<li><?php esc_html_e('10+ slider styles', 'writee')?></li>
-			<li><?php esc_html_e('Custom Widget Areas(Top, Mid and Bottom)', 'writee')?></li>
-			<li><?php esc_html_e('4+ header options', 'writee')?></li>
-			<li><?php esc_html_e('7+ Blog layout Supported', 'writee')?></li>
-			<li><?php esc_html_e('Post format supported', 'writee')?></li>
-			<li><?php esc_html_e('Turn ON/OFF any features which not required', 'writee')?></li>
-			<li><?php esc_html_e('Built-in Related Posts', 'writee')?></li>
-			<li><?php esc_html_e('9 Custom Widgets', 'writee')?></li>
-			<li><?php esc_html_e('Built-in Shortcode& Formats', 'writee')?> </li>
-			<li><?php esc_html_e('12+ Translation .mo files Included(for frontend translations)', 'writee')?></li>
-			<li><?php esc_html_e('Many more...', 'writee')?></li>
-			</ul>
+			<p style="text-align:left;">
+				<a href="<?php echo esc_url('http://www.scissorthemes.com/themes/writee-pro/?ref=writee-customizer-about-get-pro'); ?>" target="_blank"><?php esc_html_e( 'Get Writee Pro', 'writee' ); ?></a>
+			</p>
 			<h2><?php esc_html_e('About Writee', 'writee')?></h2>
 			<p><?php esc_html_e('See what you can built using Writee Demo', 'writee')?> </p>
 			<p>
-				<a href="<?php echo esc_url('https://www.scissorthemes.com/theme/writee'); ?>" target="_blank"><?php esc_html_e( 'Writee', 'writee' ); ?></a>
+				<a href="<?php echo esc_url('https://www.scissorthemes.com/themes/writee-free/?ref=writee-customizer-about'); ?>" target="_blank"><?php esc_html_e( 'Writee', 'writee' ); ?></a>
 			</p>
-			<h3><?php esc_html_e('Documentation', 'writee')?></h3>
+			<h3><?php esc_html_e('Documentation & Support', 'writee')?></h3>
 			<p><?php esc_html_e('Read documentation to learn more about theme.', 'writee')?> </p>
 			<p>
-				<a href="<?php echo esc_url('https://www.scissorthemes.com/doc/writee'); ?>" target="_blank"><?php esc_html_e( 'Writee Documentation', 'writee' ); ?></a>
+				<a href="<?php echo esc_url('http://support.scissorthemes.com/?ref=writee-customizer-about'); ?>" target="_blank"><?php esc_html_e( 'Writee Documentation', 'writee' ); ?></a>
 			</p>
 			<h3><?php esc_html_e('Demo Data', 'writee')?></h3>
 			
-			<p><?php esc_html_e('You can import the content by using this demo datato make you site look alike the Demo.', 'writee')?> </p>
+			<p><?php esc_html_e('You can import the content by using this demo data to make you site look a like the Demo.', 'writee')?> </p>
 			<p>
-				<a href="<?php echo esc_url('http://www.scissorthemes.com/wp-content/uploads/2016/12/WriteeDemoData.zip'); ?>" target="_blank"><?php esc_html_e( 'Writee Sample Data', 'writee' ); ?></a>
+				<a href="<?php echo admin_url('themes.php?page=pt-one-click-demo-import'); ?>" target="_blank"><?php esc_html_e( 'Writee Demo Data', 'writee' ); ?></a>
 			</p>
 			
-			<h3><?php esc_html_e('Support', 'writee')?></h3>
-			<p><?php esc_html_e('For support, Kindly contact us and we would be happy to assist!', 'writee')?> </p>
-			
-			<p>
-				<a href="<?php echo esc_url('https://www.scissorthemes.com/support'); ?>" target="_blank"><?php esc_html_e( 'Writee Support', 'writee' ); ?></a>
-			</p>
 			<h3><?php esc_html_e( 'Rate This Theme', 'writee' ); ?></h3>
 			<p><?php esc_html_e('If you like Writee Kindly Rate this Theme', 'writee')?> </p>
 			<p>

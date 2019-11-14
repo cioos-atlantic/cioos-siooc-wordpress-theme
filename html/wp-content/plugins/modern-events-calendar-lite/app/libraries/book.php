@@ -218,7 +218,8 @@ class MEC_book extends MEC_base
         update_post_meta($book_id, 'mec_date', $transaction['date']);
         update_post_meta($book_id, 'mec_ticket_id', $ticket_ids);
         update_post_meta($book_id, 'mec_booking_time', current_time('Y-m-d H:i:s'));
-
+        if(isset($values['mec_attendees'])) update_post_meta($book_id, 'mec_attendees', $values['mec_attendees']);
+        
         $price = isset($transaction['price']) ? $transaction['price'] : (isset($transaction['total']) ? $transaction['total'] : 0);
         update_post_meta($book_id, 'mec_price', $price);
         
@@ -336,7 +337,8 @@ class MEC_book extends MEC_base
     public function cancel($book_id)
     {
         update_post_meta($book_id, 'mec_verified', -1);
-        
+        update_post_meta($book_id, 'mec_cancelled_date', date('Y-m-d H:i:s', current_time('timestamp', 0)));
+
         // Fires after canceling a booking to send notifications etc.
         do_action('mec_booking_canceled', $book_id);
         
@@ -364,15 +366,20 @@ class MEC_book extends MEC_base
      * @author Webnus <info@webnus.biz>
      * @param int $event_id
      * @param string $date
+     * @param string $mode
      * @return array
      */
-    public function get_tickets_availability($event_id, $date)
+    public function get_tickets_availability($event_id, $date, $mode = 'availability')
     {
         $availability = array();
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
 
         // No Ticket Found!
-        if(!is_array($tickets) or (is_array($tickets) and !count($tickets))) return $availability;
+        if(!is_array($tickets) or (is_array($tickets) and !count($tickets)))
+        {
+            if($mode == 'reservation') return 0;
+            else return $availability;
+        }
         
         $booking_options = get_post_meta($event_id, 'mec_booking', true);
         if(!is_array($booking_options)) $booking_options = array();
@@ -453,8 +460,24 @@ class MEC_book extends MEC_base
             $availability[$ticket_id] = $ticket_availability >= 0 ? $ticket_availability : 0;
         }
 
+        // For the time being set reservation parameter
+        if($mode == 'reservation') return $booked;
+
         // Set Total Booking Limit
         $availability['total'] = $total_bookings_limit;
+
+        // Do not send higher limit for tickets compared to total limit
+        if($total_bookings_limit != '-1' and $total_bookings_limit > 0)
+        {
+            $new_availability = array();
+            foreach($availability as $ticket_id=>$limit)
+            {
+                if(is_numeric($ticket_id)) $new_availability[$ticket_id] = min($limit, $total_bookings_limit);
+                else $new_availability[$ticket_id] = $limit;
+            }
+
+            return $new_availability;
+        }
 
         // Total Booking Limit Reached
         if($total_bookings_limit_original != -1 and $booked >= $total_bookings_limit_original)

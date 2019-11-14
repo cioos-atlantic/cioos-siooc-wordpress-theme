@@ -10,7 +10,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                 <div class="w-welcome">
                     <div class="support-page-links link-to-doc"><a href="https://webnus.net/dox/modern-events-calendar/" target="_blank"><?php esc_html_e('Documentation' , 'modern-events-calendar-lite'); ?></a></div>
                     <div class="support-page-links link-to-videos"><a href="https://webnus.net/dox/modern-events-calendar/video-tutorials/" target="_blank"><?php esc_html_e('All videos' , 'modern-events-calendar-lite'); ?></a></div>
-                    <div class="support-page-links link-to-articles"><a href="https://webnus.ticksy.com/articles/100004962/" target="_blank"><?php esc_html_e('View all Articles' , 'modern-events-calendar-lite'); ?></a></div>
+                    <div class="support-page-links link-to-articles"><a href="https://webnus.ticksy.com/articles/100004962/" target="_blank"><?php esc_html_e('All Articles' , 'modern-events-calendar-lite'); ?></a></div>
                     <p>
                         <?php esc_html_e('If you have any questions regarding Modern Events Calendar and how to use it, you can use the following four methods we have prepared in this page. The detailed documentations of MEC along with its instructional videos will help you have a great experience working with it.So, if  you need futher instructions using the plugin, please first refer to the following to find your answers.' , 'modern-events-calendar-lite'); ?>
                     </p>
@@ -23,15 +23,41 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
         </div>
     </div>
     <div class="welcome-content w-clearfix extra">
+
+    <?php if(!$this->getPRO()): ?>
+        <div class="w-row mec-pro-notice">
+            <div class="w-col-sm-12">
+                <div class="info-msg support-box">
+                    <p><?php echo sprintf(__("%s, if you need support,  you can purchase our Extra Support feature through links below:", 'modern-events-calendar-lite'), '<strong>'.__('Dear user', 'modern-events-calendar-lite').'</strong>'); ?></p>
+                    <a target="_blank" href="https://webnus.net/checkout?edd_action=add_to_cart&download_id=960896"> Get 12 Month Premium Support </a>
+                    <a target="_blank" href="https://webnus.net/checkout?edd_action=add_to_cart&download_id=960724"> Get 6 Month Premium Support </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if($this->getPRO()): ?>
+        <div class="w-row mec-pro-notice">
+            <div class="w-col-sm-12">
+                <div class="info-msg support-box">
+                    <p><?php echo sprintf(__("%s, we won't charge you for any extra price after a year for using MEC or receiving updates, but you will need to renew your license if you needed support by then. You can use links below in order to do that:", 'modern-events-calendar-lite'), '<strong>'.__('Dear user', 'modern-events-calendar-lite').'</strong>'); ?></p>
+                    <a target="_blank" href="https://webnus.net/checkout?edd_action=add_to_cart&download_id=960896"> Get 12 Month Premium Support </a>
+                    <a target="_blank" href="https://webnus.net/checkout?edd_action=add_to_cart&download_id=960724"> Get 6 Month Premium Support </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if(current_user_can('read')): ?>
+        <script src='https://webnus.freshsales.io/web_forms/8dd552ab6041bd25d23d8a8467819f701f9196106be0e25edc6870c9cc922bdc/form.js' crossorigin='anonymous' id='fs_8dd552ab6041bd25d23d8a8467819f701f9196106be0e25edc6870c9cc922bdc'></script>
         <div class="w-row">
             <div class="w-col-sm-12">
                 <div class="w-box support-page searchbox">
                     <div class="w-box-content">
                         <p><?php esc_html_e('Advice and answers from the Webnus Team'); ?></p>  
                         <div class="search-form">
-                            <form action="https://intercom.help/webnus" method="">
-                                <input type="text" placeholder="<?php esc_html_e('Search...'); ?>" name="q">
+                            <form action="https://webnus.crisp.help/en/" method="">
+                                <input type="text" placeholder="<?php esc_html_e('Search...'); ?>" name="search_query">
                                 <button><i class="mec-sl-magnifier"></i></button>
                             </form>
                         </div>
@@ -246,7 +272,7 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                 <div class="w-box support-page mec-ticksy">
                     <div class="w-box-content">
                         <p><?php esc_html_e('Webnus is an elite and trusted author with a high percentage of satisfied users. If you have any issues please don\'t hesitate to contact us, we will reply as soon as possible.' , 'modern-events-calendar-lite'); ?></p>
-                        <a href="https://webnus.ticksy.com/" target="_blank"><?php esc_html_e('Go to support forum','modern-events-calendar-lite'); ?></a>
+                        <a href="https://webnus.ticksy.com/" target="_blank"><?php esc_html_e('Create a support ticket','modern-events-calendar-lite'); ?></a>
                     </div>
                 </div>
             </div>
@@ -281,11 +307,12 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
 </script>
 <?php if($this->getPRO()) : ?>
 <script>
-  var APP_ID = "w23d92wv";
-
- window.intercomSettings = {
-    app_id: APP_ID
-  };
+  function initFreshChat() {
+    window.fcWidget.init({
+      token: "1be9e2ea-febf-4835-b290-5bd097dc2e02",
+      host: "https://wchat.freshchat.com"
+    });
+  }
+  function initialize(i,t){var e;i.getElementById(t)?initFreshChat():((e=i.createElement("script")).id=t,e.async=!0,e.src="https://wchat.freshchat.com/js/widget.js",e.onload=initFreshChat,i.head.appendChild(e))}function initiateCall(){initialize(document,"freshchat-js-sdk")}window.addEventListener?window.addEventListener("load",initiateCall,!1):window.attachEvent("load",initiateCall,!1);
 </script>
-<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/' + APP_ID;var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();</script>
 <?php endif; ?>

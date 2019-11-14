@@ -93,7 +93,8 @@ class MEC_feature_mec extends MEC_base
         $this->factory->action('mec_booking_confirmed', array($this->notifications, 'booking_confirmation'), 10);
         $this->factory->action('mec_booking_canceled', array($this->notifications, 'booking_cancellation'), 12);
         $this->factory->action('mec_fes_added', array($this->notifications, 'new_event'), 50, 3);
-        
+        $this->factory->action('mec_event_published', array($this->notifications, 'user_event_publishing'), 10, 3);
+
         $this->page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'MEC-settings';
         
         // MEC Post Type Name
@@ -125,6 +126,9 @@ class MEC_feature_mec extends MEC_base
         // Scheduler Cronjob
         $schedule = $this->getSchedule();
         $this->factory->action('mec_scheduler', array($schedule, 'cron'));
+
+        $syncSchedule = $this->getSyncSchedule();
+        $this->factory->action('mec_syncScheduler', array($syncSchedule, 'sync'));
     }
 
     /* Activate License */
@@ -416,6 +420,10 @@ class MEC_feature_mec extends MEC_base
      */
     public function register_meta_boxes()
     {
+        // Fix conflict between Ultimate GDPR and niceSelect
+        $screen = get_current_screen();
+        if ( $screen->id == 'mec_calendars' ) remove_all_actions('acf/input/admin_head');
+
 		add_meta_box('mec_calendar_display_options', __('Display Options', 'modern-events-calendar-lite'), array($this, 'meta_box_display_options'), 'mec_calendars', 'normal', 'high');
         add_meta_box('mec_calendar_filter', __('Filter Options', 'modern-events-calendar-lite'), array($this, 'meta_box_filter'), 'mec_calendars', 'normal', 'high');
         add_meta_box('mec_calendar_shortcode', __('Shortcode', 'modern-events-calendar-lite'), array($this, 'meta_box_shortcode'), 'mec_calendars', 'side');
@@ -597,9 +605,6 @@ class MEC_feature_mec extends MEC_base
         
         if($tab == 'MEC-customcss') $this->styles();
         elseif($tab == 'MEC-ie') $this->import_export();
-        //elseif($tab == 'MEC-support') $this->support();
-        elseif($tab == 'MEC-reg-form') $this->regform();
-        elseif($tab == 'MEC-gateways') $this->gateways();
         elseif($tab == 'MEC-notifications') $this->notifications();
         elseif($tab == 'MEC-messages') $this->messages();
         elseif($tab == 'MEC-styling') $this->styling();
@@ -702,48 +707,6 @@ class MEC_feature_mec extends MEC_base
     {
         $path = MEC::import('app.features.mec.ie', true, true);
 
-        ob_start();
-        include $path;
-        echo $output = ob_get_clean();
-    }
-    
-    /**
-     * Show content of support tab
-     * @author Webnus <info@webnus.biz>
-     * @return void
-     */
-    // public function support()
-    // {
-    //     $path = MEC::import('app.features.mec.support', true, true);
-        
-    //     ob_start();
-    //     include $path;
-    //     echo $output = ob_get_clean();
-    // }
-    
-    /**
-     * Show content of registration form tab
-     * @author Webnus <info@webnus.biz>
-     * @return void
-     */
-    public function regform()
-    {
-        $path = MEC::import('app.features.mec.regform', true, true);
-
-        ob_start();
-        include $path;
-        echo $output = ob_get_clean();
-    }
-    
-    /**
-     * Show content of gateways tab
-     * @author Webnus <info@webnus.biz>
-     * @return void
-     */
-    public function gateways()
-    {
-        $path = MEC::import('app.features.mec.gateways', true, true);
-        
         ob_start();
         include $path;
         echo $output = ob_get_clean();

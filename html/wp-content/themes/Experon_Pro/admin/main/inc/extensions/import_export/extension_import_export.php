@@ -57,7 +57,7 @@
 
                 $this->parent = $parent;
                 if ( empty( $this->extension_dir ) ) {
-                    //$this->extension_dir = trailingslashit( str_replace( '\\', '/', dirname( __FILE__ ) ) );
+                    //$this->extension_dir = trailingslashit( str_replace( '\\', '/', str_replace( str_replace( 'wp-content/', '', trailingslashit( WP_CONTENT_DIR ) ), '', dirname( __FILE__ ) ) ) );
                 }
                 $this->field_name = 'import_export';
 

@@ -72,7 +72,128 @@ class MEC_skin_single extends MEC_skins
     }
 
     /**
-     * Breadcrumbs On Single
+     * Related Post in Single
+     * @author Webnus <info@webnus.biz>
+     */    
+    public function display_related_posts_widget($event_id)
+    {
+        if ( !isset( $this->settings['related_events'] ) ) return;
+        if ( isset( $this->settings['related_events'] ) && $this->settings['related_events'] != '1' ) return;
+
+        $related_args = array(
+            'post_type' => 'mec-events',
+            'posts_per_page' => 4,
+            'post_status' => 'publish',
+            'post__not_in' => array($event_id),
+            'orderby' => 'ASC',
+            'tax_query' => array(),
+        );
+
+        if (isset($this->settings['related_events_basedon_category']) && $this->settings['related_events_basedon_category'] == 1)
+        {
+            $post_terms = wp_get_object_terms($event_id, 'mec_category', array('fields'=>'slugs'));
+            $related_args['tax_query'][] = array(
+				'taxonomy' => 'mec_category',
+				'field'    => 'slug',
+				'terms' => $post_terms
+			);
+        }
+        if (isset($this->settings['related_events_basedon_organizer']) && $this->settings['related_events_basedon_organizer'] == 1)
+        {
+            $post_terms = wp_get_object_terms($event_id, 'mec_organizer', array('fields'=>'slugs'));
+            $related_args['tax_query'][] = array(
+				'taxonomy' => 'mec_organizer',
+				'field'    => 'slug',
+				'terms' => $post_terms
+			);
+        }
+        if (isset($this->settings['related_events_basedon_location']) && $this->settings['related_events_basedon_location'] == 1)
+        {
+            $post_terms = wp_get_object_terms($event_id, 'mec_location', array('fields'=>'slugs'));
+            $related_args['tax_query'][] = array(
+				'taxonomy' => 'mec_location',
+				'field'    => 'slug',
+				'terms' => $post_terms
+			);
+        }
+        if (isset($this->settings['related_events_basedon_speaker']) && $this->settings['related_events_basedon_speaker'] == 1)
+        {
+            $post_terms = wp_get_object_terms($event_id, 'mec_speaker', array('fields'=>'slugs'));
+            $related_args['tax_query'][] = array(
+				'taxonomy' => 'mec_speaker',
+				'field'    => 'slug',
+				'terms' => $post_terms
+			);
+        }
+        if (isset($this->settings['related_events_basedon_label']) && $this->settings['related_events_basedon_label'] == 1)
+        {
+            $post_terms = wp_get_object_terms($event_id, 'mec_label', array('fields'=>'slugs'));
+            $related_args['tax_query'][] = array(
+				'taxonomy' => 'mec_label',
+				'field'    => 'slug',
+				'terms' => $post_terms
+			);
+        }
+        if (isset($this->settings['related_events_basedon_tag']) && $this->settings['related_events_basedon_tag'] == 1)
+        {
+            $post_terms = wp_get_object_terms($event_id, 'post_tag', array('fields'=>'slugs'));
+            $related_args['tax_query'][] = array(
+				'taxonomy' => 'post_tag',
+				'field'    => 'slug',
+				'terms' => $post_terms
+			);
+        }
+
+        $related_args['tax_query']['relation'] = 'OR';
+
+        $related_args = apply_filters('mec_add_to_related_post_query', $related_args,$event_id);
+
+        $query = new WP_Query($related_args);
+
+        if ( $query->have_posts() ):
+            $start_hour = get_post_meta( get_the_ID(), 'mec_start_time_hour', true);
+            $start_min = (get_post_meta( get_the_ID(), 'mec_start_time_minutes', true) < '10') ? '0' . get_post_meta( get_the_ID(), 'mec_start_time_minutes', true) : get_post_meta( get_the_ID(), 'mec_start_time_minutes', true);
+            $start_ampm = get_post_meta( get_the_ID(), 'mec_start_time_ampm', true);
+            $end_hour = get_post_meta( get_the_ID(), 'mec_end_time_hour', true);
+            $end_min = (get_post_meta( get_the_ID(), 'mec_end_time_minutes', true) < '10') ? '0' . get_post_meta( get_the_ID(), 'mec_end_time_minutes', true) : get_post_meta( get_the_ID(), 'mec_end_time_minutes', true);
+            $end_ampm = get_post_meta( get_the_ID(), 'mec_end_time_ampm', true);
+            $time =  ( get_post_meta( get_the_ID(), 'mec_allday', true) == '1' ) ? __('All of the day' , 'modern-events-calendar-lite') : $start_hour . ':' .  $start_min . ' ' . $start_ampm . ' - ' . $end_hour . ':' .  $end_min . ' ' . $end_ampm;
+            ?>
+            <div class="row mec-related-events-wrap">
+                <h3 class="mec-rec-events-title"><?php echo __('Related Events' ,'modern-events-calendar-lite'); ?></h3>
+                <div class="mec-related-events">
+                <?php while ( $query->have_posts() ): $query->the_post(); ?>
+                    <article class="mec-related-event-post col-md-3 col-sm-3">
+                        <figure>
+                            <a href="<?php echo get_the_permalink(); ?>">
+                            <?php
+                            if ( get_the_post_thumbnail(get_the_ID(),'thumblist') ) :
+                                echo get_the_post_thumbnail(get_the_ID(),'thumblist');
+                            else :
+                                echo '<img src="'. plugin_dir_url(__FILE__ ) .'../../assets/img/no-image.png'.'" />';
+                            endif;
+                            ?>
+                            </a>
+                        </figure>
+                        <div class="mec-related-event-content">
+                            <span><?php
+                            $date = date(get_option('date_format'), strtotime(get_post_meta( get_the_ID(), 'mec_start_date', true )));
+                            echo $date;
+                            ?></span>
+                            <h5><a class="mec-color-hover" href="<?php echo get_the_permalink(); ?>"><?php echo get_the_title(); ?></a></h5>
+                        </div>
+                        
+                    </article>
+                <?php endwhile; ?>
+                </div>
+            </div>
+            <?php
+        endif;
+        wp_reset_postdata();
+    }
+
+    /**
+     * Breadcrumbs in Single
      * @author Webnus <info@webnus.biz>
      */    
     public function display_breadcrumb_widget($page_id)
@@ -106,8 +227,8 @@ class MEC_skin_single extends MEC_skins
         $repeat_type = !empty($rendered->meta['mec_repeat_type']) ?  $rendered->meta['mec_repeat_type'] : '';
 
         $occurrence = isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : date('Y-m-d');
-        
-        if(strtotime($occurrence) and in_array($repeat_type, array('certain_weekdays', 'custom_days'))) $occurrence = date('Y-m-d', strtotime($occurrence));
+
+        if(strtotime($occurrence) and in_array($repeat_type, array('certain_weekdays', 'custom_days', 'weekday', 'weekend'))) $occurrence = date('Y-m-d', strtotime($occurrence));
         elseif(strtotime($occurrence)) $occurrence = date('Y-m-d', strtotime('-1 day', strtotime($occurrence)));
         else $occurrence = NULL;
 
@@ -121,24 +242,54 @@ class MEC_skin_single extends MEC_skins
         // Remove First Date if it is already started!
         if(!isset($_GET['occurrence']) or (isset($_GET['occurrence']) and !trim($_GET['occurrence'])))
         {
-            $start_date = (isset($dates[0]['start']) and isset($dates[0]['start']['date'])) ? $dates[0]['start']['date'] : current_time('Y-m-d');
+            $start_date = (isset($dates[0]['start']) and isset($dates[0]['start']['date'])) ? $dates[0]['start']['date'] : current_time('Y-m-d H:i:s');
+            $end_date = (isset($dates[0]['end']) and isset($dates[0]['end']['date'])) ? $dates[0]['end']['date'] : current_time('Y-m-d H:i:s');
 
             $s_time = '';
-            $s_time .= sprintf("%02d", $dates[0]['start']['hour']).':';
-            $s_time .= sprintf("%02d", $dates[0]['start']['minutes']);
-            $s_time .= trim($dates[0]['start']['ampm']);
-
+            if ( !empty($dates) ) :
+                $s_time .= sprintf("%02d", $dates[0]['start']['hour']).':';
+                $s_time .= sprintf("%02d", $dates[0]['start']['minutes']);
+                $s_time .= trim($dates[0]['start']['ampm']);
+            endif;
             $start_time = date('D M j Y G:i:s', strtotime($start_date.' '.$s_time));
+
+            $e_time = '';
+            if ( !empty($dates) ) :
+                $e_time .= sprintf("%02d", $dates[0]['end']['hour']).':';
+                $e_time .= sprintf("%02d", $dates[0]['end']['minutes']);
+                $e_time .= trim($dates[0]['end']['ampm']);
+            endif;
+            $end_time = date('D M j Y G:i:s', strtotime($end_date.' '.$e_time));
 
             $d1 = new DateTime($start_time);
             $d2 = new DateTime(current_time("D M j Y G:i:s"));
+            $d3 = new DateTime($end_time);
 
-            if($d1 < $d2)
+            // MEC Settings
+            $settings = $this->main->get_settings();
+
+            // Booking OnGoing Event Option
+            $ongoing_event_book = (isset($settings['booking_ongoing']) and $settings['booking_ongoing'] == '1') ? true : false;
+
+            if($ongoing_event_book)
             {
-                unset($dates[0]);
+                if($d3 < $d2)
+                {
+                    unset($dates[0]);
 
-                // Get Event Dates
-                $dates = $this->render->dates($this->id, $rendered, $this->maximum_dates);
+                    // Get Event Dates
+                    $dates = $this->render->dates($this->id, $rendered, $this->maximum_dates);
+                }
+            }
+            else
+            {
+                if($d1 < $d2)
+                {
+                    unset($dates[0]);
+
+                    // Get Event Dates
+                    $dates = $this->render->dates($this->id, $rendered, $this->maximum_dates);
+                }
             }
         }
 
@@ -594,16 +745,18 @@ class MEC_skin_single extends MEC_skins
     }
 
     /**
-     * @param object register_button Widget
+     * @param object
      * @return void
      */
     public function display_register_button_widget($event)
     {
+        // MEC Settings
+        $settings = $this->main->get_settings();
+        
         if ($this->main->can_show_booking_module($event)) : ?>
             <div class="mec-reg-btn mec-frontbox">
-                <?php $data_lity = '';
-                if (isset($this->settings['single_booking_style']) and $this->settings['single_booking_style'] == 'modal') $data_lity = 'data-lity'; ?>
-                <a class="mec-booking-button mec-bg-color <?php if (isset($this->settings['single_booking_style']) and $this->settings['single_booking_style'] != 'modal') echo 'simple-booking'; ?>" href="#mec-events-meta-group-booking-<?php echo $single->uniqueid; ?>" <?php echo $data_lity; ?>><?php echo esc_html($this->main->m('register_button', __('REGISTER', 'mec-single-builder'))); ?></a>
+                <?php $data_lity = $data_lity_class =  ''; if( isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ){ $data_lity = 'data-lity'; $data_lity_class = 'mec-booking-data-lity'; }  ?>
+                <a class="mec-booking-button mec-bg-color <?php echo $data_lity_class; ?> <?php if (isset($this->settings['single_booking_style']) and $this->settings['single_booking_style'] != 'modal') echo 'simple-booking'; ?>" href="#mec-events-meta-group-booking-<?php echo $single->uniqueid; ?>" <?php echo $data_lity; ?>><?php echo esc_html($this->main->m('register_button', __('REGISTER', 'mec-single-builder'))); ?></a>
             <?php elseif (isset($event->data->meta['mec_more_info']) and trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] != 'http://') : ?>
                 <a class="mec-booking-button mec-bg-color" href="<?php echo $event->data->meta['mec_more_info']; ?>"><?php if (isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) echo esc_html(trim($event->data->meta['mec_more_info_title']), 'mec-single-builder');
                 else echo esc_html($this->main->m('register_button', __('REGISTER', 'mec-single-builder')));

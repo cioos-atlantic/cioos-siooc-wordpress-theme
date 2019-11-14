@@ -46,26 +46,32 @@ function writee_theme_register_required_plugins() {
 	$plugins = array(
 
 		// This is an example of how to include a plugin from the WordPress Plugin Repository.
-		array(
+		/* array(
 			'name'     => 'Kirki',
 			'slug'     => 'kirki',
 			'required' => true
-		),
+		), */
 		array(
 			'name' => 'One Click Demo Import',
 			'slug'  => 'one-click-demo-import',	
-			'required' => true
+			'required' => false
 		),
 		array(
-			'name'     => 'Contact Form 7',
-			'slug'     => 'contact-form-7',
+			'name'      => 'Regenerate Thumbnails',
+			'slug'      => 'regenerate-thumbnails',
+			'required'  => false,
+		),
+		/*
+		array(
+			'name'     => 'Buffer Social Widget',
+			'slug'     => 'buffer-social-widget',
 			'required' => false
 		),
 		array(
 			'name'     => 'Woocommerce',
 			'slug'     => 'woocommerce',
 			'required' => false
-		),
+		), */
 	);
 
 	/*

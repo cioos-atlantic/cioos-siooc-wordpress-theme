@@ -2,6 +2,28 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+// MEC Cancel
+if(isset($_GET['cancel']) and trim($_GET['cancel']))
+{
+    $cancellation_key = trim($_GET['cancel']);
+
+    $db = $this->getDB();
+    $book_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_cancellation_key' AND `meta_value`='$cancellation_key'", 'loadResult');
+
+    if($book_id)
+    {
+        $status = get_post_meta($book_id, 'mec_verified', true);
+        if($status == '-1')
+        {
+            echo '<p class="mec-error">'.__('Your booking already canceled!', 'modern-events-calendar-lite').'</p>';
+        }
+        else
+        {
+            $this->book->cancel($book_id);
+        }
+    }
+}
+
 // MEC Render
 $render = $this->getRender();
 
@@ -39,6 +61,12 @@ $id = 1;
             <td>
                 <?php esc_html_e('Invoice' , 'modern-events-calendar-lite'); ?>
             </td>
+            <td>
+                <?php esc_html_e('Map' , 'modern-events-calendar-lite'); ?>
+            </td>
+            <td>
+                <?php esc_html_e('Cancel' , 'modern-events-calendar-lite'); ?>
+            </td>
         </tr>
         <?php while($query->have_posts()): $query->the_post(); $ID = get_the_ID(); ?>
         <?php
@@ -52,23 +80,42 @@ $id = 1;
             else $status_class = 'mec-book-pending';
             $transaction = $this->book->get_transaction($transaction_id);
             $dates = isset($transaction['date']) ? explode(':', $transaction['date']) : array(date('Y-m-d'), date('Y-m-d'));
-            $event = $render->data($event_id);
+
+            // Check If Event Exist
+            $db = $this->getDB();
+            $check_event_exist = $db->select("SELECT `ID` FROM `#__posts` WHERE `ID`={$event_id}", 'loadResult');
+
+            $event = trim($check_event_exist) ? $render->data($event_id) : array();
         ?>
         <tr id="mec_profile_booking_<?php echo $ID; ?>">
             <td>
                 <span class="mec-event-id"><?php echo $id; ?></span>
             </td>
             <td>
-                <span class="mec-event-title"><?php echo $event->title; ?></span>
+                <?php if(!isset($event->ID) or !isset($event->title)) : ?>
+                <span class="mec-event-title"><?php _e('N/A', 'modern-events-calendar-lite'); ?></span>
+                <?php else : ?>
+                <a class="mec-event-title" href="<?php echo get_the_permalink($event->ID); ?>"><?php echo $event->title; ?></a>
+                <?php endif; ?>
             </td>
             <td>
                  <span class="mec-event-date">
-                    <?php echo trim($dates[0].' '.(isset($event->time['start']) ? $event->time['start'] : '').' - '.(($dates[0] != $dates[1]) ? $dates[1].' ' : '').(isset($event->time['end']) ? $event->time['end'] : ''), '- '); ?>
+                    <div class="mec-tooltip">
+                        <div class="box">
+                            <?php echo trim($dates[0].' '.(isset($event->time['start']) ? $event->time['start'] : '').' - '.(($dates[0] != $dates[1]) ? $dates[1].' ' : '').(isset($event->time['end']) ? $event->time['end'] : ''), '- '); ?>
+                        </div>
+                        <i class="mec-sl-calendar"></i>
+                    </div>
                 </span>
             </td>
             <td>
                 <span class="mec-event-status <?php echo $status_class;?>">
-                    <?php echo $this->main->get_confirmation_label($confirmed); ?>
+                    <div class="mec-tooltip">
+                        <div class="box">
+                            <?php echo $this->main->get_confirmation_label($confirmed); ?>
+                        </div>
+                        <i class="mec-sl-layers"></i>
+                    </div>  
                 </span>
             </td>
             <td>
@@ -78,6 +125,49 @@ $id = 1;
             </td>
             <td>
                 <span class="mec-profile-bookings-view-invoice"><a target="_blank" href="<?php echo $this->book->get_invoice_link($transaction_id); ?>"><i class="mec-sl-cloud-download"></i></a></span>
+            </td>
+            <td>
+                <?php
+                if(isset($event->ID))
+                {
+                    $location_id = get_post_meta($event->ID, 'mec_location_id', true);
+                    $location_latitude = isset($event->locations[$location_id]['latitude']) ? $event->locations[$location_id]['latitude'] : NULL;
+                    $location_longitude = isset($event->locations[$location_id]['longitude']) ? $event->locations[$location_id]['longitude'] : NULL;
+                }
+                ?>
+                <span class="mec-profile-bookings-view-google-map">
+                    <?php
+                        if((isset($location_latitude) and $location_latitude) and (isset($location_longitude) and $location_longitude)) :
+                    ?>
+                    <a target="_blank" href="<?php echo "https://www.google.com/maps?q={$location_latitude},{$location_longitude}"; ?>"><i class="mec-sl-map"></i></a>
+                    <?php
+                        else :
+                    ?>
+                    <i class="mec-sl-question mec-profile-no-location"></i>
+                    <?php 
+                        endif;
+                    ?>
+                </span>
+            </td>
+            <td>
+                <?php
+                    $mec_verified = get_post_meta($ID, 'mec_verified', true);
+                ?>
+                <span class="mec-profile-bookings-cancelation">
+                    <?php
+                        if(intval($mec_verified) != -1):
+                            $current_url = $this->main->get_full_url();
+                            $cancellation_url = $this->main->add_query_string($current_url, 'cancel', get_post_meta($ID, 'mec_cancellation_key', true));
+                    ?>
+                    <a href="<?php echo $cancellation_url; ?>"><i class="mec-fa-calendar-times-o"></i></a>
+                    <?php
+                        else:
+                    ?>
+                    <i class="mec-sl-close mec-profile-cancel-booking"></i>
+                    <?php 
+                        endif;
+                    ?>
+                </span>
             </td>
         </tr>
         <div id="mec_profile_booking_<?php echo $ID; ?>" class="mec-booking-attendees lity-hide">
@@ -115,7 +205,7 @@ $id = 1;
                         echo '<span class="mec-booking-attendee-ticket-variations">';
                         if(isset($attendee['variations']) and is_array($attendee['variations']) and count($attendee['variations']))
                         {
-                            $ticket_variations = $this->main->ticket_variations($event_id);
+                            $ticket_variations = $this->main->ticket_variations(trim($check_event_exist) ? $event_id : NULL);
                             foreach($attendee['variations'] as $variation_id=>$variation_count)
                             {
                                 if(!$variation_count or ($variation_count and $variation_count < 0)) continue;

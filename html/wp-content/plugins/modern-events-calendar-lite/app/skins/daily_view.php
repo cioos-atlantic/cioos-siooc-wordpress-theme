@@ -125,7 +125,7 @@ class MEC_skin_daily_view extends MEC_skins
         $this->active_day = $this->year.'-'.$this->month.'-'.$this->day;
         
         // Set the maximum date in current month
-        if($this->show_only_expired_events) $this->maximum_date = date('Y-m-d', strtotime('Yesterday'));
+        if($this->show_only_expired_events) $this->maximum_date = date('Y-m-d H:i:s', current_time('timestamp', 0));
         
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
@@ -140,7 +140,7 @@ class MEC_skin_daily_view extends MEC_skins
     {
         if($this->show_only_expired_events)
         {
-            $start = current_time('Y-m-d');
+            $start = date('Y-m-d H:i:s', current_time('timestamp', 0));
             $end = $this->start_date;
         }
         else
@@ -283,7 +283,8 @@ class MEC_skin_daily_view extends MEC_skins
         $this->sf = $this->request->getVar('sf', array());
         $apply_sf_date = $this->request->getVar('apply_sf_date', 1);
         $atts = $this->sf_apply($this->request->getVar('atts', array()), $this->sf, $apply_sf_date);
-        
+        $navigator_click = $this->request->getVar('navigator_click', false);
+
         // Initialize the skin
         $this->initialize($atts);
         
@@ -324,11 +325,9 @@ class MEC_skin_daily_view extends MEC_skins
             // Fetch the events
             $this->fetch();
             
-             // Break the loop if not resault
-             if($break)
-             {
-                 break;
-             }
+            // Break the loop if not resault
+            if($break) break;
+            if($navigator_click) break;
 
             $c++;
            

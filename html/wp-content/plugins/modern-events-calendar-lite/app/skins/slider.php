@@ -154,9 +154,6 @@ class MEC_skin_slider extends MEC_skins
         // Apply Maximum Date
         if($this->request->getVar('apply_sf_date', 0) == 1) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
         
-        // Maximum days for loop
-        $this->max_days_loop = 366;
-        
         // Found Events
         $this->found = 0;
     }
@@ -187,8 +184,8 @@ class MEC_skin_slider extends MEC_skins
         // Show only expired events
         if(isset($this->show_only_expired_events) and $this->show_only_expired_events)
         {
-            $yesterday = date('Y-m-d', strtotime('Yesterday'));
-            if(strtotime($date) > strtotime($yesterday)) $date = $yesterday;
+            $now = date('Y-m-d H:i:s', current_time('timestamp', 0));
+            if(strtotime($date) > strtotime($now)) $date = $now;
         }
         
         return $date;

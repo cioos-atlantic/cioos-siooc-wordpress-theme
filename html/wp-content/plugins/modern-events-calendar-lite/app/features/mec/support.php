@@ -37,7 +37,7 @@ defined('MECEXEC') or die();
                     </a>
                 </li>
 
-            <?php endif;?>
+            <?php endif; ?>
 
             <li class="wns-be-group-menu-li">
                 <a href="<?php echo $this->main->add_qs_var('tab', 'MEC-notifications'); ?>" id="" class="wns-be-group-tab-link-a">
@@ -123,7 +123,7 @@ defined('MECEXEC') or die();
                                         <?php endif; ?>
                                         <div class="w-button">
                                             <?php if(!$this->getPRO()): ?>
-                                                <a href="https://webnus.net/pricing/#plugins" target="_blank"><?php echo esc_html__('GO PREMIUM', 'modern-events-calendar-lite'); ?></a>
+                                                <a href="https://webnus.net/mec-purchase/" target="_blank"><?php echo esc_html__('GO PREMIUM', 'modern-events-calendar-lite'); ?></a>
                                             <?php else: ?>
                                                 <a href="https://webnus.ticksy.com/" target="_blank"><?php echo esc_html__('OPEN A TICKET', 'modern-events-calendar-lite'); ?></a>
                                             <?php endif; ?>
@@ -144,7 +144,7 @@ defined('MECEXEC') or die();
                                             <li><a href="https://webnus.ticksy.com/article/8601/"><?php _e("How to export events in iCal format?", 'modern-events-calendar-lite'); ?></a></li>
                                             <li><a href="https://webnus.ticksy.com/article/8603/"><?php _e("How to override MEC template files?", 'modern-events-calendar-lite'); ?></a></li>
                                             <li><a href="https://webnus.ticksy.com/article/8599/"><?php _e("How to add/manage shortcodes?", 'modern-events-calendar-lite'); ?></a></li>
-                                            <li class="mec-view-all-articles"><a href="https://webnus.ticksy.com/articles/100004962/"><?php _e("View all Articles", 'modern-events-calendar-lite'); ?></a></li>
+                                            <li class="mec-view-all-articles"><a href="https://webnus.ticksy.com/articles/100004962/"><?php _e("All Articles", 'modern-events-calendar-lite'); ?></a></li>
                                         </ul>
                                     </div>
                                 </div>

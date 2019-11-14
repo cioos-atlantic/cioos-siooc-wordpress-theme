@@ -163,6 +163,15 @@ function mec_book_form_submit'.$uniqueid.'()
     {
         var valid = true;
         
+        jQuery("#mec_book_form'.$uniqueid.'").find(\'input[type="date"], input[type="file"]\').each(function(index, context) {
+            if(!jQuery(context).val())
+            {
+                valid = false;
+                jQuery(context).parent().addClass("mec-red-notification");
+            }
+            else jQuery(context).parent().removeClass("mec-red-notification");
+        });
+        
         jQuery("#mec_book_form'.$uniqueid.' .mec-book-ticket-container .mec-book-field-name.mec-reg-mandatory").filter(":visible").each(function(i)
         {
             var ticket_id = jQuery(this).data("ticket-id");
@@ -270,6 +279,7 @@ function mec_book_form_submit'.$uniqueid.'()
 
     // Add loading Class to the button
     jQuery("#mec_book_form'.$uniqueid.' button[type=submit]").addClass("loading");
+    jQuery("#mec_book_form'.$uniqueid.' button[type=submit]").attr("disabled" , "true");
     jQuery("#mec_booking_message'.$uniqueid.'").removeClass("mec-success mec-error").hide();
        
     var fileToUpload = false;
@@ -287,6 +297,7 @@ function mec_book_form_submit'.$uniqueid.'()
         {
             // Remove the loading Class to the button
             jQuery("#mec_book_form'.$uniqueid.' button[type=submit]").removeClass("loading");
+            jQuery("#mec_book_form'.$uniqueid.' button[type=submit]").removeAttr("disabled");
             
             if(data.success)
             {

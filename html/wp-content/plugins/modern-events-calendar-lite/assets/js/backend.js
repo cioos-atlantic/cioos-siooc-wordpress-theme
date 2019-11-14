@@ -22,24 +22,18 @@ jQuery(document).ready(function($)
     });
 
     // MEC Accordion
-    $('.mec-accordion li').on('click', function()
+    $('.mec-accordion .mec-acc-label').on('click', function()
     {
-        var key = $(this).data('key');
-        var status = $(this).data('status');
+        var key = $(this).attr('data-key');
+        var status = $(this).attr('data-status');
 
         // Open the accordion
         if(status === 'close')
         {
-            $(this).parent().find('ul').hide();
-
+            $('.mec-accordion .mec-acc-label ul').hide();
+            $('.mec-accordion .mec-acc-label').attr('data-status', 'close');
+            $(this).attr('data-status', 'open');
             $('#mec-acc-'+key).show();
-            $(this).data('status', 'open');
-        }
-        // Close the opened accordion
-        else
-        {
-            $('#mec-acc-'+key).hide();
-            $(this).data('status', 'close');
         }
     });
 
@@ -107,7 +101,8 @@ jQuery(document).ready(function($)
     });
     
     // Initialize WP Color Picker
-    $('.mec-color-picker').wpColorPicker();
+    if ($.fn.wpColorPicker) jQuery('.mec-color-picker').wpColorPicker();
+    
     
     // Initialize MEC Skin Switcher
     $('#mec_skin').on('change', function()
@@ -173,14 +168,13 @@ jQuery(document).ready(function($)
                 {
                     $('.mec-options-fields').hide();
                     $('.mec-options-fields').removeClass('active');
-                    $('#general_option.mec-options-fields').show();
-                    $('#general_option.mec-options-fields').addClass('active');
-                    $('.pr-be-group-menu-li').removeClass('active');
-                    $('.wns-be-group-menu-li .subsection .pr-be-group-menu-li:first').addClass('active');
+                    $('.wns-be-group-tab form .mec-options-fields:first-of-type').addClass('active');
+                    $('.subsection li').removeClass('active');
+                    $('.wns-be-sidebar .wns-be-group-menu .subsection li:first-of-type').addClass('active');
                 }
                 else
                 {
-                    $("#mec_settings_form .mec-options-fields").filter(function ()
+                    $(".mec-options-fields").filter(function ()
                     {
                         var search_label = $(this).find('label.mec-col-3').text().toLowerCase();
                         var search_title = $(this).find('h4.mec-form-subtitle').text().toLowerCase();
@@ -190,6 +184,21 @@ jQuery(document).ready(function($)
                         if ($(this).find('label.mec-col-3').text().toLowerCase().indexOf(value) > -1 || $(this).find('h4.mec-form-subtitle').text().toLowerCase().indexOf(value) > -1) {
                             $('.mec-options-fields').hide();
                             $('.mec-options-fields').removeClass('active');
+                            $('.wns-be-group-menu .subsection .mec-settings-menu li').removeClass('active');
+                            elements.push($(this));
+                        }
+                    });
+
+                    $(".mec-settings-menu li").filter(function ()
+                    {
+                        var search_label = $(this).find('a').text().toLowerCase();
+                        var search_title = $(this).find('a span').text().toLowerCase();
+                        if ((!search_label || search_label == "") && (!search_title || search_title == "")) {
+                            return false;
+                        }
+                        if ($(this).find('a span').text().toLowerCase().indexOf(value) > -1 || $(this).find('a span').text().toLowerCase().indexOf(value) > -1) {
+                            $('.mec-settings-menu li').removeClass('active');
+                            $('.wns-be-group-menu .subsection .mec-settings-menu li').removeClass('active');
                             elements.push($(this));
                         }
                     });
@@ -216,6 +225,18 @@ jQuery(document).ready(function($)
             return false;
         }
     }
+
+    // Location select2
+    jQuery(".mec-additional-locations select").select2();
+    jQuery("#mec_location_id").select2();
+    
+    // Organizer Select2
+    jQuery(".mec-additional-organizers select").select2();
+    jQuery("#mec_organizer_id").select2();
+
+    // Add shortcode select2
+    jQuery(".mec-create-shortcode-tab-content select").select2();
+    
 
     $('.mec-import-settings').on('click', function (e) {
         e.preventDefault();
@@ -375,42 +396,66 @@ function mec_skin_toggle()
     jQuery('#mec_skin_'+skin+'_style').trigger('change');
 }
 
-function mec_skin_style_changed(skin, style)
+function mec_skin_style_changed(skin, style, context)
 {
     jQuery('.mec-skin-'+skin+'-date-format-container').hide();
     jQuery('#mec_skin_'+skin+'_date_format_'+style+'_container').show();
+
+    // Show Or Hide Include Events Time Switcher
+    if(style == 'classic' || style == 'minimal' || style == 'modern') jQuery(context).parent().parent().find('.mec-include-events-times').show();
+    else jQuery(context).parent().parent().find('.mec-include-events-times').hide();
 }
 
-// TinyMce Plugins
-var items = JSON.parse(mec_admin_localize.mce_items);
-var menu = new Array();
-if(items && typeof tinymce !== 'undefined')
+function mec_show_widget_check(context)
 {
-    tinymce.PluginManager.add('mec_mce_buttons', function (editor, url) 
+    var skin = jQuery(context).find(':selected').data('skin');
+
+    if(skin == 'monthly_view')
     {
-        items.shortcodes.forEach(function(e, i)
-        {
-            menu.push(
-                {
-                    text: items.shortcodes[i]['PN'].replace(/-/g, ' '),
-                    id: items.shortcodes[i]['ID'],
-                    classes: 'mec-mce-items',
-                    onselect: function(e)
+        jQuery(context).parent().parent().find('.mec-current-check-wrap').show();
+    }
+    else
+    {
+        jQuery(context).parent().parent().find('.mec-current-check-wrap').hide();
+    }
+}
+
+// Niceselect
+jQuery(document).ready(function() {
+
+    if (jQuery('.wn-mec-select').length > 0) jQuery('.wn-mec-select').niceSelect();
+});
+
+// TinyMce Plugins
+if (jQuery('.mec-fes-form').length < 1)
+{
+    var items = JSON.parse(mec_admin_localize.mce_items);
+    var menu = new Array();
+    if (items && typeof tinymce !== 'undefined') {
+        tinymce.PluginManager.add('mec_mce_buttons', function (editor, url) {
+            items.shortcodes.forEach(function (e, i) {
+                menu.push(
                     {
-                        editor.insertContent(`[MEC id="${e.control.settings.id}"]`);
-                    }
+                        text: items.shortcodes[i]['PN'].replace(/-/g, ' '),
+                        id: items.shortcodes[i]['ID'],
+                        classes: 'mec-mce-items',
+                        onselect: function (e) {
+                            editor.insertContent(`[MEC id="${e.control.settings.id}"]`);
+                        }
+                    });
+            });
+            // Add menu button
+            editor.addButton('mec_mce_buttons',
+                {
+                    text: items.mce_title,
+                    icon: false,
+                    type: 'menubutton',
+                    menu: menu
                 });
         });
-        // Add menu button
-        editor.addButton('mec_mce_buttons', 
-        {
-            text: items.mce_title,
-            icon: false,
-            type: 'menubutton',
-            menu: menu
-        });
-    });
+    }
 }
+
 
 (function(wp, $)
 {

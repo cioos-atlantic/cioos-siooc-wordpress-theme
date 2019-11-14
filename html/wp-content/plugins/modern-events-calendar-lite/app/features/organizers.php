@@ -74,6 +74,7 @@ class MEC_feature_organizers extends MEC_base
                     'new_item_name'=>sprintf(__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
                     'popular_items'=>sprintf(__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
                     'search_items'=>sprintf(__('Search %s', 'modern-events-calendar-lite'), $plural_label),
+                    'back_to_items'=>sprintf(__('← Back to  %s', 'modern-events-calendar-lite'), $plural_label),
                 ),
                 'rewrite'=>array('slug'=>'events-organizer'),
                 'public'=>false,
@@ -132,6 +133,7 @@ class MEC_feature_organizers extends MEC_base
                 <button type="button" class="mec_remove_image_button button <?php echo (!trim($thumbnail) ? 'mec-util-hidden' : ''); ?>"><?php echo __('Remove image', 'modern-events-calendar-lite'); ?></button>
             </td>
         </tr>
+        <?php do_action( 'mec_edit_organizer_extra_fields' , $term ); ?>
     <?php
     }
     
@@ -161,6 +163,7 @@ class MEC_feature_organizers extends MEC_base
             <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo __('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
             <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo __('Remove image', 'modern-events-calendar-lite'); ?></button>
         </div>
+        <?php do_action( 'mec_add_organizer_extra_fields' ); ?>
     <?php
     }
     
@@ -180,6 +183,8 @@ class MEC_feature_organizers extends MEC_base
         update_term_meta($term_id, 'email', $email);
         update_term_meta($term_id, 'url', $url);
         update_term_meta($term_id, 'thumbnail', $thumbnail);
+
+        do_action( 'mec_save_organizer_extra_fields' , $term_id );
     }
     
     /**
@@ -200,8 +205,8 @@ class MEC_feature_organizers extends MEC_base
         $columns['contact'] = __('Contact info', 'modern-events-calendar-lite');
         $columns['posts'] = __('Count', 'modern-events-calendar-lite');
         $columns['slug'] = __('Slug', 'modern-events-calendar-lite');
-
-        return $columns;
+        
+        return apply_filters('organizer_filter_column', $columns);
     }
     
     /**
@@ -233,7 +238,7 @@ class MEC_feature_organizers extends MEC_base
                 break;
         }
 
-        return $content;
+        return apply_filters('organizer_filter_column_content', $content , $column_name, $term_id);
     }
     
     /**
@@ -251,7 +256,7 @@ class MEC_feature_organizers extends MEC_base
 
         $additional_organizers_status = (!isset($this->settings['additional_organizers']) or (isset($this->settings['additional_organizers']) and $this->settings['additional_organizers'])) ? true : false;
     ?>
-        <div class="mec-meta-box-fields" id="mec-organizer">
+        <div class="mec-meta-box-fields mec-event-tab-content" id="mec-organizer">
             <h4><?php echo sprintf(__('Event Main %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_organizer', __('Organizer', 'modern-events-calendar-lite'))); ?></h4>
 			<div class="mec-form-row">
 				<select name="mec[organizer_id]" id="mec_organizer_id" title="<?php echo esc_attr__($this->main->m('taxonomy_organizer', __('Organizer', 'modern-events-calendar-lite')), 'modern-events-calendar-lite'); ?>">
@@ -307,14 +312,13 @@ class MEC_feature_organizers extends MEC_base
             <div class="mec-form-row">
                 <p><?php _e('You can select extra organizers in addition to main organizer if you like.', 'modern-events-calendar-lite'); ?></p>
                 <div class="mec-additional-organizers">
-                    <?php foreach($organizers as $organizer): ?>
-                    <div>
-                        <label for="additional_organizer_ids<?php echo $organizer->term_id; ?>">
-                            <input type="checkbox" name="mec[additional_organizer_ids][]" id="additional_organizer_ids<?php echo $organizer->term_id; ?>" value="<?php echo $organizer->term_id; ?>" <?php if(in_array($organizer->term_id, $organizer_ids)) echo 'checked="checked"'; ?>>
+                    <select class="mec-select2-dropdown" name="mec[additional_organizer_ids][]" multiple="multiple">
+                        <?php foreach($organizers as $organizer): ?>
+                        <option <?php if(in_array($organizer->term_id, $organizer_ids)) echo 'selected="selected"'; ?> value="<?php echo $organizer->term_id; ?>">
                             <?php echo $organizer->name; ?>
-                        </label>
-                    </div>
-                    <?php endforeach; ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
             <?php endif; ?>

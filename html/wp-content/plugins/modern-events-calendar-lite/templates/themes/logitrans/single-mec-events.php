@@ -12,9 +12,10 @@ defined('MECEXEC') or die();
 logitrans_page_header_menu_choice_noplugin();
 logitrans_blog_title_final(); ?>
 
-    <?php do_action('mec_before_main_content'); ?>
-
         <section id="<?php echo apply_filters('mec_single_page_html_id', 'main-content'); ?>" class="<?php echo apply_filters('mec_single_page_html_class', 'mec-container'); ?>">
+
+        <?php do_action('mec_before_main_content'); ?>
+
             <?php while(have_posts()): the_post(); ?>
 
                 <?php $MEC = MEC::instance(); echo $MEC->single(); ?>

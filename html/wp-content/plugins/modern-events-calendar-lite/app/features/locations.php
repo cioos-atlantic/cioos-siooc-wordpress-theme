@@ -74,6 +74,7 @@ class MEC_feature_locations extends MEC_base
                     'new_item_name'=>sprintf(__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
                     'popular_items'=>sprintf(__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
                     'search_items'=>sprintf(__('Search %s', 'modern-events-calendar-lite'), $plural_label),
+                    'back_to_items'=>sprintf(__('← Back to  %s', 'modern-events-calendar-lite'), $plural_label),                    
                 ),
                 'rewrite'=>array('slug'=>'events-location'),
                 'public'=>false,
@@ -198,7 +199,7 @@ class MEC_feature_locations extends MEC_base
         $thumbnail = isset($_POST['thumbnail']) ? sanitize_text_field($_POST['thumbnail']) : '';
 
         // Geo Point is Empty or Address Changed
-        if(!trim($latitude) or !trim($longitude) or ($address != get_term_meta($term_id, 'address', true)))
+        if(!floatval($latitude) or !floatval($longitude) or (trim($address) and ($address != get_term_meta($term_id, 'address', true))))
         {
             $geo_point = $this->main->get_lat_lng($address);
             
@@ -282,7 +283,7 @@ class MEC_feature_locations extends MEC_base
 
         $additional_locations_status = (!isset($this->settings['additional_locations']) or (isset($this->settings['additional_locations']) and $this->settings['additional_locations'])) ? true : false;
     ?>
-        <div class="mec-meta-box-fields" id="mec-location">
+        <div class="mec-meta-box-fields mec-event-tab-content" id="mec-location">
             <h4><?php echo sprintf(__('Event %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_location', __('Location', 'modern-events-calendar-lite'))); ?></h4>
 			<div class="mec-form-row">
 				<select name="mec[location_id]" id="mec_location_id" title="<?php echo esc_attr__($this->main->m('taxonomy_location', __('Location', 'modern-events-calendar-lite')), 'modern-events-calendar-lite'); ?>">
@@ -356,14 +357,13 @@ class MEC_feature_locations extends MEC_base
             <div class="mec-form-row">
                 <p><?php _e('You can select extra locations in addition to main location if you like.', 'modern-events-calendar-lite'); ?></p>
                 <div class="mec-additional-locations">
-                    <?php foreach($locations as $location): ?>
-                    <div>
-                        <label for="additional_location_ids<?php echo $location->term_id; ?>">
-                            <input type="checkbox" name="mec[additional_location_ids][]" id="additional_location_ids<?php echo $location->term_id; ?>" value="<?php echo $location->term_id; ?>" <?php if(in_array($location->term_id, $location_ids)) echo 'checked="checked"'; ?>>
-                            <?php echo $location->name; ?>
-                        </label>
-                    </div>
-                    <?php endforeach; ?>
+                    <select class="mec-select2-dropdown" name="mec[additional_location_ids][]" multiple="multiple">
+                        <?php foreach($locations as $location): ?>
+                            <option <?php if(in_array($location->term_id, $location_ids)) echo 'selected="selected"'; ?> value="<?php echo $location->term_id; ?>">
+                                <?php echo $location->name; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
             <?php endif; ?>

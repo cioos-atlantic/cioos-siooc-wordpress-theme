@@ -15,14 +15,18 @@ $start_date = (isset($date['start']) and isset($date['start']['date'])) ? $date[
 $end_date = (isset($date['end']) and isset($date['end']['date'])) ? $date['end']['date'] : current_time('Y-m-d H:i:s');
 
 $s_time = '';
-$s_time .= sprintf("%02d", $date['start']['hour']).':';
-$s_time .= sprintf("%02d", $date['start']['minutes']);
-$s_time .= trim($date['start']['ampm']);
+if ( !empty($date) ): 
+    $s_time .= sprintf("%02d", $date['start']['hour']).':';
+    $s_time .= sprintf("%02d", $date['start']['minutes']);
+    $s_time .= trim($date['start']['ampm']);
+endif;
 
 $e_time = '';
-$e_time .= sprintf("%02d", $date['end']['hour']).':';
-$e_time .= sprintf("%02d", $date['end']['minutes']);
-$e_time .= trim($date['end']['ampm']);
+if ( !empty($date) ):
+    $e_time .= sprintf("%02d", $date['end']['hour']).':';
+    $e_time .= sprintf("%02d", $date['end']['minutes']);
+    $e_time .= trim($date['end']['ampm']);
+endif;
 
 $start_time = date('D M j Y G:i:s', strtotime($start_date.' '.$s_time));
 $end_time = date('D M j Y G:i:s', strtotime($end_date.' '.$e_time));
@@ -34,12 +38,14 @@ $d1 = new DateTime($start_time);
 $d2 = new DateTime(current_time("D M j Y G:i:s"));
 $d3 = new DateTime($end_time);
 
+$ongoing = (isset($settings['hide_time_method']) and trim($settings['hide_time_method']) == 'end') ? true : false;
+
 if($d3 < $d2)
 {
     echo '<div class="mec-end-counts"><h3>'.__('The event is finished.', 'modern-events-calendar-lite').'</h3></div>';
     return;
 }
-elseif($d1 < $d2)
+elseif($d1 < $d2 and !$ongoing)
 {
     echo '<div class="mec-end-counts"><h3>'.__('The event is ongoing.', 'modern-events-calendar-lite').'</h3></div>';
     return;
@@ -54,9 +60,9 @@ if(isset($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'T
 $defaultjs = '<script type="text/javascript">
 jQuery(document).ready(function()
 {
-    jQuery("#countdown").mecCountDown(
+    jQuery("#mec_countdown_details").mecCountDown(
     {
-        date: "'.$start_time.$gmt_offset.'",
+        date: "'.(($ongoing and (isset($event->data->meta['mec_repeat_status']) and $event->data->meta['mec_repeat_status'] == 0)) ? $end_time : $start_time).$gmt_offset.'",
         format: "off"
     },
     function()
@@ -70,7 +76,7 @@ $flipjs = '<script type="text/javascript">
 var clock;
 jQuery(document).ready(function()
 {
-    var futureDate = new Date("'.$start_time.$gmt_offset.'");
+    var futureDate = new Date("'.($ongoing ? $end_time : $start_time).$gmt_offset.'");
     var currentDate = new Date();
     var diff = parseInt((futureDate.getTime() / 1000 - currentDate.getTime() / 1000));
     

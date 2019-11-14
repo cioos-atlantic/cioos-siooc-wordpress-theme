@@ -317,10 +317,11 @@ else
 
 
  ?>
-    
-	<?php do_action('mec_before_main_content'); ?>
-        
-        <section id="<?php echo apply_filters('mec_archive_page_html_id', 'main-content'); ?>" class="<?php echo apply_filters('mec_archive_page_html_class', 'container'); ?>">
+
+		<section id="<?php echo apply_filters('mec_archive_page_html_id', 'main-content'); ?>" class="<?php echo apply_filters('mec_archive_page_html_class', 'container'); ?>">
+		
+		<?php do_action('mec_before_main_content'); ?>
+
 		<?php if(have_posts()): ?>
 
 			<?php do_action('mec_before_events_loop'); ?>

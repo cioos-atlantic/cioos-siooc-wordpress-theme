@@ -49,8 +49,8 @@ if ( !class_exists ( 'ReduxFramework_thinkup_slider_v3' ) ) {
             $this->value = $value;
 
                 if ( empty( $this->_extension_dir ) ) {
-                    $this->_extension_dir = trailingslashit( str_replace( '\\', '/', dirname( __FILE__ ) ) );
-                    $this->_extension_url = site_url( str_replace( trailingslashit( str_replace( '\\', '/', ABSPATH ) ), '/', $this->_extension_dir ) );
+                    $this->_extension_dir = trailingslashit( str_replace( '\\', '/', str_replace( str_replace( 'wp-content/', '', trailingslashit( WP_CONTENT_DIR ) ), '', dirname( __FILE__ ) ) ) );
+                    $this->_extension_url = site_url( str_replace( trailingslashit( str_replace( '\\', '/', str_replace( 'wp-content/', '', trailingslashit( ABSPATH ) ) ) ), '/', $this->_extension_dir ) );
                 }
         }
 

@@ -316,10 +316,10 @@ else
 
 ?>
     
-	<?php do_action('mec_before_main_content'); ?>
-        
-        <section id="<?php echo apply_filters('mec_category_page_html_id', 'main-content'); ?>" class="<?php echo apply_filters('mec_category_page_html_class', 'container'); ?>">
-		<?php if(have_posts()): ?>
+	
+		<section id="<?php echo apply_filters('mec_category_page_html_id', 'main-content'); ?>" class="<?php echo apply_filters('mec_category_page_html_class', 'container'); ?>">
+	
+		<?php do_action('mec_before_main_content'); ?>
 
 			<?php do_action('mec_before_events_loop'); ?>
 
@@ -327,7 +327,6 @@ else
 
 			<?php do_action('mec_after_events_loop'); ?>
 
-		<?php endif; ?>
         </section>
 
     <?php do_action('mec_after_main_content'); ?>

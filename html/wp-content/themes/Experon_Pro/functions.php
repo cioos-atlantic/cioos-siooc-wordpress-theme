@@ -6,7 +6,7 @@
  */
 
 // Declare latest theme version
-$GLOBALS['thinkup_theme_version'] = '1.8.9';
+$GLOBALS['thinkup_theme_version'] = '1.8.12';
 
 // WooCommerce API Manager Integration
 if ( ! defined( 'THINKUP_UPDATE_THEME_UPRADE_URL' ) ) {

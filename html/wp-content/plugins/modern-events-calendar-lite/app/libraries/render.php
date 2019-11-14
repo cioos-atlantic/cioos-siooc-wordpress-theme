@@ -23,6 +23,7 @@ class MEC_render extends MEC_base
         // Add image size for list and carousel 
         add_image_size('thumblist', '300', '300', true);
         add_image_size('meccarouselthumb', '474', '324', true);
+        add_image_size('gridsquare', '391', '260', true);
 
         // Import MEC skin class
         MEC::import('app.libraries.skins');
@@ -106,11 +107,26 @@ class MEC_render extends MEC_base
      */
     public function vfull($atts = array())
     {
-        $atts = apply_filters('mec_vfull_atts', $atts);
+        $atts = apply_filters('default', $atts);
         $skin = 'full_calendar';
         
         return $this->skin($skin, $atts);
     }
+
+    /**
+     * Do the default_full_calendar skin and returns its output (archive page)
+     * @author Webnus <info@webnus.biz>
+     * @param array $atts
+     * @return string
+     */
+    public function vdefaultfull($atts = array())
+    {
+        $atts = apply_filters('mec_vdefaultfull_atts', $atts);
+        $skin = 'default_full_calendar';
+        
+        return $this->skin($skin, $atts);
+    }
+
     
     /**
      * Do the weekly_view skin and returns its output
@@ -244,7 +260,7 @@ class MEC_render extends MEC_base
      */
     public function vdefault($atts = array())
     {
-        $monthly_skin = (isset($this->settings['monthly_view_archive_skin']) and trim($this->settings['monthly_view_archive_skin']) != '') ? $this->settings['monthly_view_archive_skin'] : 'classic';
+        $monthly_skin = (isset($this->settings['monthly_view_archive_skin']) and trim($this->settings['monthly_view_archive_skin']) != '') ? $this->settings['monthly_view_archive_skin'] : 'clean';
         $list_skin = (isset($this->settings['list_archive_skin']) and trim($this->settings['list_archive_skin']) != '') ? $this->settings['list_archive_skin'] : 'standard';
         $grid_skin = (isset($this->settings['grid_archive_skin']) and trim($this->settings['grid_archive_skin']) != '') ? $this->settings['grid_archive_skin'] : 'classic';
         $timetable_skin = (isset($this->settings['timetable_archive_skin']) and trim($this->settings['timetable_archive_skin']) != '') ? $this->settings['timetable_archive_skin'] : 'modern';
@@ -256,7 +272,7 @@ class MEC_render extends MEC_base
 
 
         if($this->settings['default_skin_archive'] == 'monthly_view') $content = $this->vmonth(array_merge($atts, array('sk-options'=>array('monthly_view'=>array('style'=>$monthly_skin)))));
-        elseif($this->settings['default_skin_archive'] == 'full_calendar') $content = $this->vfull($atts);
+        elseif($this->settings['default_skin_archive'] == 'full_calendar') $content = $this->vdefaultfull($atts);
         elseif($this->settings['default_skin_archive'] == 'yearly_view') $content = $this->vyear($atts);
         elseif($this->settings['default_skin_archive'] == 'weekly_view') $content = $this->vweek($atts);
         elseif($this->settings['default_skin_archive'] == 'daily_view') $content = $this->vday($atts);
@@ -467,6 +483,7 @@ class MEC_render extends MEC_base
         // Thumbnails
         $thumbnail = get_the_post_thumbnail($post_id, 'thumbnail', array('data-mec-postid'=>$post_id));
         $thumblist = get_the_post_thumbnail($post_id, 'thumblist' , array('data-mec-postid'=>$post_id));        
+        $gridsquare = get_the_post_thumbnail($post_id, 'gridsquare' , array('data-mec-postid'=>$post_id));        
         $meccarouselthumb = get_the_post_thumbnail($post_id, 'meccarouselthumb' , array('data-mec-postid'=>$post_id));
         $medium = get_the_post_thumbnail($post_id, 'medium', array('data-mec-postid'=>$post_id));
         $large = get_the_post_thumbnail($post_id, 'large', array('data-mec-postid'=>$post_id));
@@ -478,6 +495,7 @@ class MEC_render extends MEC_base
         $data->thumbnails = array(
             'thumbnail'=>$thumbnail,
             'thumblist'=>$thumblist,
+            'gridsquare'=>$gridsquare,
             'meccarouselthumb'=>$meccarouselthumb,
             'medium'=>$medium,
             'large'=>$large,
@@ -488,6 +506,7 @@ class MEC_render extends MEC_base
         $data->featured_image = array(
             'thumbnail'=>esc_url(get_the_post_thumbnail_url($post_id, 'thumbnail')),
             'thumblist'=>esc_url(get_the_post_thumbnail_url($post_id, 'thumblist' )),
+            'gridsquare'=>esc_url(get_the_post_thumbnail_url($post_id, 'gridsquare' )),
             'meccarouselthumb'=>esc_url(get_the_post_thumbnail_url($post_id, 'meccarouselthumb')),
             'medium'=>esc_url(get_the_post_thumbnail_url($post_id, 'medium')),
             'large'=>esc_url(get_the_post_thumbnail_url($post_id, 'large')),
@@ -525,6 +544,22 @@ class MEC_render extends MEC_base
             }
         }
         
+        // Add mec event past index to array.
+        $end_date = (isset($data->meta['mec_date']['end']) and isset($data->meta['mec_date']['end']['date'])) ? $data->meta['mec_date']['end']['date'] : current_time('Y-m-d H:i:s');
+
+        $e_time = '';
+        $e_time .= sprintf("%02d", (isset($data->meta['mec_date']['end']['hour']) ? $data->meta['mec_date']['end']['hour'] : '6')).':';
+        $e_time .= sprintf("%02d", (isset($data->meta['mec_date']['end']['minutes']) ? $data->meta['mec_date']['end']['minutes'] : '0'));
+        $e_time .= isset($data->meta['mec_date']['end']['ampm']) ? trim($data->meta['mec_date']['end']['ampm']) : 'PM';
+
+        $end_time = date('D M j Y G:i:s', strtotime($end_date.' '.$e_time));
+
+        $d1 = new DateTime(current_time("D M j Y G:i:s"));
+        $d2 = new DateTime($end_time);
+        
+        if($d2 < $d1) $data->meta['event_past'] = true;
+        else $data->meta['event_past'] = false;
+
         // Set to cache
         wp_cache_set($post_id, $data, 'mec-events-data', 43200);
         
@@ -702,13 +737,17 @@ class MEC_render extends MEC_base
                     $year = date('Y', strtotime($today));
                     $month = date('m', strtotime($today));
                     $day = $event_start_day;
+                    $hour = isset($event->meta['mec_date']['end']['hour']) ? sprintf('%02d', $event->meta['mec_date']['end']['hour']) : '06';
+                    $minutes = isset($event->meta['mec_date']['end']['minutes']) ? sprintf('%02d', $event->meta['mec_date']['end']['minutes']) : '00';
+                    $ampm = isset($event->meta['mec_date']['end']['ampm']) ? strtolower($event->meta['mec_date']['end']['ampm']) : 'pm';
                     
                     // Fix for 31st, 30th, 29th of some months
                     while(!checkdate($month, $day, $year)) $day--;
                     
                     $start_date = $year.'-'.$month.'-'.$day;
-                    
-                    if(strtotime($start_date) < time())
+                    $end_time = $hour.':'.$minutes.$ampm;
+
+                    if(strtotime($start_date.' '.$end_time) < current_time('timestamp', 0))
                     {
                         $i++;
                         continue;
@@ -849,26 +888,28 @@ class MEC_render extends MEC_base
      *  Render advanced dates
      * @author Webnus <info@webnus.biz>
      * @param array $advanced_days
+     * @param array $event_info
+     * @param int $maximum
+     * @param string $referer_date
+     * @param string $mode
      * @return array
      */
-    function generate_advanced_days($advanced_days = array(), $event_info = array(), $maximum = 6, $today = NULL, $mode = 'render')
+    public function generate_advanced_days($advanced_days = array(), $event_info = array(), $maximum = 6, $referer_date = NULL, $mode = 'render')
     {
-
         if(!count($advanced_days)) return array();
-        if(!trim($today)) $today = date( 'Y-m-d', current_time( 'timestamp', 0 ));
-
+        if(!trim($referer_date)) $referer_date = date('Y-m-d', current_time('timestamp', 0));
+    
         $levels = array('first', 'second', 'third', 'fourth', 'last');
         $year = date('Y');
         $dates = array();
-        
+    
         // Set last month for include current month results
-        $month = date('m', strtotime('first day of last month'));
+        $month = date('m', strtotime('first day of last month', strtotime($event_info['start']['date'])));
         $current_day = date("d");
-        $last_day =substr(end($advanced_days), 0, 3);
-        
+    
         $maximum = intval($maximum);
         $i = 0;
-
+    
         // Event info
         $exceptional_days =  array_key_exists('exceptional_days', $event_info) ? $event_info['exceptional_days'] : array();
         $start_date = $event_info['start'];
@@ -880,77 +921,87 @@ class MEC_render extends MEC_base
         $event_period_days = $event_period ? $event_period->days : 0;
         $mec_repeat_end = array_key_exists('mec_repeat_end', $event_info) ? $event_info['mec_repeat_end'] : '';
         $occurrences = array_key_exists('occurrences', $event_info) ? $event_info['occurrences'] : 0;
-
+    
         // Include default start date to resualts
-        if(!$this->main->is_past($start_date['date'], $today) and !in_array($start_date['date'], $exceptional_days))
+        if(!$this->main->is_past($start_date['date'], $referer_date) and !in_array($start_date['date'], $exceptional_days)) 
         {
             $dates[] = array(
                 'start' => $start_date,
                 'end' => $end_date,
                 'allday' => $allday,
                 'hide_time' => $hide_time,
-                'past' => 0
+                'past' => 0,
             );
-
-        if($mode == 'render') $i++;
+    
+            if($mode == 'render') $i++;
         }
-
-        while($i < $maximum)
+    
+        $referer_date = $event_info['start']['date'];
+        while($i < $maximum) 
         {
             foreach($advanced_days as $day)
             {
                 if($i >= $maximum) break;
-
+    
                 // Explode $day value for example (Sun.1) to Sun and 1
                 $d = explode('.', $day);
-
+    
                 // Set indexes for {$levels} index if number day is Last(Sun.l) then indexes set 4th {$levels} index
                 $index = intval($d[1]) ? (intval($d[1]) - 1) : 4;
-
+    
                 // Generate date
                 $date = "{$year}-{$month}-{$current_day}";
-
+    
                 // Generate start date for example "first Sun of next month"
                 $start = date('Y-m-d', strtotime("{$levels[$index]} {$d[0]} of next month", strtotime(date($date))));
                 $end = date('Y-m-d', strtotime("+{$event_period_days} Days", strtotime($start)));
-                
+    
                 // When ends repeat date set
-                if($mode == 'render' and $this->main->is_past($finish_date, $start)) continue;
-
+                if ($mode == 'render' and $this->main->is_past($finish_date, $start)) continue;
+    
                 // Jump to next level if start date is past
-                if($this->main->is_past($start, $today) or in_array($start, $exceptional_days)) continue;
-
+                if ($this->main->is_past($start, $referer_date) or in_array($start, $exceptional_days)) continue;
+    
                 // Add dates
                 $dates[] = array(
-                    'start' => array('date'=>$start, 'hour'=>$start_date['hour'], 'minutes'=>$start_date['minutes'], 'ampm'=>$start_date['ampm']),
-                    'end' => array('date'=>$end, 'hour'=>$end_date['hour'], 'minutes'=>$end_date['minutes'], 'ampm'=>$end_date['ampm']),
+                    'start' => array(
+                        'date' => $start,
+                        'hour' => $start_date['hour'],
+                        'minutes' => $start_date['minutes'],
+                        'ampm' => $start_date['ampm'],
+                    ),
+                    'end' => array('date' => $end,
+                    'hour' => $end_date['hour'],
+                    'minutes' => $end_date['minutes'],
+                    'ampm' => $end_date['ampm'],
+                    ),
                     'allday' => $allday,
                     'hide_time' => $hide_time,
-                    'past' => 0
+                    'past' => 0,
                 );
-
+    
                 $i++;
             }
-
+    
             // When ends repeat date set
             if($mode == 'render' and $this->main->is_past($finish_date, $start)) break;
-            
+    
             // Change month and years for next resualts
             if(intval($month) == 12)
             {
-                $year = intval($year)+1;
-                $month = '01';
+                $year = intval($year) + 1;
+                $month = '00';
             }
-
-            $month = sprintf("%02d", intval($month)+1);
+    
+            $month = sprintf("%02d", intval($month) + 1);
         }
-        
-        if($mode == 'render' and trim($mec_repeat_end) == 'occurrences' and count($dates) > $occurrences) 
+    
+        if(($mode == 'render') and (trim($mec_repeat_end) == 'occurrences') and (count($dates) > $occurrences))
         {
             $max = strtotime(reset($dates)['start']['date']);
             $pos = 0;
-            
-            for($i=1; $i < count($dates); $i++)
+    
+            for($i = 1; $i < count($dates); $i++)
             {
                 if(strtotime($dates[$i]['start']['date']) > $max)
                 {
@@ -958,9 +1009,10 @@ class MEC_render extends MEC_base
                     $pos = $i;
                 }
             }
+    
             unset($dates[$pos]);
         }
-        
+    
         return $dates;
     }
 
