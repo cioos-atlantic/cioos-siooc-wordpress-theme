@@ -8,10 +8,6 @@
 
 
 
-
-
-
-
 // =======================================================
 // Disable Jquery core, replace with new
 // ======================================================= 
@@ -96,6 +92,7 @@ add_action( 'wp_print_scripts', 'dequeue_unnecessary_scripts', 1);
             wp_enqueue_script( 'map-build','https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js', array('jquery'), '', false  );
             wp_enqueue_script( 'polyfill','https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL', array('jquery'), '', false  );
             wp_enqueue_script( 'jquery' );
+            wp_enqueue_script( 'jquery-migrate' );
             wp_enqueue_script( 'bootstrap','https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array('jquery'), '', false  );
             wp_enqueue_script( 'i18', get_stylesheet_directory_uri() . '/asset/js/asset_i18n.js', array('jquery'), '', false   );
             wp_enqueue_script( 'assetckan', get_stylesheet_directory_uri() . '/asset/js/asset_ckan.js', array('jquery'), '', false   );
