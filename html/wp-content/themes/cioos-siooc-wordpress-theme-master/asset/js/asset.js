@@ -214,8 +214,8 @@ function setVerticalFilters( minVertical, maxVertical )
             success: function (data) {
                 ui_str = data;
                 i18nStrings.setUIStrings(ui_str);
-                i18nStrings.setBaseLanguage("en");
-                i18nStrings.setCurrentLanguage("en");
+                i18nStrings.setBaseLanguage("fr");
+                i18nStrings.setCurrentLanguage("fr");
             },
             error: function (e) {
             }
