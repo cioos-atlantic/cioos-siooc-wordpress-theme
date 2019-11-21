@@ -1,6 +1,6 @@
 var lg = null;
 var ui_str = null;
-var ckan_server = null;
+var ckan_server = "pacific";
 var i18nStrings = null;
 var filters = null;
 var mapconfig = null;
@@ -214,8 +214,8 @@ function setVerticalFilters( minVertical, maxVertical )
             success: function (data) {
                 ui_str = data;
                 i18nStrings.setUIStrings(ui_str);
-                i18nStrings.setBaseLanguage("fr");
-                i18nStrings.setCurrentLanguage("fr");
+                i18nStrings.setBaseLanguage("en");
+                i18nStrings.setCurrentLanguage("en");
             },
             error: function (e) {
             }
