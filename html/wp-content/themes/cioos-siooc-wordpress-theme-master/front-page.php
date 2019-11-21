@@ -37,21 +37,3 @@ get_header(); ?>
     inlinejs($lang); 
   }; 
 ?>
-<script>
-function changeCurrentLanguage( newLanguage )
-{
-    // set CKAN current language
-    ckan_server.setCurrentLanguage(newLanguage);
-    // set i18n o language
-    i18nStrings.setBaseLanguage(newLanguage);
-    i18nStrings.setCurrentLanguage(newLanguage);
-
-    // clear map and details
-    clearAllDatasets();
-    // reload filters
-    generateFilterCategories();
-
-    //
-}
-
-</script>
