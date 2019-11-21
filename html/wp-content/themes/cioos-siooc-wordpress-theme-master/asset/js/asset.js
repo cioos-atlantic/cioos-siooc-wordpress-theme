@@ -235,7 +235,7 @@ function setVerticalFilters( minVertical, maxVertical )
         });
 
         $.ajax({
-            url: "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/resources/ckan.json",
+            url: "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/resources/pacific.json",
             dataType: 'json',
             async: false,
             success: function (data) {
