@@ -830,7 +830,7 @@ function getVariableForDatataset(dataset)
             let thumb =  ckan_server.getVariableThumbnail(entry);
             if ( thumb !== undefined )
             {
-                ret_html += "<img src='" + "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/thumbnails/" + thumb + "'></img>";
+                ret_html += "<img src='" + "/asset/images/thumbnails/" + thumb + "'></img>";
             }
         });
     }
@@ -846,7 +846,7 @@ function getVariableForDatataset(dataset)
                 let thumb =  ckan_server.getVariableThumbnail(entry);
                 if ( thumb !== undefined )
                 {
-                    ret_html += "<img src='" + "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/thumbnails/" + thumb + "'></img>";
+                    ret_html += "<img src='" + "/asset/images/thumbnails/" + thumb + "'></img>";
                 }
             });
         }
@@ -859,7 +859,7 @@ function getVariableForDatataset(dataset)
                 let thumb =  ckan_server.getVariableThumbnail(entry["name"]);
                 if ( thumb !== undefined )
                 {
-                    ret_html += "<img src='" + "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/thumbnails/" + thumb + "'></img>";
+                    ret_html += "<img src='" + "/asset/images/thumbnails/" + thumb + "'></img>";
                 }
             });
         }
@@ -950,7 +950,7 @@ function generateDetailsPanel( dataset ) //, language, dataset_id, title, descri
     // check if geomeetry details available for this dataset
     if ( datasetHasSpatial(dataset) )
     {
-        ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/map-marker.png"></a>';
+        ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/asset/images/map-marker.png"></a>';
     }
     ret_html += '<h3 class="details_label">' + '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + i18nStrings.getUIString("dataset_title") + '</a></h3>'; 
     if ( ckan_server.support_multilanguage)
@@ -1164,7 +1164,9 @@ function clearAllDatasets()
     document.getElementById('dataset_desc').innerHTML = "";
 
     // clear map display
-    clusterLayer.setVisible(false);
+    if (clusterLayer !== undefined){
+        clusterLayer.setVisible(false);   
+    }
     vectorLayer.setVisible(false);
     let vectorSource= vectorLayer.getSource();
     vectorSource.clear();
@@ -1244,31 +1246,44 @@ function updateDatasetDetails( datasets )
 function updateDatasetDetailsFromCache( datasetid )
 {
     let element = ckan_server.datasetDetails[datasetid];
-    // update and open panel 
+    // update and open panel
     let itemid = '#' + element['id'] + '_collapse';
-    document.getElementById(element['id'] + '_collapse').innerHTML = generateCompleteDetailsPanel(element);
+    if (document.getElementById(element['id'] + '_collapse')) {
+        document.getElementById(element['id'] + '_collapse').innerHTML = generateCompleteDetailsPanel(element);
+    }
     $(itemid).collapse("show");
 }
 
-function showDatasetDetailDescription( datasetid )
+function showDatasetDetailDescription( datasetid , goto_description = true, select_point = true, center_point = true)
 /**
  * Shows Dataset Detail Description and adjusts the scroll so that detail panel is visible
- * @param  {[string]} datasetid [element]
+ * @param  {[string]} datasetid
+ * @param  {[bool]} goto_description - scroll to the current description in the right panel if True
+ * @param  {[bool]} select_point - selects corresponding feature (point) on the map
+ * @param  {[bool]} center_point - center corresponding feature (point) on the map
  */
 {
     // collapse other detail panels
     $('#dataset_desc').find('.collapse').each(function() {
-        if ($(this).attr('id') != datasetid || true) {
+        if ($(this).attr('id') != datasetid) {
             $(this).collapse('hide');
         }
     });
-    // show details panel
+    // load details panel
     callDatasetDetailDescription(datasetid);
-    // sroll up to this panel
-    $("#"+datasetid).on("shown.bs.collapse", function() {
-        let topPos = $('#dataset_desc').scrollTop() + $("#"+datasetid).position().top;
-        $('#dataset_desc').animate({scrollTop:topPos}, 500);
-    });
+    // scroll up to this panel
+    if (goto_description) {
+        $("#"+datasetid).on("shown.bs.collapse", function() {
+            let topPos = $('#dataset_desc').scrollTop() + $("#"+datasetid).position().top;
+            $('#dataset_desc').animate({scrollTop:topPos}, 500);
+        });
+    }
+    if (select_point) {
+        selectFeatureOnMap(datasetid);
+    }
+    if (center_point) {
+        centerFeatureOnMap(datasetid);
+    }
 }
 
 function callDatasetDetailDescription( datasetid )

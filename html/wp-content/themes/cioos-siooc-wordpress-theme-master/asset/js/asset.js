@@ -32,7 +32,7 @@ function generateVariableBox( vardata )
         ret_html += "disabled";
     }
     ret_html += " onclick='checkCKANData();'>";
-    ret_html += "<label for='" + vardata["id"] + "'>" + "<img src='/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/icons/" + vardata["icon"] + "' />" + i18nStrings.getTranslation(vardata["label"]) + "</label>";
+    ret_html += "<label for='" + vardata["id"] + "'>" + "<img src='/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/icons/" + vardata["icon"] + "' />" + "<em>" + i18nStrings.getTranslation(vardata["label"]) + "</em>" + "</label>";
     ret_html += "</li>";
     return ret_html;
 }
@@ -223,7 +223,7 @@ function setVerticalFilters( minVertical, maxVertical )
 
         initMapFromConfig
         $.ajax({
-            url: "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/resources/map.json",
+            url: "/asset/resources/map.json",
             dataType: 'json',
             async: false,
             success: function (data) {
@@ -235,7 +235,7 @@ function setVerticalFilters( minVertical, maxVertical )
         });
 
         $.ajax({
-            url: "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/resources/cioos_pacific_ckan.json",
+            url: "/asset/resources/ckan.json",
             dataType: 'json',
             async: false,
             success: function (data) {
@@ -247,7 +247,7 @@ function setVerticalFilters( minVertical, maxVertical )
         });
 
         $.ajax({
-            url: "/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/resources/filters.json",
+            url: "/asset/resources/filters.json",
             dataType: 'json',
             async: false,
             success: function (data) {
