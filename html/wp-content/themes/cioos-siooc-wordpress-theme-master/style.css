@@ -29,8 +29,7 @@ Text Domain: CIOOS
 }
 
 #mega-menu-wrap-pre_header_menu {
-    background: 
-    #006e90;
+    background: #006e90 !important;
 }
 
 .elementor-column-gap-default>.elementor-row>.full-section-image>.elementor-element-populated {
