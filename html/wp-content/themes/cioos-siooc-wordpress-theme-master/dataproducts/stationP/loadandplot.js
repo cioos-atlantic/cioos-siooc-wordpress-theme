@@ -1,14 +1,14 @@
 async function loadplotdata() {
 
     const summaryData =
-        await d3.csv("../wp-content/themes/cioos-siooc-wordpress-theme-master/dataproducts/stationP/Data/p26_temp_final_long.csv", d3.autoType);
+        await d3.csv("/wp-content/themes/cioos-siooc-wordpress-theme-master/dataproducts/stationP/Data/p26_temp_final_long.csv", d3.autoType);
 
     // make bar chart
     chart(summaryData)
 
 
     const allIOSData =
-        await d3.csv("../wp-content/themes/cioos-siooc-wordpress-theme-master/dataproducts/stationP/Data/allIOSBinned.csv", d3.autoType);
+        await d3.csv("/wp-content/themes/cioos-siooc-wordpress-theme-master/dataproducts/stationP/Data/allIOSBinned.csv", d3.autoType);
 
         // plot all profiles    
         profilechart(allIOSData);    
