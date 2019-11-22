@@ -20,7 +20,17 @@ Text Domain: CIOOS
 }
 
 #pre-header {
-	background-color: grey;
+	background-color: #006e90;
+}
+
+#site-header {
+    position: relative;
+    z-index: 9999;
+}
+
+#mega-menu-wrap-pre_header_menu {
+    background: 
+    #006e90;
 }
 
 .elementor-column-gap-default>.elementor-row>.full-section-image>.elementor-element-populated {
@@ -147,7 +157,3 @@ Text Domain: CIOOS
 	margin: 0;
 }
 
-#site-header {
-    position: relative;
-    z-index: 9999;
-}
