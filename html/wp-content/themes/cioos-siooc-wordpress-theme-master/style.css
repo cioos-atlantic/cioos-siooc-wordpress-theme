@@ -45,13 +45,15 @@ Text Domain: CIOOS
 	color: #021F30;
 	font-weight: bold;
 }
-#header .menu > li.current-menu-item > a :hover{
-	color: #bebebe!important;
-	
+
+#header .menu > li.current-menu-item > a :hover {
+    color: #bebebe!important;
+    text-decoration: none;
 }
 
 #header .menu > li > a span:hover{
 	color: grey!important;
+	text-decoration: none;
 }
 
 #header .menu > li.current-menu-item > a span:after{
