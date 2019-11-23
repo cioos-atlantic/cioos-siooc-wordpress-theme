@@ -16,7 +16,7 @@ get_header(); ?>
   <div id="dataset_desc" class="panel_details"></div>
   <div class="panel_search_info" style="text-align:center" id="dataset_search_stats"></div>
 </div>
-
+<script>jQuery(document).ready(function( $ ) {changeCurrentCKAN("cioos_pacific_ckan.json")});</script>
 <?php while ( have_posts() ) : the_post(); ?>
 <?php get_template_part( 'content', 'page' ); ?>
 <?php endwhile; wp_reset_query(); ?>
@@ -24,6 +24,7 @@ get_header(); ?>
 
 
 <?php get_footer(); ?>
+
 <?php 
   function inlinejs($output) {
     $js_code = '<script>' . $output . '</script>';
