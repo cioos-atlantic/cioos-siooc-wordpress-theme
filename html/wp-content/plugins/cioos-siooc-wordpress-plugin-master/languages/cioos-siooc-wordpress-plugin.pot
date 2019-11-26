@@ -1,0 +1,221 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: CIOOS Plugin\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-09 15:29+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.0; wp-5.2.2"
+
+#. 1: Plugin name 2: Elementor
+#: cioos-plugin.php:123
+#, php-format
+msgid "\"%1$s\" requires \"%2$s\" to be installed and activated."
+msgstr ""
+
+#. 1: Plugin name 2: Elementor 3: Required Elementor version
+#. 1: Plugin name 2: PHP 3: Required PHP version
+#: cioos-plugin.php:144 cioos-plugin.php:166
+#, php-format
+msgid "\"%1$s\" requires \"%2$s\" version %3$s or greater."
+msgstr ""
+
+#: widgets/cta_widget.php:139 widgets/cta_widget.php:193
+msgid "Add your custom id WITHOUT the Pound key. e.g: my-id"
+msgstr ""
+
+#: widgets/mailchimp_widget.php:86
+msgid "API key"
+msgstr ""
+
+#: widgets/mailchimp_widget.php:91
+msgid "API Key:"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:77
+msgid "Background"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:83
+msgid "Background Color"
+msgstr ""
+
+#: widgets/cta_widget.php:76 widgets/cta_widget.php:82
+#: widgets/two_panel_box_widget.php:94
+msgid "Body Text"
+msgstr ""
+
+#: widgets/cta_widget.php:133 widgets/cta_widget.php:187
+msgid "Button ID"
+msgstr ""
+
+#: widgets/cta_widget.php:33
+msgid "Call to Action Widget"
+msgstr ""
+
+#. Name of the plugin
+#: cioos-plugin.php:124 cioos-plugin.php:145 cioos-plugin.php:167
+msgid "CIOOS Plugin"
+msgstr ""
+
+#: widgets/cta_widget.php:110 widgets/cta_widget.php:111
+#: widgets/cta_widget.php:164 widgets/cta_widget.php:165
+#: widgets/three_boxes_widget.php:110 widgets/three_boxes_widget.php:111
+#: widgets/three_boxes_widget.php:122 widgets/three_boxes_widget.php:123
+#: widgets/three_boxes_widget.php:134 widgets/three_boxes_widget.php:135
+#: widgets/two_panel_box_widget.php:87 widgets/two_panel_box_widget.php:88
+msgid "Click here"
+msgstr ""
+
+#. Description of the plugin
+msgid "Custom widgets for the CIOOS National and RA sites"
+msgstr ""
+
+#: cioos-plugin.php:125 cioos-plugin.php:146
+msgid "Elementor"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:96 widgets/two_panel_box_widget.php:97
+msgid "Enter Your Text"
+msgstr ""
+
+#: widgets/cta_widget.php:87 widgets/cta_widget.php:88
+msgid "Enter your text"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://ogsl.ca/"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:127
+msgid "Image"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:152
+msgid "Image 1"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:176
+msgid "Image 2"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:200
+msgid "Image 3"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:121
+msgid "Image/Link Panel"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:146
+msgid "Images/Links"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:105
+msgid "Left"
+msgstr ""
+
+#: widgets/cta_widget.php:99
+msgid "Left Button"
+msgstr ""
+
+#: widgets/cta_widget.php:117 widgets/cta_widget.php:171
+#: widgets/two_panel_box_widget.php:137
+msgid "Link"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:162
+msgid "Link 1"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:186
+msgid "Link 2"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:210
+msgid "Link 3"
+msgstr ""
+
+#. Widget name will appear in UI
+#: widgets/mailchimp_widget.php:14
+msgid "Mailchimp Widget"
+msgstr ""
+
+#: widgets/offset_background_widget.php:33
+msgid "Offset Background Widget"
+msgstr ""
+
+#. Author of the plugin
+msgid "OGSL"
+msgstr ""
+
+#: cioos-plugin.php:168
+msgid "PHP"
+msgstr ""
+
+#: widgets/cta_widget.php:141 widgets/cta_widget.php:195
+msgid ""
+"Please make sure the ID is unique and not used elsewhere on the page this "
+"form is displayed. This field allows <code>A-z 0-9</code> & underscore chars "
+"without spaces."
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:106
+msgid "Right"
+msgstr ""
+
+#: widgets/cta_widget.php:153
+msgid "Right Button"
+msgstr ""
+
+#: widgets/cta_widget.php:105 widgets/cta_widget.php:159
+msgid "Text"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:76
+msgid "Text Panel"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:103
+msgid "Text Side "
+msgstr ""
+
+#: widgets/three_boxes_widget.php:105
+msgid "Text Title Left"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:117
+msgid "Text Title Middle"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:129
+msgid "Text Title Right"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:34
+msgid "Three Boxes Widget"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:82
+msgid "Title"
+msgstr ""
+
+#: widgets/three_boxes_widget.php:99
+msgid "Titles"
+msgstr ""
+
+#: widgets/two_panel_box_widget.php:33
+msgid "Two Panel Box Widget"
+msgstr ""
+
+#: widgets/mailchimp_widget.php:17
+msgid "Widget to display the mailchimp subscription form"
+msgstr ""
