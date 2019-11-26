@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Twenty package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-06-27 11:45:47+0000\n"
+"PO-Revision-Date: 2019-11-17 22:06:14+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,6 +10,97 @@ msgstr ""
 "X-Generator: GlotPress/2.4.0-alpha\n"
 "Language: fr_CA\n"
 "Project-Id-Version: Themes - Twenty Twenty\n"
+
+#. Theme Name of the theme
+msgid "Twenty Twenty"
+msgstr "Twenty Twenty"
+
+#: template-parts/entry-author-bio.php:29
+msgid "View Archive <span aria-hidden=\"true\">&rarr;</span>"
+msgstr "Voir l'archive <span aria-hidden=\"true\">&rarr;</span>"
+
+#: inc/starter-content.php:38
+msgctxt "Theme starter content"
+msgid "The New UMoMA Opens its Doors"
+msgstr "Le nouveau UMoMa ouvre ses portes"
+
+#: inc/starter-content.php:69 inc/starter-content.php:101
+msgid "August 1 -- December 1"
+msgstr "1er août -- 1er décembre"
+
+#: classes/class-twentytwenty-customize.php:126
+msgid "Custom"
+msgstr "Personnalisée"
+
+#: classes/class-twentytwenty-customize.php:125
+msgid "Default"
+msgstr "Par défaut"
+
+#: inc/starter-content.php:150
+msgid "Join the Club"
+msgstr "Joindre le club"
+
+#: inc/starter-content.php:144
+msgid "Become a Member and Get Exclusive Offers!"
+msgstr "Devenez membre et obtenez des offres exclusives!"
+
+#: inc/starter-content.php:98
+msgid "The Life I Deserve"
+msgstr "La vie que je mérite"
+
+#: inc/starter-content.php:84 inc/starter-content.php:116
+msgid "October 1 -- December 1"
+msgstr "1er octobre -- 1er décembre"
+
+#: inc/starter-content.php:81
+msgid "Theatre of Operations"
+msgstr "Théâtre des opérations"
+
+#: inc/starter-content.php:72 inc/starter-content.php:87
+#: inc/starter-content.php:104 inc/starter-content.php:119
+msgid "Read More"
+msgstr "Lire la suite"
+
+#: inc/template-tags.php:387
+msgctxt "A string that is output before one or more categories"
+msgid "In"
+msgstr "Dans"
+
+#: inc/starter-content.php:113
+msgid "From Signac to Matisse"
+msgstr "De Signac à Matisse"
+
+#: inc/starter-content.php:66
+msgid "Works and Days"
+msgstr "Travaux et jours"
+
+#: inc/starter-content.php:47
+msgid "The New UMoMA Opens its Doors"
+msgstr "Le nouveau UMoMA ouvre ses portes"
+
+#: classes/class-twentytwenty-customize.php:374
+msgid "Overlay Opacity"
+msgstr "Opacité de l’élément superposé"
+
+#: classes/class-twentytwenty-customize.php:123
+msgid "Primary Color"
+msgstr "Couleur principale"
+
+#: inc/starter-content.php:147
+msgid "Members get access to exclusive exhibits and sales. Our memberships cost $99.99 and are billed annually."
+msgstr "Les membres obtiennent accès à des expositions et des ventes exclusives. Notre abonnement coûte 99,99 $ et est facturé annuellement."
+
+#: 404.php:24
+msgid "404 not found"
+msgstr "404 introuvable"
+
+#: searchform.php:24 template-parts/modal-search.php:20
+msgid "Search for:"
+msgstr "Rechercher :"
+
+#: index.php:99
+msgid "search again"
+msgstr "chercher de nouveau"
 
 #: comments.php:127
 msgid "Comments are closed."
@@ -83,6 +174,232 @@ msgstr "Pages&nbsp;:"
 msgid "Your comment is awaiting moderation."
 msgstr "Votre commentaire est en attente de modération."
 
+#. translators: %d: ID of a post
+#: classes/class-twentytwenty-walker-page.php:82
+msgid "#%d (no title)"
+msgstr "#%d (pas de titre)"
+
+#: functions.php:486
+msgid "Accent Color"
+msgstr "Couleur d'accent"
+
+#. translators: %s: Author name
+#: template-parts/entry-author-bio.php:20 inc/template-tags.php:348
+msgid "By %s"
+msgstr "Par %s"
+
+#: template-parts/entry-header.php:36 template-parts/content-cover.php:70
+#: inc/template-tags.php:383
+msgid "Categories"
+msgstr "Catégories"
+
+#: template-parts/modal-search.php:26
+msgid "Close search"
+msgstr "Fermer la recherche"
+
+#: template-parts/content.php:36
+msgid "Continue reading"
+msgstr "Lire la suite"
+
+#. Template Name of the theme
+#: classes/class-twentytwenty-customize.php:260
+msgid "Cover Template"
+msgstr "Gabarit de couverture"
+
+#: functions.php:363
+msgid "Footer #1"
+msgstr "Pied de page 1"
+
+#: functions.php:375
+msgid "Footer #2"
+msgstr "Pied de page 2"
+
+#: template-parts/modal-menu.php:73
+msgid "Mobile"
+msgstr "Mobile"
+
+#: index.php:32
+msgid "Search:"
+msgstr "Recherche :"
+
+#: inc/template-tags.php:439
+msgid "Sticky post"
+msgstr "Article mis en avant"
+
+#: inc/template-tags.php:401
+msgid "Tags"
+msgstr "Étiquettes"
+
+#: inc/template-tags.php:365
+msgid "Post date"
+msgstr "Date de l’article"
+
+#: inc/template-tags.php:341
+msgid "Post author"
+msgstr "Auteur de l’article"
+
+#: header.php:88
+msgid "Horizontal"
+msgstr "Horizontal"
+
+#: header.php:76 header.php:137
+msgid "Menu"
+msgstr "Menu"
+
+#: header.php:53 header.php:157
+msgid "Search"
+msgstr "Chercher"
+
+#: functions.php:548
+msgctxt "Short name of the larger font size in the block editor."
+msgid "XL"
+msgstr "TG"
+
+#: functions.php:547
+msgctxt "Name of the larger font size in the block editor"
+msgid "Larger"
+msgstr "Plus grand"
+
+#: functions.php:542
+msgctxt "Short name of the large font size in the block editor."
+msgid "L"
+msgstr "G"
+
+#: functions.php:541
+msgctxt "Name of the large font size in the block editor"
+msgid "Large"
+msgstr "Grand"
+
+#: functions.php:536
+msgctxt "Short name of the regular font size in the block editor."
+msgid "M"
+msgstr "M"
+
+#: functions.php:535
+msgctxt "Name of the regular font size in the block editor"
+msgid "Regular"
+msgstr "Régulier"
+
+#: functions.php:530
+msgctxt "Short name of the small font size in the block editor."
+msgid "S"
+msgstr "P"
+
+#: functions.php:529
+msgctxt "Name of the small font size in the block editor"
+msgid "Small"
+msgstr "Petit"
+
+#: functions.php:514
+msgid "Background Color"
+msgstr "Couleur d'arrière plan"
+
+#: functions.php:338
+msgid "Skip to the content"
+msgstr "Aller au contenu"
+
+#: functions.php:259
+msgid "Social Menu"
+msgstr "Menu de réseaux sociaux"
+
+#: functions.php:257
+msgid "Mobile Menu"
+msgstr "Menu mobile"
+
+#: classes/class-twentytwenty-walker-comment.php:127
+msgid "By Post Author"
+msgstr "Par auteur de l'article"
+
+#: classes/class-twentytwenty-walker-comment.php:56
+msgid "says:"
+msgstr "dit :"
+
+#: classes/class-twentytwenty-customize.php:249
+msgid "Summary"
+msgstr "Résumé"
+
+#: classes/class-twentytwenty-customize.php:248
+msgid "Full text"
+msgstr "Texte intégral"
+
+#: classes/class-twentytwenty-customize.php:202
+msgid "Theme Options"
+msgstr "Options du thème"
+
+#: classes/class-twentytwenty-customize.php:81
+msgid "Retina logo"
+msgstr "Logo Rétina"
+
+#: template-parts/modal-menu.php:21
+msgid "Close Menu"
+msgstr "Fermer menu"
+
+#: template-parts/footer-menus-widgets.php:57
+msgid "Social links"
+msgstr "Liens sociaux"
+
+#: searchform.php:27
+msgctxt "submit button"
+msgid "Search"
+msgstr "Recherche"
+
+#: searchform.php:25
+msgctxt "placeholder"
+msgid "Search &hellip;"
+msgstr "Recherche&hellip;"
+
+#: comments.php:75
+msgid "Older Comments"
+msgstr "Commentaires antérieurs"
+
+#: comments.php:74
+msgid "Newer Comments"
+msgstr "Derniers commentaires"
+
+#: classes/class-twentytwenty-customize.php:284
+msgid "Fixed Background Image"
+msgstr "Image d'arrière-plan fixe"
+
+#: classes/class-twentytwenty-customize.php:225
+msgid "Show search in header"
+msgstr "Afficher la recherche dans l’en-tête"
+
+#: 404.php:17
+msgid "Page Not Found"
+msgstr "Page non trouvée"
+
+#: classes/class-twentytwenty-walker-page.php:134 inc/template-tags.php:545
+msgid "Show sub menu"
+msgstr "Afficher sous-menu"
+
+#: footer.php:33
+msgid "Powered by WordPress"
+msgstr "Propulsé par WordPress"
+
+#. Template Name of the theme
+msgid "Full Width Template"
+msgstr "Modèle pleine largeur"
+
+#: template-parts/navigation.php:25
+msgid "Post"
+msgstr "Article"
+
+#: classes/class-twentytwenty-customize.php:246
+msgid "On archive pages, posts show:"
+msgstr "Sur les pages d'archive, les articles affichent :"
+
+#: classes/class-twentytwenty-customize.php:285
+msgid "Creates a parallax effect when the visitor scrolls."
+msgstr "Crée un effet de parallaxe lorsque le visiteur défile."
+
+#: classes/class-twentytwenty-customize.php:101
+msgid "Header &amp; Footer Background Color"
+msgstr "Couleur d’arrière-plan de l’en-tête et du pied de page"
+
+#: classes/class-twentytwenty-customize.php:82
+msgid "Scales the logo to half its uploaded size, making it sharp on high-res screens."
+msgstr "Redimensionne le logo à la moitié de sa taille de téléversement afin de le rendre net sur les écrans haute résolution."
+
 #. Author of the theme
 msgid "the WordPress team"
 msgstr "L'équipe WordPress"
@@ -91,3 +408,7 @@ msgstr "L'équipe WordPress"
 #: footer.php:32
 msgid "https://wordpress.org/"
 msgstr "https://fr-ca.wordpress.org/"
+
+#. Theme URI of the theme
+msgid "https://wordpress.org/themes/twentytwenty/"
+msgstr "https://fr-ca.wordpress.org/themes/twentytwenty/"

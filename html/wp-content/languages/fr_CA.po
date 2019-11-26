@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 5.3.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2019-11-12 15:43:36+0000\n"
+"PO-Revision-Date: 2019-11-18 20:41:21+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1002,7 +1002,7 @@ msgstr "Me le rappeler ultérieurement"
 
 #: wp-login.php:682
 msgid "The email is correct"
-msgstr "Lecourriel est correct"
+msgstr "L'adresse courriel est correcte"
 
 #: wp-login.php:670
 msgid "This email may be different from your personal email address."
