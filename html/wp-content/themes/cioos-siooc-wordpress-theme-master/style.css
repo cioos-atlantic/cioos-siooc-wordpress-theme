@@ -42,22 +42,24 @@ Text Domain: CIOOS
 	padding:10px;
 }
 #header .menu > li.current-menu-item > a span{
-	color: #021F30;
+	color: #ffc857;
 	font-weight: bold;
 }
+#header .menu > li.current-menu-item > a :hover,
+#header .menu > li.current-menu-item > a :active,
+#header .menu > li.current-menu-item > a :focus{
+	color: #b9d6f2!important;
 
-#header .menu > li.current-menu-item > a :hover {
-    color: #bebebe!important;
-    text-decoration: none;
+	
 }
 
 #header .menu > li > a span:hover{
-	color: grey!important;
-	text-decoration: none;
+	color: #006e90!important;
+	text-decoration: none!important;
 }
 
 #header .menu > li.current-menu-item > a span:after{
-    background: #bebebe;
+    background: #b9d6f2;
 	  width: 100%;
 
 }
@@ -67,13 +69,17 @@ Text Domain: CIOOS
     display: block;
     width: 0;
     height: 2px;
-    background: grey;
+    background: #006e90;
     transition: width .5s;
 }
 
 
 #header .menu > li > a span:hover::after {
     width: 100%;
+}
+
+#header .header-links > ul > li a {
+    text-decoration: none !important;
 }
 
 /***About page***/
@@ -158,3 +164,6 @@ Text Domain: CIOOS
 	margin: 0;
 }
 
+#mega-menu-wrap-pre_header_menu #mega-menu-pre_header_menu > li.mega-menu-item > a.mega-menu-link:hover {
+	background:transparent !important;
+}
