@@ -274,3 +274,10 @@ input[type=checkbox]:checked + label:before { letter-spacing: 5px; } /* allow sp
 #mega-menu-wrap-pre_header_menu #mega-menu-pre_header_menu > li.mega-menu-item > a.mega-menu-link:hover {
 	background:transparent !important;
 }
+
+.mec-event-date-carousel {
+    background: #006e90 !important;
+}
+.event-carousel-type1-head .mec-event-date-carousel::after {
+    background: #04475c !important;
+}
