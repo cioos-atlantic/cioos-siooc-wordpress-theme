@@ -51,9 +51,6 @@ function CKANServer()
     
     // result per paging  
     this.resultPageSize = 20;
-
-    // size of the first call ( smaller let the total of dataset be known quickly)
-    this.initialPageSize = 5;
     
     // rapid paging of data until x dataset receive then change for update before paging 
     this.slowDownPagingTreshold = 300;
@@ -221,7 +218,7 @@ function CKANServer()
         // will there be any other processing required?
         let ret = [];
         variable['eovs'].forEach( function(element) {
-            ret.push(element);
+            ret.push("eov:" + "\"" + element + "\"");
             }
         )
         return ret;
@@ -266,8 +263,6 @@ function CKANServer()
         let ret_url =  this.url;
         let query_elems = [];
         let filtered_query_elems = [];
-        let eovs_query = [];
-
         if (this.usejsonp == true)
         {
             // add the package search
@@ -302,7 +297,7 @@ function CKANServer()
             {
                 if ( this.support_eov )
                 {
-                    eovs_query = eovs_query.concat(this.getVariableEOVFilters(varData));
+                    filtered_query_elems = filtered_query_elems.concat(this.getVariableEOVFilters(varData));
                 }
                 else
                 {
@@ -311,9 +306,6 @@ function CKANServer()
             }
             ++v;
         }
-        if(eovs_query.length)
-            filtered_query_elems.push('eov:(' + eovs_query.join(' OR ') + ')');
-
         if ( this.support_time )
         {
             filtered_query_elems = filtered_query_elems.concat(this.getURLParamForTimeFilter());
@@ -324,9 +316,9 @@ function CKANServer()
         }
         // generate q and fq url parameter
         let hasquery = false;
-        if ( query_elems.length )
+        if ( query_elems.length > 0 )
         {
-            ret_url += 'q=text:("' + query_elems.join( '" OR "' ) + '")';
+            ret_url += "q=" + query_elems.join( ' +' );
             hasquery = true;
         }
         if ( filtered_query_elems.length > 0)
@@ -421,7 +413,7 @@ function CKANServer()
     {
         // call proxy with url and variable
         url = this.getURLPaginated(0, 5);
-        jQuery.getJSON( url, afficheCKANExtent );
+        $.getJSON( url, afficheCKANExtent );
         //$.getJSON( "https://test-catalogue.ogsl.ca/api/3/action/package_search?ext_bbox=-104,17,-18,63&q=" + document.getElementById('searchbox').value, afficheCKANExtent );
     };
 
@@ -1075,7 +1067,7 @@ function addAndDisplaydataset(data)
             // request first page of dataset
             if ( ckan_server.usejsonp)
             {
-                jQuery.ajax({
+                $.ajax({
                     url: url_ckan,
                     dataType: "text",
                     success: function( data )
@@ -1089,7 +1081,7 @@ function addAndDisplaydataset(data)
             }
             else
             {
-                jQuery.getJSON( url_ckan, addAndDisplaydataset );
+                $.getJSON( url_ckan, addAndDisplaydataset );
             }
         }
         else
@@ -1131,9 +1123,9 @@ function searchAndDisplayDataset(data)
     
     // if result count is bigger than the rows return, call add dataset 
     var totaldataset =  parseInt(data["result"]["count"]);
-    if ( totaldataset > ckan_server.initialPageSize )
+    if ( totaldataset > ckan_server.resultPageSize )
     {
-        ckan_server.lastPagedDataIndex = ckan_server.initialPageSize;
+        ckan_server.lastPagedDataIndex = 5;
         displayTotalSearchDetails( totaldataset, ckan_server.lastPagedDataIndex );
         // until the weird jquery jsonp bug is corrected, do it by hand!
         let url_ckan = ckan_server.getURLPaginated( ckan_server.lastPagedDataIndex, ckan_server.resultPageSize);
@@ -1141,7 +1133,7 @@ function searchAndDisplayDataset(data)
         // request first page of dataset
         if ( ckan_server.usejsonp)
         {
-            jQuery.ajax({
+            $.ajax({
                 url: url_ckan,
                 dataType: "text",
                 success: function( data )
@@ -1155,7 +1147,7 @@ function searchAndDisplayDataset(data)
         }
         else
         {
-            jQuery.getJSON( url_ckan, addAndDisplaydataset );
+            $.getJSON( url_ckan, addAndDisplaydataset );
         }
     }
     else
@@ -1205,7 +1197,7 @@ function checkCKANData()
         if ( ckan_server.usejsonp)
         {
             // add header with basic auth if required
-            jQuery.ajax({
+            $.ajax({
                 url: url_ckan,
                 dataType: "text",
                 headers: auth_header,
@@ -1221,7 +1213,7 @@ function checkCKANData()
         }
         else
         {
-            jQuery.ajax({
+            $.ajax({
                 url: url_ckan,
                 dataType: "json",
                 headers: auth_header,
@@ -1248,7 +1240,7 @@ function updateDatasetDetails( datasets )
     // update and open panel 
     let itemid = '#' + element['id'] + '_collapse';
     document.getElementById(element['id'] + '_collapse').innerHTML = generateCompleteDetailsPanel(element);
-    jQuery(itemid).collapse("show");
+    $(itemid).collapse("show");
 }
 
 function updateDatasetDetailsFromCache( datasetid )
@@ -1259,7 +1251,7 @@ function updateDatasetDetailsFromCache( datasetid )
     if (document.getElementById(element['id'] + '_collapse')) {
         document.getElementById(element['id'] + '_collapse').innerHTML = generateCompleteDetailsPanel(element);
     }
-    jQuery(itemid).collapse("show");
+    $(itemid).collapse("show");
 }
 
 function showDatasetDetailDescription( datasetid , goto_description = true, select_point = true, center_point = true)
@@ -1272,18 +1264,18 @@ function showDatasetDetailDescription( datasetid , goto_description = true, sele
  */
 {
     // collapse other detail panels
-    jQuery('#dataset_desc').find('.collapse').each(function() {
-        if (jQuery(this).attr('id') != datasetid) {
-            jQuery(this).collapse('hide');
+    $('#dataset_desc').find('.collapse').each(function() {
+        if ($(this).attr('id') != datasetid) {
+            $(this).collapse('hide');
         }
     });
     // load details panel
     callDatasetDetailDescription(datasetid);
     // scroll up to this panel
     if (goto_description) {
-        jQuery("#"+datasetid).on("shown.bs.collapse", function() {
-            let topPos = jQuery('#dataset_desc').scrollTop() + jQuery("#"+datasetid).position().top;
-            jQuery('#dataset_desc').animate({scrollTop:topPos}, 500);
+        $("#"+datasetid).on("shown.bs.collapse", function() {
+            let topPos = $('#dataset_desc').scrollTop() + $("#"+datasetid).position().top;
+            $('#dataset_desc').animate({scrollTop:topPos}, 500);
         });
     }
     if (select_point) {
@@ -1314,7 +1306,7 @@ function callDatasetDetailDescription( datasetid )
     if ( ckan_server.usejsonp)
     {
         // add header with basic auth if required
-        jQuery.ajax({
+        $.ajax({
             url: url_ckan,
             dataType: "text",
             headers: auth_header,
@@ -1330,7 +1322,7 @@ function callDatasetDetailDescription( datasetid )
     }
     else
     {
-        jQuery.ajax({
+        $.ajax({
             url: url_ckan,
             dataType: "json",
             headers: auth_header,
