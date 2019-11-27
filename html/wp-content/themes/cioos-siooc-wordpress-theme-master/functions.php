@@ -13,8 +13,6 @@
     function assetmap_scripts() {
         if( is_front_page() ){ 
         // CSS
-          wp_deregister_script('jquery');
-          wp_register_script('jquery', "//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js", false, null);
           wp_enqueue_style( 'asset-style', get_stylesheet_directory_uri().'/asset/css/asset.css' );
           wp_enqueue_style( 'map-style', get_stylesheet_directory_uri().'/asset/css/ol.css' );
 
