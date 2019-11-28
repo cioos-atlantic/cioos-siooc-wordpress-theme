@@ -237,7 +237,10 @@ function CKANServer()
         var ret_url =  this.url;
         if (this.ckan_proxy_name !== undefined)
         {
-            ret_url += this.ckan_proxy_name + '/';
+            //ret_url += this.ckan_proxy_name + '/';
+            ret_url +='/';
+        } else {
+            ret_url +='/';
         }
         if (this.usejsonp)
         {
@@ -276,7 +279,10 @@ function CKANServer()
         else if (this.ckan_proxy_name !== undefined)
         {
             // since no jsonp and name of proxy define then add proxy info to url
-            ret_url += this.ckan_proxy_name + '/';
+            // ret_url += this.ckan_proxy_name + '/';
+            ret_url +=  '/';
+        }else{
+            ret_url +=  '/';
         }
 
         ret_url += 'package_search?';
@@ -968,7 +974,7 @@ function generateDetailsPanel( dataset ) //, language, dataset_id, title, descri
     // check if geomeetry details available for this dataset
     if ( spatial && spatial['type'] === 'Polygon')
     {
-        ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/map-marker.png"></a>';
+        ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/map-marker.svg"></a>';
     }
     
     const title = ckan_server.support_multilanguage ? i18nStrings.getTranslation(dataset['title_translated']) : dataset['title'];
