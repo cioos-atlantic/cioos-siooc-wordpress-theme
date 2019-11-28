@@ -276,7 +276,7 @@ function CKANServer()
         else if (this.ckan_proxy_name !== undefined)
         {
             // since no jsonp and name of proxy define then add proxy info to url
-            ret_url += '/';
+            ret_url += this.ckan_proxy_name + '/';
         }
 
         ret_url += 'package_search?';
@@ -544,8 +544,17 @@ function AddDisplayCKANClusterIcon( data )
        {
             addGeometryToCache(r['id'], objspatial);
            // Create geometry feature as polygone (rect extent)
-           var feature = new ol.Feature({
-            geometry: new ol.geom.Point(getCenterOfCoordinates(objspatial['coordinates'][0]))
+           let centerPoint;
+
+           if(objspatial['type']==='Point') {
+               centerPoint = objspatial['coordinates'];
+            }
+           else {
+               centerPoint = getCenterOfCoordinates(objspatial['coordinates'][0]);
+            }
+
+            feature = new ol.Feature({
+                geometry: new ol.geom.Point(centerPoint)
             });
             feature.setId(r['id']);
             feature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
@@ -564,23 +573,24 @@ function AddDisplayCKANClusterIcon( data )
    // update map
 }
 
-function datasetHasSpatial(data)
+function getDatasetSpatialData(data)
+{   let spatial;
+    if (data["spatial"])
 {
-    if (data["spatial"] != undefined && data["spatial"] !== "")
-    {
-       return true;
+        spatial = data["spatial"];
     }
-    else if ( data['extras'] != undefined)
+    else if ( data['extras'] )
     {
         // slgo + extension spatial schema
         data['extras'].forEach( function(entry)
         {
             if ( entry['key'] == 'spatial')
             {
-                return true;
+                spatial = entry['value'];
             }
         });
     }
+    if(spatial) return JSON.parse(spatial);
     return false;
 }
 
@@ -953,22 +963,17 @@ function generateCompleteDetailsPanel( dataset )
 }
 
 function generateDetailsPanel( dataset ) //, language, dataset_id, title, description, provider, link_url, prov_url)
-{
+{   let spatial = getDatasetSpatialData(dataset);
     let ret_html = "<div id='" + dataset["id"] + "'class='asset_details'>";
     // check if geomeetry details available for this dataset
-    if ( datasetHasSpatial(dataset) )
+    if ( spatial && spatial['type'] === 'Polygon')
     {
         ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/map-marker.png"></a>';
     }
-    ret_html += '<h3 class="details_label">' + '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + i18nStrings.getUIString("dataset_title") + '</a></h3>'; 
-    if ( ckan_server.support_multilanguage)
-    {
-        ret_html += "<p class='details_text bottom-0'>" + i18nStrings.getTranslation(dataset['title_translated']) + "</p>";
-    }
-    else
-    {
-        ret_html += "<p class='details_text bottom-0'>" + dataset['title'] + "</p>";
-    }
+    
+    const title = ckan_server.support_multilanguage ? i18nStrings.getTranslation(dataset['title_translated']) : dataset['title'];
+    ret_html += '<h3 class="details_label">' + '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + title + '</a></h3>'; 
+    
     // ret_html += '<div class="asset-actions">';
     // ret_html += '<span class="details_label">Information:</span>';
     // ret_html += '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + i18nStrings.getUIString("details") + '</a>';
