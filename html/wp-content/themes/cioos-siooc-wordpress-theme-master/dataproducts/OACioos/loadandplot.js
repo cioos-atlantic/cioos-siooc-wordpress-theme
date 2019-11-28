@@ -1,4 +1,3 @@
-
 // start date of plot. Last 7 days.
 const today = new Date(new Date().setDate(new Date().getDate()));
 const st = new Date(today.setDate(today.getDate() - 7));
@@ -6,7 +5,7 @@ const st = new Date(today.setDate(today.getDate() - 7));
 async function loadDataandPlot() {
 
     const berkData = await d3.json(
-        "https://catalogue.hakai.org/erddap/tabledap/HakaiBaynesSoundBoL5min.json?time%2Clatitude%2Clongitude%2CpCO2_uatm_Avg%2CTSG_T_Avg%2CTSG_S_Avg%2CAlkS_Avg%2CcalcOmega_Avg%2CcalcpH_Avg&time%3E=" +
+        "https://catalogue.hakai.org/erddap/tabledap/HakaiBaynesSoundBoL5min.json?time%2Clatitude%2Clongitude%2CpCO2_uatm_Avg%2CTSG_T_Avg%2CTSG_S_Avg%2CAlkS_Avg%2CcalcOmegaCalcite_Avg%2CcalcpH_Avg&time%3E=" +
         st.toLocaleDateString("en-GB", {
             year: "numeric"
         }) +
@@ -69,25 +68,29 @@ async function loadDataandPlot() {
         row.mean = result[0]['mean'];
         row.per90 = result[0]['90thper'];
         row.ph10 = result[0]['ph'];
+        row.omega_calc_10p = result[0]['omega_calc_10p'];
         return row;
     })
 
-    console.log(combined[0]);
-
+    console.log(combined[0].calcpH_Avg === null)
     // update with last reading. Color based on thresholds
     d3.select("#temperature")
-        .html(combined[0].TSG_T_Avg.toFixed(2))
-        .style("background", d => {
-            return combined[0].TSG_T_Avg > combined[0].per90 ? "#b9f6ca" : 'rgba(255, 200, 200, 0.5)'
-        });
-
-
+        .html(() => combined[0].TSG_T_Avg !== null ? combined[0].TSG_T_Avg.toFixed(2) : "N/A")
+        .style("background", () =>
+            combined[0].TSG_T_Avg === null ? "red" : combined[0].TSG_T_Avg > combined[0].per90 ? "#b9f6ca" : 'rgba(255, 200, 200, 0.5)'
+        );
 
     d3.select("#pH")
-        .html(combined[0].calcpH_Avg.toFixed(2))
-        .style("background", d => {
-            return combined[0].calcpH_Avg < 7.69 ? "#b9f6ca" : 'rgba(255, 200, 200, 0.5)'
-        });
+        .html(() => combined[0].calcpH_Avg !== null ? combined[0].calcpH_Avg.toFixed(2) : "N/A")
+        .style("background", () =>
+            combined[0].calcpH_Avg === null ? "red" : combined[0].calcpH_Avg < 7.69 ? "#b9f6ca" : 'rgba(255, 200, 200, 0.5)'
+        );
+
+    d3.select("#calciteSat")
+        .html(() => combined[0].calcOmegaCalcite_Avg !== null ? combined[0].calcOmegaCalcite_Avg.toFixed(2) : "N/A")
+        .style("background", () =>
+            combined[0].calcOmegaCalcite_Avg === null ? "red" : combined[0].calcOmegaCalcite_Avg > 1 ? "#b9f6ca" : 'rgba(255, 200, 200, 0.5)'
+        );
 
 
     // time series chart creation
@@ -107,7 +110,7 @@ async function loadDataandPlot() {
         const h_each_plot = (height - 20 - 100) / n;
         const bh_top_chart = h_each_plot * (n - 1) + 100;
         const margin1 = {
-            top: 20,
+            top: 30,
             right: 20,
             bottom: bh_top_chart,
             left: 40
@@ -139,6 +142,126 @@ async function loadDataandPlot() {
             .attr("pointer-events", "none")
             .call(zoom2);
 
+        const tempColors = d3
+            .scaleOrdinal()
+            .domain(["1", "2", "3", "4"])
+            .range(["steelblue", "#fc4e2a", "#e31a1c", "#b10026"]);
+
+        // const series = 
+
+        // temperature legend
+        const legend = svg
+            .append("g")
+            .attr("transform", "translate(0,40)")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data([{
+                    key: "Temperature"
+                },
+                {
+                    key: "Category 1"
+                },
+                {
+                    key: "Category 2"
+                },
+                {
+                    key: "Category 3"
+                }
+            ])
+            .enter()
+            .append("g")
+            .attr("transform", function (d, i) {
+                return "translate(" + (width - 100) + "," + i * 12 + ")";
+            });
+
+        //append legend colour blocks
+        legend
+            .append("rect")
+            .attr("x", 10)
+            .attr("width", 18)
+            .attr("height", 8)
+            .attr("fill", function (d) {
+                return tempColors(d.key);
+            });
+
+        //append legend texts
+        legend
+            .append("text")
+            .attr("x", 35)
+            .attr("y", 4)
+            .attr("dy", "0.32em")
+            .attr("text-anchor", "start")
+            .text(function (d) {
+                return d.key;
+            });
+
+        // if (p[0].calcOmegaCalcite_Avg === 1) {
+        //     return "gray";
+        // } else if (p[0].calcOmegaCalcite_Avg < 0.4) {
+        //     return "red";
+        // } else if (p[0].calcOmegaCalcite_Avg > 1 && p[0].calcOmegaCalcite_Avg < p[0].omega_calc_10p) {
+        //     return "#fee08b"; //yellow
+        // } else if (p[0].calcOmegaCalcite_Avg > p[0].omega_calc_10p) {
+        //     return "#33a02c"; //green
+        // }
+
+        // // Calcite Saturation legend
+
+        const CalSatColors = d3
+            .scaleOrdinal()
+            .domain(["1", "2", "3", "4"])
+            .range(["gray", "#fc4e2a", "#feb24c", "#33a02c"]);
+
+        const legend3 = svg
+            .append("g")
+            .attr("transform", "translate(0,480)")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data([{
+                    key: "= 1"
+                },
+                {
+                    key: "< .4"
+                },
+                {
+                    key: ">1 < 10th percentile"
+                },
+                {
+                    key: "> 10 percentile "
+                }
+            ])
+            .enter()
+            .append("g")
+            .attr("transform", function (d, i) {
+                return "translate(" + (width - 100) + "," + i * 12 + ")";
+            });
+
+        //append legend colour blocks
+        legend3
+            .append("rect")
+            .attr("x", 10)
+            .attr("width", 18)
+            .attr("height", 8)
+            .attr("fill", function (d) {
+                return CalSatColors(d.key);
+            });
+
+        //append legend texts
+        legend3
+            .append("text")
+            .attr("x", 35)
+            .attr("y", 4)
+            .attr("dy", "0.32em")
+            .attr("text-anchor", "start")
+            .text(function (d) {
+                return d.key;
+            });
+
+
         const today = new Date();
         const startExt = new Date();
         const endExt = new Date();
@@ -168,24 +291,26 @@ async function loadDataandPlot() {
 
         const labels = {
             "TSG_T_Avg": "Temperature (°C)",
-            "calcpH_Avg": "Ph"
+            "calcpH_Avg": "pH",
+            "calcOmegaCalcite_Avg": "Calcite Saturation"
         };
 
         vars.forEach((vari, i) => {
-            console.log(labels[vars[i]])
+            // console.log(labels[vars[i]])
             let yside = "y" + i;
             myYs[yside];
             myYs[yside] = d3.scaleLinear().range([chart_height, 0]);
 
             const yAxis = g =>
                 g
-                .call(d3.axisLeft(myYs["y" + i]))
+                .call(d3.axisLeft(myYs["y" + i]).ticks(6))
                 .call(g => g.select(".domain").remove())
                 .call(g =>
                     g
                     .select(".tick:last-of-type text")
                     .clone()
                     .attr("x", 3)
+                    // .attr("y", 10)
                     .attr("text-anchor", "start")
                     .attr("font-weight", "bold")
                     .text(labels[vars[i]])
@@ -225,18 +350,20 @@ async function loadDataandPlot() {
                 })
             );
 
-            let ymin = d3.min(combined, function(d) {
+            // add spacing to y extent
+            let ymin = d3.min(combined, function (d) {
                 return d[vari];
-              });
-              let ymax = d3.max(combined, function(d) {
+            });
+            let ymax = d3.max(combined, function (d) {
                 return d[vari];
-              });
-           
-          
-              myYs["y" + i].domain([
+            });
+
+
+            myYs["y" + i].domain([
                 ymin - (ymax - ymin) * 0.1,
-                ymax + (ymax - ymin) * 0.2
-              ]);
+                ymax + (ymax - ymin) * 0.1
+            ]);
+            // console.log("y", ymax + (ymax - ymin) * 0.1);
 
             y2.domain(myYs["y" + i].domain());
 
@@ -251,7 +378,7 @@ async function loadDataandPlot() {
                     .x(d => x(new Date(d.time)))
                     .y(d => myYs["y" + i](d.TSG_T_Avg));
 
-                var gradientColor = p => {
+                let gradientColor = p => {
                     if (
                         p[0].TSG_T_Avg > p[0].per90 &&
                         p[0].TSG_T_Avg < (p[0].per90 - p[0].mean) * 2 + p[0].mean
@@ -267,8 +394,6 @@ async function loadDataandPlot() {
                     }
                 };
 
-     
-
                 myVariables[variableName]
                     .selectAll('path')
                     .data(newdata)
@@ -279,23 +404,24 @@ async function loadDataandPlot() {
                     .attr("clip-path", "url(#clip)")
                     // .style("opacity", d => makeOpacity(d))
                     .attr('stroke', p => gradientColor(p)).style("stroke-width", "1.5px");
+
             } else if (vari === "calcpH_Avg") {
                 myLines[lineName] = d3
                     .line()
-                    .defined(d => !(d.TSG_T_Avg < 7)) // arbitratry value to filter out drop outs
+                    .defined(d => !(d.calcpH_Avg < 7)) // arbitratry value to filter out drop outs
                     .x(d => x(new Date(d.time)))
                     .y(d => myYs["y" + i](d.calcpH_Avg));
 
-                var gradientColor = p => {
+                let gradientColor = p => {
                     if (p[0].calcpH_Avg > 7.69 && p[0].calcpH_Avg < p[0].ph10) {
-                        return "yellow";
+                        return "#fee08b"; //yellow
                     } else if (p[0].calcpH_Avg < 7.69) {
                         return "red";
                     } else if (p[0].calcpH_Avg > p[0].ph10) {
-                        return "green";
+                        return "steelblue";
                     }
                 };
-         
+
 
                 myVariables[variableName]
                     .selectAll('path')
@@ -307,19 +433,41 @@ async function loadDataandPlot() {
                     .attr("clip-path", "url(#clip)")
                     // .style("opacity", d => makeOpacity(d))
                     .attr('stroke', p => gradientColor(p)).style("stroke-width", "1.5px");
-            } else {
+
+            } else if (vari === "calcOmegaCalcite_Avg") {
+                myLines[lineName] = d3
+                    .line()
+                    .defined(d => !(d.calcOmegaCalcite_Avg > 2)) // arbitratry value to filter out drop outs
+                    .x(d => x(new Date(d.time)))
+                    .y(d => myYs["y" + i](d.calcOmegaCalcite_Avg));
+
+                // ["gray", "#fc4e2a", "#fee08b", "#33a02c"]
+                let gradientColor = p => {
+                    if (p[0].calcOmegaCalcite_Avg === 1) {
+                        return "gray";
+                    } else if (p[0].calcOmegaCalcite_Avg < 0.4) {
+                        return "#fc4e2a";
+                    } else if (p[0].calcOmegaCalcite_Avg > 1 && p[0].calcOmegaCalcite_Avg < p[0].omega_calc_10p) {
+                        return "#feb24c"; //yellow
+                    } else if (p[0].calcOmegaCalcite_Avg > p[0].omega_calc_10p) {
+                        return "#33a02c"; //green
+                    }
+                };
+
+
                 myVariables[variableName]
-                    .append("path")
-                    .datum(combined)
+                    .selectAll('path')
+                    .data(newdata)
+                    .enter()
+                    .append('path')
                     .attr("class", "line" + i)
-                    .attr("d", myLines["line" + i])
-                    .attr("fill", "none")
+                    .attr('d', p => myLines[lineName](p))
                     .attr("clip-path", "url(#clip)")
-                    .style("stroke", colour(i))
-                    .style("stroke-width", "1.5px");
+                    // .style("opacity", d => makeOpacity(d))
+                    .attr('stroke', p => gradientColor(p)).style("stroke-width", "1.5px");
             }
-         
-            // hide ticks for most plots
+
+            // hide x ticks for most plots
             i === vars.length - 1 ?
                 myVariables[variableName]
                 .append("g")
@@ -365,10 +513,12 @@ async function loadDataandPlot() {
         // context line
         const line2 = d3
             .line()
+            .defined(d => !(d.calcOmegaCalcite_Avg > 2 || d.calcOmegaCalcite_Avg < .2))
             .x(function (d) {
                 return x(d3.isoParse(d.time));
             })
             .y(function (d) {
+                // console.log(vars.slice(-1)[0])
                 return y2(d[vars.slice(-1)[0]]);
             });
 
@@ -436,8 +586,11 @@ async function loadDataandPlot() {
         return svg.node();
     }
 
-    
-    chart2(["TSG_T_Avg", "calcpH_Avg"]);
+
+    chart2(["TSG_T_Avg", "calcpH_Avg", "calcOmegaCalcite_Avg"]);
+    leafletmap()
+
+    // topomap()
 }
 
 loadDataandPlot();
