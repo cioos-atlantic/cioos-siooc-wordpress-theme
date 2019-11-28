@@ -45,7 +45,7 @@
 
     function addheaders() {        
         
-        header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' *.googleapis.com *.hakai.org *.cioos.org *.cioos.ca *.canada.ca d3js.org *.cloudflare.com *.gstatic.com unpkg.com *.bootstrapcdn.com *.rawgit.com *.polyfill.io *.gebco.net *.mailchimp.com cdn-images.mailchimp.com *.dropboxusercontent.com/s/pxxqg90g7zxtt8n/q67JXA0dJ1dt.js?ver=1573772173 *.gravatar.com data: ;");
+        header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' *.googleapis.com *.wikimedia.org *.hakai.org *.cioos.org *.cioos.ca *.canada.ca d3js.org *.cloudflare.com *.gstatic.com unpkg.com *.bootstrapcdn.com *.rawgit.com *.polyfill.io *.gebco.net *.mailchimp.com cdn-images.mailchimp.com *.dropboxusercontent.com/s/pxxqg90g7zxtt8n/q67JXA0dJ1dt.js *.gravatar.com *.arcgis.com data: ;");
         header("Access-Control-Allow-Origin: *");
         header("X-Frame-Options: SAMEORIGIN" );
         header("X-XSS-Protection: 1; mode=block");
