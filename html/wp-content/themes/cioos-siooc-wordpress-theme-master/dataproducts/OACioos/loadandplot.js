@@ -22,7 +22,7 @@ async function loadDataandPlot() {
     );
 
     const climatology =
-        await d3.csv("Data/ChromeIsland_climatological_SST_90th_10th_percentile@4.csv",
+        await d3.csv("/wp-content/themes/cioos-siooc-wordpress-theme-master/dataproducts/OACioos/Data/ChromeIsland_climatological_SST_90th_10th_percentile@4.csv",
             d3.autoType);
 
     // get date from DOY
