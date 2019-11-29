@@ -8,6 +8,7 @@ function CKANServer()
     this.organization_url= '';
     this.varriables = [];
     this.datasetDetails = {};
+    this.wordpresspath = '/wp-content/themes/cioos-siooc-wordpress-theme-master/asset';
 
     // CKAN inistance name for the proxy
     this.ckan_proxy_name = undefined;
@@ -974,7 +975,7 @@ function generateDetailsPanel( dataset ) //, language, dataset_id, title, descri
     // check if geomeetry details available for this dataset
     if ( spatial && spatial['type'] === 'Polygon')
     {
-        ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/images/map-marker.svg"></a>';
+        ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="'+ wordpresspath +'images/map-marker.svg"></a>';
     }
     
     const title = ckan_server.support_multilanguage ? i18nStrings.getTranslation(dataset['title_translated']) : dataset['title'];
