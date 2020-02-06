@@ -2,3 +2,11 @@ html/wp-config\.php
 html/wp-content/uploads/
 
 html/wp-content/themes/cioos-siooc-wordpress-theme-master/asset/backup/
+
+html/wp-content/themes/cioos-siooc-wordpress-theme-master/node_modules/
+
+html/wp-content/themes/cioos-siooc-wordpress-theme-master/.eslintrc.js
+
+html/wp-content/themes/cioos-siooc-wordpress-theme-master/package-lock.json
+
+html/wp-content/themes/cioos-siooc-wordpress-theme-master/package.json
