@@ -169,7 +169,8 @@ function changeCurrentLanguage( newLanguage )
 function changeCurrentCKAN( ckan_instance )
 {
 
-    ckan_server.ckan_proxy_name = ckan_instance.substring(0, ckan_instance.length - 24)
+    // ckan_server.ckan_proxy_name = ckan_instance.substring(0, ckan_instance.length - 5)
+    ckan_server.ckan_proxy_name = ''
     // reload ckan option
     jQuery.ajax({
         url: wordpresspath + "/asset/resources/" + ckan_instance,
