@@ -257,7 +257,7 @@ function CKANServer()
     this.getDatasetShowURL = function( id )
     {
         var ret_url =  this.url;
-        console.log(this.url)
+        console.log(ret_url)
         if (this.ckan_proxy_name !== undefined)
         {
             ret_url += this.ckan_proxy_name + 'zabbazabba/';
@@ -273,6 +273,7 @@ function CKANServer()
         {
             ret_url += '&rererererecallback=jsonpcallback'
         }
+        console.log(ret_url);
         return ret_url
     }
 
