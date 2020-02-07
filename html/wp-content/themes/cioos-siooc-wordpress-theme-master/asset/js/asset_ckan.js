@@ -11,7 +11,7 @@ function CKANServer()
     this.wordpresspath = '/wp-content/themes/cioos-siooc-wordpress-theme-master';
 
     // CKAN inistance name for the proxy
-    this.ckan_proxy_name = "";
+    this.ckan_proxy_name = "proxy var";
 
     // current language to display dataset and UI
     this.currentLanguage = "fr";
@@ -300,7 +300,7 @@ function CKANServer()
         if (this.usejsonp == true)
         {
             // add the package search
-            ret_url += '3/action/';
+            ret_url += '3/action/fart';
         }
         else if (this.ckan_proxy_name !== undefined)
         {
