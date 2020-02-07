@@ -6,7 +6,7 @@
     "access_url":"https://pac-dev1.cioos.org/ckan/api/3/action/",
     "add_language_url": true,
     "support_multilanguage": true,
-    "usejsonp": true,
+    "usejsonp": false,
     "initial_page_size": 40,
     "page_size": 40,
     "restrict_json_return": true,
