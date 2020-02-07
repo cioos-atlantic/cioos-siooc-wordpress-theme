@@ -22,7 +22,7 @@ get_header(); ?>
   </div>
 
 
-<script>jQuery(document).ready(function( $ ) {changeCurrentCKAN("cioos_pacific_ckan.json")});</script>
+<script></script>
 <?php while ( have_posts() ) : the_post(); ?>
 <?php get_template_part( 'content', 'page' ); ?>
 <?php endwhile; wp_reset_query(); ?>
