@@ -265,7 +265,7 @@ function CKANServer()
         else
         {
             console.log('undefined',ckan_proxy_name)
-            ret_url = '/';
+            ret_url = '';
         }
         if (this.usejsonp)
         {
