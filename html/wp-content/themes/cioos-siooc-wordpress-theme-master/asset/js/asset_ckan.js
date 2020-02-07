@@ -260,10 +260,9 @@ function CKANServer()
         console.log(ret_url)
         if (this.ckan_proxy_name !== undefined)
         {
-            console.log('undefined',ckan_proxy_name)
             ret_url += this.ckan_proxy_name + '/';
         }
-        else if (this.ckan_proxy_name == undefined)
+        else
         {
             console.log('undefined',ckan_proxy_name)
             ret_url '/';
