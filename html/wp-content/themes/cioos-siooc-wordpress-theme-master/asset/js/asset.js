@@ -1,6 +1,6 @@
 var lg = null;
 var ui_str = null;
-var ckan_server = "pacific";
+var ckan_server = null;
 var i18nStrings = null;
 var filters = null;
 var mapconfig = null;
@@ -301,7 +301,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    $.ajax({
+    jQuery.ajax({
         url: "/asset/resources/locations.json",
         dataType: 'json',
         async: false,
