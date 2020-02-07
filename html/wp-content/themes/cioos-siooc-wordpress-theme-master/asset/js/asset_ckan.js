@@ -11,7 +11,7 @@ function CKANServer()
     this.wordpresspath = '/wp-content/themes/cioos-siooc-wordpress-theme-master';
 
     // CKAN inistance name for the proxy
-    this.ckan_proxy_name = "proxy var";
+    this.ckan_proxy_name = undefined;
 
     // current language to display dataset and UI
     this.currentLanguage = "fr";
