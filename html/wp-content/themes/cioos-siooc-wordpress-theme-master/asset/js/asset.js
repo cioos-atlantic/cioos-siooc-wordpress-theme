@@ -1,6 +1,6 @@
 var lg = null;
 var ui_str = null;
-var ckan_server = null;
+var ckan_server = 'pacific';
 var i18nStrings = null;
 var filters = null;
 var mapconfig = null;

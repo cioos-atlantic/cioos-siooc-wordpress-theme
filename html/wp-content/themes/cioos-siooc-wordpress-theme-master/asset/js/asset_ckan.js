@@ -8,6 +8,7 @@ function CKANServer()
     this.organization_url= '';
     this.varriables = [];
     this.datasetDetails = {};
+    this.wordpresspath = '/wp-content/themes/cioos-siooc-wordpress-theme-master';
 
     // CKAN inistance name for the proxy
     this.ckan_proxy_name = undefined;
@@ -888,7 +889,7 @@ function getVariableForDatataset(dataset)
             let thumb =  ckan_server.getVariableThumbnail(entry);
             if ( thumb !== undefined )
             {
-                ret_html += "<img src='" + "/asset/images/thumbnails/" + thumb + "'></img>";
+                ret_html += "<img src='" + wordpresspath + "/asset/images/thumbnails/" + thumb + "'></img>";
             }
         });
     }
@@ -904,7 +905,7 @@ function getVariableForDatataset(dataset)
                 let thumb =  ckan_server.getVariableThumbnail(entry);
                 if ( thumb !== undefined )
                 {
-                    ret_html += "<img src='" + "/asset/images/thumbnails/" + thumb + "'></img>";
+                    ret_html += "<img src='"  + wordpresspath +  "/asset/images/thumbnails/" + thumb + "'></img>";
                 }
             });
         }
@@ -917,7 +918,7 @@ function getVariableForDatataset(dataset)
                 let thumb =  ckan_server.getVariableThumbnail(entry["name"]);
                 if ( thumb !== undefined )
                 {
-                    ret_html += "<img src='" + "/asset/images/thumbnails/" + thumb + "'></img>";
+                    ret_html += "<img src='"  + wordpresspath +  "/asset/images/thumbnails/" + thumb + "'></img>";
                 }
             });
         }
