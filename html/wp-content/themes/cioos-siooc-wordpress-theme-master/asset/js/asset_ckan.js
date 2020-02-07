@@ -259,12 +259,14 @@ function CKANServer()
         var ret_url =  this.url;
         console.log(ret_url)
         if (this.ckan_proxy_name !== undefined)
+            console.log('undefined',ckan_proxy_name)
         {
             ret_url += this.ckan_proxy_name + 'zabbazabba/';
         }
         if (this.usejsonp)
         {
             // add the package search
+            console.log('ret url',ckan_proxy_name)
             ret_url += '3/action/kakaka';
         }
         ret_url += 'package_show?';
