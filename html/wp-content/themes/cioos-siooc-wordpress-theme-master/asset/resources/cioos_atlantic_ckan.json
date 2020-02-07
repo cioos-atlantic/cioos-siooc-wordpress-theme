@@ -6,7 +6,7 @@
     "access_url":"https://dev.cioosatlantic.ca/ckan/api/",
     "add_language_url": true,
     "support_multilanguage": true,
-    "usejsonp": true,
+    "usejsonp": false,
     "page_size": 40,
     "restrict_json_return": false,
     "support_time": false,
