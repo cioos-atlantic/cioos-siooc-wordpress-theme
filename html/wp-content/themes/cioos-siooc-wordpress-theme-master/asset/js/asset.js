@@ -265,7 +265,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    var initMapFromConfig =''
+    function  initMapFromConfig ()
     jQuery.ajax({
         url: wordpresspath + "/asset/resources/map.json",
         dataType: 'json',
