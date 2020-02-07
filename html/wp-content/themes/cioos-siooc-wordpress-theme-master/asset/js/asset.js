@@ -4,7 +4,7 @@ var ckan_server = 'pacific';
 var i18nStrings = null;
 var filters = null;
 var mapconfig = null;
-var wordpresspath = "/wp-content/themes/cioos-siooc-wordpress-theme-master/"
+var wordpresspath = "/wp-content/themes/cioos-siooc-wordpress-theme-master"
 
 function displayDatasetSummary( )
 {
