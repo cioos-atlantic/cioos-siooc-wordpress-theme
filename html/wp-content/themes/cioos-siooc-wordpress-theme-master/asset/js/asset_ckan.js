@@ -257,20 +257,13 @@ function CKANServer()
     this.getDatasetShowURL = function( id )
     {
         var ret_url =  this.url;
-        console.log(ret_url)
         if (this.ckan_proxy_name !== undefined)
         {
             ret_url += this.ckan_proxy_name + '/';
         }
-        else
-        {
-            console.log('undefined',ckan_proxy_name)
-            ret_url = '/';
-        }
         if (this.usejsonp)
         {
             // add the package search
-            console.log('ret url',ckan_proxy_name)
             ret_url += '3/action/';
         }
         ret_url += 'package_show?';
@@ -279,7 +272,6 @@ function CKANServer()
         {
             ret_url += '&callback=jsonpcallback'
         }
-        console.log(ret_url);
         return ret_url
     }
 
@@ -312,8 +304,6 @@ function CKANServer()
         {
             // since no jsonp and name of proxy define then add proxy info to url
             ret_url += this.ckan_proxy_name + '/';
-        } else {
-            ret_url = '/';
         }
 
         ret_url += 'package_search?';
@@ -822,23 +812,9 @@ function getStyleFromClusterConfig( config, nbrElem)
     ret['circle_radius'] = config['minimum']['circle_radius'] * minweight + config['maximum']['circle_radius'] * maxweight;
     return ret;
 }
-// if newCoords exists in existingCoordsArray, return a coordinate that is slightly different
-function moveCoordsSlightlyIfDuplicate(newCoords, existingCoordsArray) {
-                    
-    const [lat, long] = newCoords;
-
-    const numberMatchingCoords = existingCoordsArray.filter(function (coord) { return coord[0] == lat && coord[1] == long; }).length
-    
-    if (numberMatchingCoords > 0) {
-        const movedCoords = [lat, long + numberMatchingCoords * 0.001]
-        return movedCoords;
-    }
-    return newCoords;
-}
 
 function displayCKANClusterIcon( data )
 {
-    const allCoords = [];
     // for each, look for the spatial extra
     let i = 0;
     let results = data['result']['results'];
@@ -869,12 +845,9 @@ function displayCKANClusterIcon( data )
             addGeometryToCache(r['id'], objspatial);
             // Create geometry feature as polygone (rect extent)
             //new Feature(new Point(coordinates));
-            const coordsToAdd = getCentroidOfSpatial(objspatial)
             var pointfeature = new ol.Feature({
-                
-                geometry: new ol.geom.Point(moveCoordsSlightlyIfDuplicate(coordsToAdd, allCoords))
+                geometry: new ol.geom.Point(getCentroidOfSpatial(objspatial))
             });
-            allCoords.push(coordsToAdd)
             pointfeature.setId(r['id']);
             pointfeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
             // set id to link to description panel
