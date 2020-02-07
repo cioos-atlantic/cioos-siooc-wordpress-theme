@@ -300,7 +300,7 @@ function CKANServer()
             // add the package search
             ret_url += '3/action/';
         }
-        if (this.ckan_proxy_name !== undefined)
+        else if (this.ckan_proxy_name !== undefined)
         {
             // since no jsonp and name of proxy define then add proxy info to url
             ret_url += this.ckan_proxy_name + '/';
