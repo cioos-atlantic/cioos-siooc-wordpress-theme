@@ -28,7 +28,7 @@
             wp_enqueue_script( 'i18', get_stylesheet_directory_uri() . '/asset/js/asset_i18n.js', array('jquery'), '', false   );
             wp_enqueue_script( 'assetckan', get_stylesheet_directory_uri() . '/asset/js/asset_ckan.js', array('jquery'), '', false   );
             wp_enqueue_script( 'assetgeneral', get_stylesheet_directory_uri() . '/asset/js/asset.js', array('jquery'), '', false   );
-            wp_enqueue_script( 'assetol', get_stylesheet_directory_uri() . '/asset/js/asset_ol.js', array('jquery'), '', true   );
+            wp_enqueue_script( 'assetol', get_stylesheet_directory_uri() . '/asset/js/asset_ui.js', array('jquery'), '', true   );
         }
         
     }
