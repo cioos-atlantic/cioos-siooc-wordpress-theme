@@ -259,18 +259,18 @@ function CKANServer()
         var ret_url =  this.url;
         if (this.ckan_proxy_name !== undefined)
         {
-            ret_url += this.ckan_proxy_name + '/';
+            ret_url += this.ckan_proxy_name + 'zabbazabba/';
         }
         if (this.usejsonp)
         {
             // add the package search
-            ret_url += '3/action/';
+            ret_url += '3/action/kakaka';
         }
         ret_url += 'package_show?';
         ret_url += 'id=' + id;
         if (this.usejsonp)
         {
-            ret_url += '&callback=jsonpcallback'
+            ret_url += '&rererererecallback=jsonpcallback'
         }
         return ret_url
     }
