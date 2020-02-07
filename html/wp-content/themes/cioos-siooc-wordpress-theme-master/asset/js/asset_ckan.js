@@ -313,7 +313,7 @@ function CKANServer()
             // since no jsonp and name of proxy define then add proxy info to url
             ret_url += this.ckan_proxy_name + '/';
         } else {
-            ret_url = '/';
+            ret_url = '';
         }
 
         ret_url += 'package_search?';
