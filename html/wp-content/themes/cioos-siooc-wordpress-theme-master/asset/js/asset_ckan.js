@@ -266,7 +266,7 @@ function CKANServer()
         {
             console.log('undefined',ckan_proxy_name)
             ret_url '/';
-        }
+        };
         if (this.usejsonp)
         {
             // add the package search
