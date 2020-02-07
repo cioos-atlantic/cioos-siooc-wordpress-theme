@@ -9,7 +9,7 @@
 
 get_header(); ?>
 
-<div class="map-container">
+<div id="asset_map_container" class="map-container">
   <div id="map" class="map" style=""></div>
   <div id="category_panel" class="category-selection"></div>
   <div id="variable_panel" class="variable-selection tab-content"></div>
