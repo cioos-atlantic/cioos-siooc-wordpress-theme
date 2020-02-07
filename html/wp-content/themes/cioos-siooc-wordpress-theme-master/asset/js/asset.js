@@ -4,6 +4,7 @@ var ckan_server = null;
 var i18nStrings = null;
 var filters = null;
 var mapconfig = null;
+var wordpresspath = "/wp-content/themes/cioos-siooc-wordpress-theme-master/"
 
 function displayDatasetSummary( )
 {
@@ -32,7 +33,7 @@ function generateVariableBox( vardata )
         ret_html += "disabled";
     }
     ret_html += " onclick='checkCKANData();'>";
-    ret_html += "<label for='" + vardata["id"] + "'>" + "<img src='/asset/images/icons/" + vardata["icon"] + "' />" + "<em>" + i18nStrings.getTranslation(vardata["label"]) + "</em>" + "</label>";
+    ret_html += "<label for='" + vardata["id"] + "'>" + "<img src='" + wordpresspath + "/asset/images/icons/" + vardata["icon"] + "' />" + "<em>" + i18nStrings.getTranslation(vardata["label"]) + "</em>" + "</label>";
     ret_html += "</li>";
     return ret_html;
 }
@@ -85,7 +86,7 @@ function generateCategoryButton( catData)
 {
     ret_html = '<a href="#' + category["id"] + '_tab' + '" role="tab" onclick="toggleTab(event, this);">';
     ret_html += "<div class='category_cell_bg'>";
-    ret_html += "<div class='category-icon'><img src='/asset/images/icons/" + catData["icon"] + "' onclick=''></div>";
+    ret_html += "<div class='category-icon'><img src='" + wordpresspath + "/asset/images/icons/" + catData["icon"] + "' onclick=''></div>";
     ret_html += i18nStrings.getTranslation(catData["label"]);
     ret_html += "</div>";
     ret_html += "</a>";
