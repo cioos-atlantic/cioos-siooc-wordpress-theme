@@ -31,7 +31,7 @@ async function loadDataandPlot() {
         return new Date(date.setDate(day)); // add the number of days
     }
 
-    climTemp = climatology.map(({
+    var climTemp = climatology.map(({
         ...row
     }) => {
         row.date = dateFromDay(2019, row.doy);
@@ -94,12 +94,11 @@ async function loadDataandPlot() {
 
 
     // time series chart creation
-    chart2 = function (vars) {
+    var chart2 = function (vars) {
 
         const width = 960;
         const n = vars.length;
         const height = 800;
-        const colour = d3.scaleOrdinal(d3.schemeCategory10); // let focusList = [],
         const margin2 = {
             top: 720,
             right: 20,
