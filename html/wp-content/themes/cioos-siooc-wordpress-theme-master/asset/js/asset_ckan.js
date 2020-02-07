@@ -14,7 +14,7 @@ function CKANServer()
     this.ckan_proxy_name = undefined;
 
     // current language to display dataset and UI
-    this.currentLanguage = "fr";
+    this.currentLanguage = "en";
 
     // add current language code in the linked URL to dataset/resource/organization
     // so CKAN display the data ine the desired language
