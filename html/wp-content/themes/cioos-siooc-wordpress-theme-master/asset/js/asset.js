@@ -302,7 +302,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    $.ajax({
+    jQuery.ajax({
         url: "/asset/resources/locations.json",
         dataType: 'json',
         async: false,
