@@ -18,14 +18,15 @@ Colours
   height: 720px;
   font-family: 'Montserrat', sans-serif;
 }
+
 .overlay {
-  background: rgba(33, 138, 157, .4);
+  background: rgba(0, 110, 144, .4);
   position: absolute;
-  width: 1280px;
+  width: 1103px;
   height: 720px;
   z-index: 99999999;
-  margin-left: calc(-1 * (1280px - 100%) / 2) !important;
-  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/44969/34230.svg);
+  margin-left: calc(-1 * (1103px - 100%) / 2) !important;
+  
   content:"View map";
 background-size: 100px;
   background-position: 50% 50%;
