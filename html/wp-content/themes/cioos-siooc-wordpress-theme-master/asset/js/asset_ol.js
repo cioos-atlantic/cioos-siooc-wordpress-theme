@@ -8,7 +8,6 @@ var hoverlayer = null;
 var clusterLayer = null;
 var clusterVectorSource = null;
 var clusterSource = null;
-var clusterStyleCache = {};
 var clusterStyleConfig = {};
 
 var selectDoubleCLick = null;
@@ -28,7 +27,7 @@ var datasetGeometryCache = {};
 function CreateBackgroundLayerFromConfig( lconfig )
 {
     let ret = undefined;
-    // switch type
+    // switch type 
     if ( lconfig['type'] === "OpenStreetMap")
     {
         ret = new  ol.layer.Tile({
@@ -61,15 +60,12 @@ function CreateBackgroundLayerFromConfig( lconfig )
               transition: 0
             })
           });
-    }
+    } 
     return ret;
 }
 
 function initMapFromConfig(config)
 {
-
-    addMapSelctionDropdown(config);
-
     vectorSource= new ol.source.Vector({
         features: []
     });
@@ -77,7 +73,7 @@ function initMapFromConfig(config)
     hoverSource = new ol.source.Vector({
         features: []
     });
-
+    
     polyStyle =  new ol.style.Style({
         stroke: new ol.style.Stroke(
             config["Polystyle"]["Stroke"]),
@@ -102,52 +98,8 @@ function initMapFromConfig(config)
     useClustering = config["start_cluster"];
 
 
-     // create layer if null
-    clusterVectorSource = new ol.source.Vector({
-    });
-
-    clusterSource = new ol.source.Cluster({
-        distance: clusterStyleConfig["distance"],
-        source: clusterVectorSource
-      });
-
-    clusterStyleCache = {};
-    clusterLayer = new ol.layer.Vector({
-        source: clusterSource,
-        style: function(feature) {
-          let featuresSize = feature.get('features')
-          let curstyle;
-          if ( featuresSize != undefined)
-          {
-            let size = feature.get('features').length;
-            curstyle = clusterStyleCache[size];
-            if (!curstyle) {
-                let cfg = getStyleFromClusterConfig(clusterStyleConfig, size);
-                curstyle = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: cfg["circle_radius"],
-                    stroke: new ol.style.Stroke({
-                    color: cfg["stroke_color"]
-                    }),
-                    fill: new ol.style.Fill({
-                    color: cfg["fill_color"]
-                    })
-                }),
-                text: new ol.style.Text({
-                    text: size.toString(),
-                    fill: new ol.style.Fill({
-                    color: cfg["text_color"]
-                    })
-                })
-                });
-                clusterStyleCache[size] = curstyle;
-            }
-          }
-          return curstyle;
-        }
-      });
-    clusterLayer.setZIndex(10);
-    // update map
+    clusterLayer = undefined;
+    clusterSource = undefined;
 
     selectClick = new ol.interaction.Select({
         condition: ol.events.condition.click
@@ -156,7 +108,7 @@ function initMapFromConfig(config)
     selectDoubleCLick = new ol.interaction.Select({
         condition: ol.events.condition.doubleClick
     });
-
+    
 
     selectPointerMove = new ol.interaction.Select({
         condition: ol.events.condition.pointerMove
@@ -201,7 +153,6 @@ function initMapFromConfig(config)
     let maplayers = Object.values(bacground_layers);
     maplayers.push(vectorLayer);
     maplayers.push(hoverlayer);
-    maplayers.push(clusterLayer);
     map = new ol.Map({
         layers: maplayers,
         target: 'map',
@@ -231,28 +182,6 @@ function initMapFromConfig(config)
         // hide last selected
     });
 
-    var dragBox = new ol.interaction.DragBox({
-        condition: ol.events.condition.platformModifierKeyOnly
-      });
-
-    map.addInteraction(dragBox);
-
-    dragBox.on('boxend', function() {
-        // features that intersect the box are added to the collection of
-        // selected features
-        var coordinates = dragBox
-          .getGeometry()
-          .transform("EPSG:3857", "EPSG:4326")
-          .getExtent()
-
-        ckan_server.setCustomBbox(
-          coordinates.map(function(value) {
-            return parseInt(value);
-          })
-        );
-        checkCKANData()
-      });
-
     selectDoubleCLick.on('select', function(e) {
         // if details panel close, open drawer
         // open details of selected feature dataset
@@ -266,7 +195,7 @@ function initMapFromConfig(config)
             if ( 'features' in f['values_'])
             {
                 let coords = [];
-
+                
                 f['values_']['features'].forEach( function(element)
                     {
                         // call package show and update details panel
@@ -301,7 +230,7 @@ function initMapFromConfig(config)
                 console.log('specific feature');
                 console.log(f['values_']['id']);
             }
-
+            
         }
         else
         {
@@ -309,7 +238,6 @@ function initMapFromConfig(config)
             console.log('pointer out of object');
         }
     });
-
 }
 
 function clearGeometryCache()
@@ -427,34 +355,3 @@ function selectAndCenterFeatureOnMap( id )
 }
 
 // Should have code to add dataset to layer here
-
-function addMapSelctionDropdown( config )
-{
-    if ( "backgrouns_layers" in config)
-    {
-        // add the select object and the bottom left of the map div
-        domstr = '<div style="position: relative; left: 0px; bottom: 0px; z-index: 100;">';
-        domstr += '<span style="text-shadow: 1px 1px 2px #FFFFFF;">' + i18nStrings.getUIString("background_map") + '</span>';
-        domstr += '<select id="sel_asset_base_layer" onchange="asset_change_base_layer();">';
-        config["backgrouns_layers"].forEach( function(element)
-            {
-                domstr += '<option value="' + element['name'] + '"';
-                if ( element['name'] === config["start_layer"] )
-                {
-                    domstr += ' selected="selected"'
-                }
-                domstr += '">' + i18nStrings.getTranslation(element["label"]) + '</option>';
-            }
-        );
-        domstr += '</select></div>';
-    // append to the div map
-        document.getElementById('asset_map_container').innerHTML += domstr;
-    }
-    // add the select object and the bottom left of the map div
-}
-
-function asset_change_base_layer()
-{
-    let desired_layer = jQuery( "#sel_asset_base_layer" ).val();
-    changeBackgrounLayer(desired_layer);
-}

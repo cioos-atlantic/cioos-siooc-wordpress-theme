@@ -52,12 +52,12 @@ function CKANServer()
     this.lastPagedDataIndex = 0;
     // sequential increment each time filters are modified
     this.lastFilterChange = 0;
-    // paging done for filters modified, if differ than lastFilterChange, then not
+    // paging done for filters modified, if differ than lastFilterChange, then not 
     // in sych with current filters
     this.currentFilterQuery = 0;
-
+    
     this.hasfilterquery = false;
-    // result per paging 
+    // result per paging  
     this.resultPageSize = 20;
 
 
@@ -85,15 +85,10 @@ function CKANServer()
         this.support_multilanguage = false;
         this.usejsonp = false;
         this.resultPageSize = 40;
-        this.initialPageSize = 40;
         this.slowDownPagingTreshold = 300;
         this.restrict_json_return = false;
         this.support_eov = false;
         this.bbox = undefined;
-        this.spatialSearch = {
-            customBbox: false,
-            bbox: []
-          };
         this.use_basic_auth = false;
         this.support_vertical = false;
         this.vertical_minimum = undefined;
@@ -114,7 +109,6 @@ function CKANServer()
         this.support_multilanguage = config["support_multilanguage"];
         this.usejsonp = config["usejsonp"];
         this.resultPageSize = config["page_size"];
-        this.initialPageSize = config["initial_page_size"];
         this.restrict_json_return = config["restrict_json_return"];
         this.support_eov = config["support_eov"];
         this.use_basic_auth = config["use_basic_auth"];
@@ -139,7 +133,7 @@ function CKANServer()
     };
 
     this.getURLForDataset = function( datasetId ) {
-        ret = this.dataset_url
+        ret = this.dataset_url 
         if (this.add_language_url)
         {
             ret += this.currentLanguage + '/';
@@ -149,7 +143,7 @@ function CKANServer()
     };
 
     this.getURLForResources = function( datasetId ) {
-        ret = this.dataset_url
+        ret = this.dataset_url 
         if (this.add_language_url)
         {
             ret += this.currentLanguage + '/';
@@ -159,7 +153,7 @@ function CKANServer()
     };
 
     this.getURLForOrganization = function( organisationId ) {
-        ret = this.organization_url
+        ret = this.organization_url 
         if (this.add_language_url)
         {
             ret += this.currentLanguage + '/';
@@ -167,13 +161,6 @@ function CKANServer()
         ret += 'organization/' + organisationId;
         return ret;
     };
-
-    this.setCustomBbox = function(bbox) {
-        this.spatialSearch = {
-          customBbox: true,
-          bbox: bbox
-        };
-      };
 
     this.setCurrentLanguage = function(language) {
         this.currentLanguage = language;
@@ -206,7 +193,7 @@ function CKANServer()
             ret_str += "]";
             ret.push(ret_str);
         }
-        // add
+        // add 
         return ret;
     }
 
@@ -228,7 +215,7 @@ function CKANServer()
     this.getURLParamterForFieldRestriction = function()
     {
         // fl=title_translated,notes_translated,eov,keywords,spatial
-        ret = "fl=id,title_translated,eov,spatial";
+        ret = "fl=id,title_translated,notes_translated,eov,keywords,spatial";
         return ret;
     }
 
@@ -275,17 +262,12 @@ function CKANServer()
         return ret_url
     }
 
-    this.getURLParameterForBoundingBox = function (custom) {
-    if (! custom) {
-        let ret = "ext_bbox="; // -104,17,-18,63
+    this.getURLParameterForBoundingBox = function()
+    {
+        let ret = "ext_bbox=" //-104,17,-18,63
         ret += this.bbox[0].toString() + "," + this.bbox[1].toString() + "," + this.bbox[2].toString() + "," + this.bbox[3].toString();
         return ret;
-    } else {
-        let ret = "ext_bbox="; // -104,17,-18,63
-        ret += this.spatialSearch.bbox[0].toString() + "," + this.spatialSearch.bbox[1].toString() + "," + this.spatialSearch.bbox[2].toString() + "," + this.spatialSearch.bbox[3].toString();
-        return ret;
     }
-}
 
 
     this.getURLPaginated = function( startrow, numrow )
@@ -307,15 +289,14 @@ function CKANServer()
         }
 
         ret_url += 'package_search?';
-        if (this.spatialSearch.customBbox) {
-            ret_url += this.getURLParameterForBoundingBox(true) + "&";
-        } else if (this.bbox !== undefined) {
-            ret_url += this.getURLParameterForBoundingBox(false) + "&";
+        if ( this.bbox !== undefined )
+        {
+            ret_url += this.getURLParameterForBoundingBox() + "&";
         }
-        if ( this.restrict_json_return )
+        if ( this.restrict_json_return ) 
         {
             // add fl with desired element to be returned in the JSON
-            // this feature required the latest version of CKAN and that the items desired are
+            // this feature required the latest version of CKAN and that the items desired are 
             ret_url += this.getURLParamterForFieldRestriction() + "&";
         }
 
@@ -373,7 +354,7 @@ function CKANServer()
         if ( startrow !== undefined )
         {
             ret_url += '&start=' + startrow.toString();
-        }
+        } 
         if (this.usejsonp)
         {
             ret_url += '&callback=jsonpcallback'
@@ -398,12 +379,6 @@ function CKANServer()
             }
             ++v;
         }
-
-        if (!ret) {
-            if (this.spatialSearch.customBbox) {
-              ret = true;
-            }
-        }
         return ret;
     };
 
@@ -418,7 +393,7 @@ function CKANServer()
     };
 
 
-    this.getVaraibleIcon = function (name)
+    this.getVaraibleIcon = function (name) 
     {
         //look for viable of name
         ret_thumb = undefined;
@@ -434,7 +409,7 @@ function CKANServer()
             {
                 ret = v["icon"]
             }
-        });
+        }); 
         return ret;
     };
 
@@ -447,21 +422,21 @@ function CKANServer()
             {
                 ret = v;
             }
-        });
+        }); 
         return ret;
     }
 
     this.getCKANData = function ()
     {
         // call proxy with url and variable
-        url = this.getURLPaginated(0, this.initialPageSize);
+        url = this.getURLPaginated(0, 5);
         jQuery.getJSON( url, afficheCKANExtent );
         //$.getJSON( "https://test-catalogue.ogsl.ca/api/3/action/package_search?ext_bbox=-104,17,-18,63&q=" + document.getElementById('searchbox').value, afficheCKANExtent );
     };
 
     this.changeLanguage = function ( newlanguage )
     {
-        // clear
+        // clear 
         this.currentLanguage = newlanguage;
     }
 
@@ -475,58 +450,23 @@ function CKANServer()
 function addCKANExtent(data)
 {
     // add extent to the one already available
-
+    
 }
 
 
-function getCentroidOfSpatial(spatialobj){
-    let center = [0, 0];
-    if ( spatialobj["type"] == "Point" )
+function getCenterOfCoordinates( coords )
+{
+    // need to rework the ventroid caculation to support other geometry
+    x = 0;
+    y = 0;
+    if ( coords.length == 5 || coords.length == 4 )
     {
-        center = spatialobj["coordinates"];
+        // rectangle!
+        x = (coords[0][0] + coords[1][0] + coords[2][0] + coords[3][0] ) / 4;
+        y = (coords[0][1] + coords[1][1] + coords[2][1] + coords[3][1] ) / 4;
     }
-    else if ( spatialobj["type"] == "Polygon" )
-    {
-        center = getCenterOfCoordinates(spatialobj["coordinates"][0]);
-    }
-    return center;
+    return [x, y];
 }
-
-// adapted from https://stackoverflow.com/questions/9692448/how-can-you-find-the-centroid-of-a-concave-irregular-polygon-in-javascript
-// takes a 2D array of coordinates
-function getCenterOfCoordinates(pts) {
-    // one point
-    if (pts.length == 1) return pts[0];
-
-    // a line
-    if (pts.length == 2)
-        return [(pts[0][0] + pts[1][0]) / 2, (pts[0][1] + pts[1][1]) / 2];
-
-    var first = pts[0],
-        last = pts[pts.length - 1];
-    if (first[0] != last[0] || first[1] != last[1]) pts.push(first);
-    var twicearea = 0,
-        x = 0,
-        y = 0,
-        nPts = pts.length,
-        p1,
-        p2,
-        f;
-    for (var i = 0, j = nPts - 1; i < nPts; j = i++) {
-        p1 = pts[i];
-        p2 = pts[j];
-        f =
-        (p1[1] - first[1]) * (p2[0] - first[0]) -
-        (p2[1] - first[1]) * (p1[0] - first[0]);
-        twicearea += f;
-        x += (p1[0] + p2[0] - 2 * first[0]) * f;
-        y += (p1[1] + p2[1] - 2 * first[1]) * f;
-    }
-    f = twicearea * 3;
-    const center = [x / f + first[0], y / f + first[1]];
-
-    return center;
- }
 
 function AddDisplayCKANExtent( data )
 {
@@ -568,13 +508,13 @@ function AddDisplayCKANExtent( data )
             // set id to link to description panel
             feature.set('id', r['id']);
              // if multi polygone, will only see first. base on rectangle for now
-            feature.set('center', getCentroidOfSpatial(objspatial));
+            feature.set('center', getCenterOfCoordinates(objspatial['coordinates'][0]));
             features.push(feature);
         }
         ++i;
     }
-    // recreate layer
-
+    // recreate layer 
+    
     //console.log(vectorLayer);
     let cursource = vectorLayer.getSource();
     cursource.addFeatures(features);
@@ -615,13 +555,12 @@ function AddDisplayCKANClusterIcon( data )
            // Create geometry feature as polygone (rect extent)
            let centerPoint;
 
-           centerPoint = getCentroidOfSpatial(objspatial);
-           /* if(objspatial['type']==='Point') {
+           if(objspatial['type']==='Point') {
                centerPoint = objspatial['coordinates'];
             }
            else {
-               centerPoint = getCentroidOfSpatial(objspatial['coordinates'][0]);
-            } */
+               centerPoint = getCenterOfCoordinates(objspatial['coordinates'][0]);
+            }
 
             feature = new ol.Feature({
                 geometry: new ol.geom.Point(centerPoint)
@@ -635,8 +574,8 @@ function AddDisplayCKANClusterIcon( data )
        }
        ++i;
    }
-   // recreate layer
-
+   // recreate layer 
+   
    //console.log(vectorLayer);
    //cursource = clusterLayer.getSource();
    clusterVectorSource.addFeatures(features);
@@ -704,12 +643,12 @@ function displayCKANExtent( data )
             // set id to link to description panel
             feature.set('id', r['id']);
             // if multi polygone, will only see first. base on rectangle for now
-            feature.set('center', getCentroidOfSpatial(objspatial['coordinates'][0]));
+            feature.set('center', getCenterOfCoordinates(objspatial['coordinates'][0]));
             features.push(feature);
         }
         ++i;
     }
-    // recreate layer
+    // recreate layer 
     let vectorSource= new ol.source.Vector({
         features: features
     });
@@ -740,7 +679,7 @@ function textColorToRGBA(color)
         {
             result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
             ret = [ parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), parseInt(result[4], 16)];
-        }
+        } 
     }
     else if ( color.startsWith('rgb('))
     {
@@ -753,7 +692,7 @@ function textColorToRGBA(color)
         // extract 4 numbers between the ( ) seprated by ,
         result = /^rgb\(?([d]{3})([d]{3})([d]{3})([d]{3})$/i.exec(color);
         ret = [ parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), parseInt(result[4], 16)];
-    }
+    } 
     // hex only 3 letter ( rgb )
     // hex 6 letter ( rgb )
     // hex 8 letter ( rgba )
@@ -765,7 +704,7 @@ function textColorToRGBA(color)
 function lerpColor( color1, color2, lerpvalue)
 {
     // lerp should be between 0 and 1.
-    // color as a
+    // color as a 
     // 0 = only color1
     // 1 = only color2
     // the result should be clamp between 0 and 255
@@ -805,30 +744,16 @@ function getStyleFromClusterConfig( config, nbrElem)
         minweight = 1 - maxweight;
     }
     config['minimum']['circle_radius'] * minweight + config['minimum']['circle_radius'] * maxweight;
-
+    
     ret['text_color'] = rgbaColorToHexRGB(lerpColor(textColorToRGBA(config['minimum']['text_color']), textColorToRGBA(config['maximum']['text_color']), maxweight));
     ret['fill_color'] = rgbaColorToHexRGB(lerpColor(textColorToRGBA(config['minimum']['fill_color']), textColorToRGBA(config['maximum']['fill_color']), maxweight));
     ret['stroke_color'] = rgbaColorToHexRGB(lerpColor(textColorToRGBA(config['minimum']['stroke_color']), textColorToRGBA(config['maximum']['stroke_color']), maxweight));
     ret['circle_radius'] = config['minimum']['circle_radius'] * minweight + config['maximum']['circle_radius'] * maxweight;
     return ret;
 }
-// if newCoords exists in existingCoordsArray, return a coordinate that is slightly different
-function moveCoordsSlightlyIfDuplicate(newCoords, existingCoordsArray) {
-                    
-    const [lat, long] = newCoords;
-
-    const numberMatchingCoords = existingCoordsArray.filter(function (coord) { return coord[0] == lat && coord[1] == long; }).length
-    
-    if (numberMatchingCoords > 0) {
-        const movedCoords = [lat, long + numberMatchingCoords * 0.001]
-        return movedCoords;
-    }
-    return newCoords;
-}
 
 function displayCKANClusterIcon( data )
 {
-    const allCoords = [];
     // for each, look for the spatial extra
     let i = 0;
     let results = data['result']['results'];
@@ -859,12 +784,9 @@ function displayCKANClusterIcon( data )
             addGeometryToCache(r['id'], objspatial);
             // Create geometry feature as polygone (rect extent)
             //new Feature(new Point(coordinates));
-            const coordsToAdd = getCentroidOfSpatial(objspatial)
             var pointfeature = new ol.Feature({
-                
-                geometry: new ol.geom.Point(moveCoordsSlightlyIfDuplicate(coordsToAdd, allCoords))
+                geometry: new ol.geom.Point(getCenterOfCoordinates(objspatial['coordinates'][0]))
             });
-            allCoords.push(coordsToAdd)
             pointfeature.setId(r['id']);
             pointfeature.getGeometry().transform('EPSG:4326', 'EPSG:3857');
             // set id to link to description panel
@@ -874,9 +796,55 @@ function displayCKANClusterIcon( data )
         }
         ++i;
     }
-    // clean cluster source
-    clusterVectorSource.addFeatures(features);
-    clusterLayer.setVisible(true); 
+    // recreate layer 
+    clusterVectorSource = new ol.source.Vector({
+        features: features
+    });
+
+    var clusterSource = new ol.source.Cluster({
+        distance: clusterStyleConfig["distance"],
+        source: clusterVectorSource
+      });
+
+    var styleCache = {};
+    clusterLayer = new ol.layer.Vector({
+        source: clusterSource,
+        style: function(feature) {
+          let featuresSize = feature.get('features')
+          let curstyle;
+          if ( featuresSize != undefined)
+          {
+            let size = feature.get('features').length;
+            curstyle = styleCache[size];
+            if (!curstyle) {
+                let cfg = getStyleFromClusterConfig(clusterStyleConfig, size);
+                curstyle = new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: cfg["circle_radius"],
+                    stroke: new ol.style.Stroke({
+                    color: cfg["stroke_color"]
+                    }),
+                    fill: new ol.style.Fill({
+                    color: cfg["fill_color"]
+                    })
+                }),
+                text: new ol.style.Text({
+                    text: size.toString(),
+                    fill: new ol.style.Fill({
+                    color: cfg["text_color"]
+                    })
+                })
+                });
+                styleCache[size] = curstyle;
+            }
+          }
+          return curstyle;
+        }
+      });
+    clusterLayer.setZIndex(10);
+    map.addLayer(clusterLayer);
+    // update map
+
 }
 
 function getVariableForDatataset(dataset)
@@ -893,7 +861,7 @@ function getVariableForDatataset(dataset)
             }
         });
     }
-    else
+    else    
     {
         // Use tag to identify variable available. Temporary solution
         if (dataset['keywords'] !== undefined )
@@ -980,7 +948,7 @@ function generateCompleteDetailsPanel( dataset )
     ret_html += '<div class="card card-body">'
     if ( ckan_server.support_eov == true)
     {
-        // add categories from variable
+        // add categories from variable 
         ret_html += "<span class='details_text'>" + i18nStrings.getUIString("category") + "</span>";
         ret_html += getCategoriesForDataset( dataset);
     }
@@ -1011,10 +979,15 @@ function generateDetailsPanel( dataset ) //, language, dataset_id, title, descri
     {
         ret_html += '<a href="#" onclick="showInGeometryLayer(\'' + dataset["id"] + '\')" title="' + i18nStrings.getUIString("map") + '"><img class="map-marker" src="/asset/images/map-marker.svg"></a>';
     }
-    
-    const title = ckan_server.support_multilanguage ? i18nStrings.getTranslation(dataset['title_translated']) : dataset['title'];
-    ret_html += '<h3 class="details_label">' + '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + title + '</a></h3>'; 
-    
+    ret_html += '<h3 class="details_label">' + '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + i18nStrings.getUIString("dataset_title") + '</a></h3>'; 
+    if ( ckan_server.support_multilanguage)
+    {
+        ret_html += "<p class='details_text bottom-0'>" + i18nStrings.getTranslation(dataset['title_translated']) + "</p>";
+    }
+    else
+    {
+        ret_html += "<p class='details_text bottom-0'>" + dataset['title'] + "</p>";
+    }
     // ret_html += '<div class="asset-actions">';
     // ret_html += '<span class="details_label">Information:</span>';
     // ret_html += '<a data-toggle="collapse" href="#' + dataset["id"] + '_collapse' + '" role="button" onclick="showDatasetDetailDescription(\'' + dataset["id"] + '\');">' + i18nStrings.getUIString("details") + '</a>';
@@ -1092,24 +1065,18 @@ function addAndDisplaydataset(data)
 {
     // continue paging data until no more is required
     var notdisplayed = true;
-    // query is still relevant ( hasn't changed since the request )
-    if ( ckan_server.currentFilterQuery != ckan_server.lastFilterChange )
-    {
-        return;
-    }
-
     if ( ckan_server.lastPagedDataIndex > ckan_server.slowDownPagingTreshold)
     {
-            AddToDisplayCkanDatasetDetails(data);
-            if ( useClustering )
-            {
-                AddDisplayCKANClusterIcon(data);
-            }
-            else
-            {
-                AddDisplayCKANExtent(data);
-            }
-            notdisplayed = false;
+        AddToDisplayCkanDatasetDetails(data);
+        if ( useClustering )
+        {
+            AddDisplayCKANClusterIcon(data);
+        }
+        else
+        {
+            AddDisplayCKANExtent(data);
+        }
+        notdisplayed = false;
     }
     // make the call before adding the data so server side can compute
     // while client render or after for older machine / large result?
@@ -1149,32 +1116,23 @@ function addAndDisplaydataset(data)
             displayTotalSearchDetails( totaldataset, totaldataset );
         }
     }
-    // query still hasn't changed during processing?
-    if ( ckan_server.currentFilterQuery == ckan_server.lastFilterChange )
+    // was under the treshold for paging slowdown, need to display now
+    if ( notdisplayed )
     {
-        // was under the treshold for paging slowdown, need to display now
-        if ( notdisplayed )
+        AddToDisplayCkanDatasetDetails(data);
+        if ( useClustering )
         {
-            AddToDisplayCkanDatasetDetails(data);
-            if ( useClustering )
-            {
-                AddDisplayCKANClusterIcon(data);
-            }
-            else
-            {
-                AddDisplayCKANExtent(data);
-            }
+            AddDisplayCKANClusterIcon(data);
         }
-    }   
+        else
+        {
+            AddDisplayCKANExtent(data);
+        }
+    }
 }
 
 function searchAndDisplayDataset(data)
 {
-    if ( this.hasfilterquery == false)
-    {
-        // oups, ajax took to long, no more filter, don't display anything
-        return;
-    }
     // start of a new possible pagination, set current to last, even is too fast, it will be updated afterward?
     // No way to identify the request made since no param or user define info can be returned
     ckan_server.currentFilterQuery = ckan_server.lastFilterChange;
@@ -1189,8 +1147,8 @@ function searchAndDisplayDataset(data)
     {
         displayCKANExtent(data);
     }
-
-    // if result count is bigger than the rows return, call add dataset
+    
+    // if result count is bigger than the rows return, call add dataset 
     var totaldataset =  parseInt(data["result"]["count"]);
     if ( totaldataset > ckan_server.initialPageSize )
     {
@@ -1235,7 +1193,6 @@ function clearAllDatasets()
     // clear map display
     if (clusterLayer !== undefined){
         clusterLayer.setVisible(false);   
-        clusterVectorSource.clear();
     }
     vectorLayer.setVisible(false);
     let vectorSource= vectorLayer.getSource();
@@ -1249,20 +1206,15 @@ function checkCKANData()
 {
     // update the current state of filters ( use to check for parelle paging of data)
     ckan_server.lastFilterChange += 1;
-
-    // remove data from the map and on the list, will be reconstructed with the paginated search
-    clearAllDatasets();
-    this.hasfilterquery = false;
     // verify if filters are active, if not, remove all data and don't access the entire catalogue
     if ( ckan_server.hasActiveFilter() )
     {
-        this.hasfilterquery = true;
         // use CKAN config to write call to package_search
 
         // support jsonp by hand since jquery bug with adding other parameters at then end for nothing ( other than the callback )
 
         //var datavalue = {"q": "patate", "callback": "jsonpcallback"}
-        let url_ckan = ckan_server.getURLPaginated(0, ckan_server.initialPageSize);
+        let url_ckan = ckan_server.getURLPaginated(0, 5);
         // until the weird jquery jsonp bug is corrected, do it by hand!
         let auth_header = {};
         if ( ckan_server.use_basic_auth)
@@ -1301,20 +1253,18 @@ function checkCKANData()
         //   console.log("incoming Text " + jqXHR.responseText);
         //});
     }
+    else
+    {
+        // remove all info from layers
+        clearAllDatasets();
+    }
 }
-
-function setLocationAndCheck(location){
-    ckan_server.setCustomBbox(
-      location
-    );
-    checkCKANData()
-  }
 
 function updateDatasetDetails( datasets )
 {
     let element = datasets['result'];
     ckan_server.datasetDetails[element['id']] = element;
-    // update and open panel
+    // update and open panel 
     let itemid = '#' + element['id'] + '_collapse';
     document.getElementById(element['id'] + '_collapse').innerHTML = generateCompleteDetailsPanel(element);
     jQuery(itemid).collapse("show");
@@ -1376,7 +1326,7 @@ function callDatasetDetailDescription( datasetid )
     let auth_header = {};
     if ( ckan_server.use_basic_auth)
     {
-        auth_header = {
+        auth_header = { 
             'Authorization': 'Basic ' + btoa(ckan_server.basic_auth_user + ':' + ckan_server.basic_auth_password)
             };
     }
@@ -1407,4 +1357,3 @@ function callDatasetDetailDescription( datasetid )
         });
     }
 }
-
