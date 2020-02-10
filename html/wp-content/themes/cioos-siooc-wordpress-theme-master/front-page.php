@@ -12,14 +12,15 @@ get_header(); ?>
 
   <div class="outer-map-container">
     <div class="overlay"></div>
-    <div id="asset_map_container" class="map-container">
-      <div id="map" class="map" style=""></div>
+    <div class="map-container" id="asset_map_container">
+      <div id="map" class="map" ></div>
       <div id="category_panel" class="category-selection"></div>
       <div id="variable_panel" class="variable-selection tab-content"></div>
       <div id="dataset_desc" class="panel_details"></div>
       <div class="panel_search_info" style="text-align:center" id="dataset_search_stats"></div>
     </div>
   </div>
+  
 
 
 <script></script>
