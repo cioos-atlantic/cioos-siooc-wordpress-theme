@@ -24,7 +24,7 @@ Colours
   position: absolute;
   width: 1103px;
   height: 720px;
-  z-index: 99999999;
+  z-index: 101;
   margin-left: calc(-1 * (1103px - 100%) / 2) !important;
   
   content:"View map";
