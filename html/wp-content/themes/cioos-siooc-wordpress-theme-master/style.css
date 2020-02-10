@@ -255,6 +255,7 @@ input[type=checkbox]:checked + label:before { letter-spacing: 5px; } /* allow sp
 	margin: 0;
 }
 
+
 @media only screen and (max-width: 685px) {
 
 	#sidebar {
@@ -274,3 +275,5 @@ input[type=checkbox]:checked + label:before { letter-spacing: 5px; } /* allow sp
 #mega-menu-wrap-pre_header_menu #mega-menu-pre_header_menu > li.mega-menu-item > a.mega-menu-link:hover {
 	background:transparent !important;
 }
+
+.elementor-column-gap-default>.elementor-row>.elementor-column>.elementor-element-populated {padding:0};
