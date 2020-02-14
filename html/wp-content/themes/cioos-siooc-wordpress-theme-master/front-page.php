@@ -10,7 +10,7 @@
 get_header(); ?>
 
 
-  <div class="outer-map-container">
+  <div class="outer-map-container" id="intro-core">
     <div class="overlay"></div>
     <div class="map-container" id="asset_map_container">
       <div id="map" class="map" ></div>
