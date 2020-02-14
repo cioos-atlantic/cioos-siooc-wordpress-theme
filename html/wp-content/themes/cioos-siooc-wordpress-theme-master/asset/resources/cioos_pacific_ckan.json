@@ -16,5 +16,5 @@
     "support_vertical": false,
     "support_eov": true,
     "use_basic_auth": false,
-    "page_size: 10000"
+    "page_size": 10000
 }
