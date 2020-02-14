@@ -68,7 +68,7 @@ function CreateBackgroundLayerFromConfig( lconfig )
 function initMapFromConfig(config)
 {
 
-    addMapSelctionDropdown(config);
+    // addMapSelctionDropdown(config);
 
     vectorSource= new ol.source.Vector({
         features: []
