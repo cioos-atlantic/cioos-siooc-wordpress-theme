@@ -14,7 +14,7 @@ Colours
 .map-container {
   position: relative;
   margin: 0 auto;
-  width: 1103px;
+  width: 1140px;
   height: 720px;
   font-family: 'Montserrat', sans-serif;
 }
@@ -22,10 +22,10 @@ Colours
 .overlay {
   background: rgba(0, 110, 144, .4);
   position: absolute;
-  width: 1103px;
+  width: 1140px;
   height: 720px;
   z-index: 101;
-  margin-left: calc(-1 * (1103px - 100%) / 2) !important;
+  margin-left: calc(-1 * (1140px - 100%) / 2) !important;
   
   content:"View map";
 background-size: 100px;
@@ -158,7 +158,7 @@ ul.variable-options li input[type="checkbox"]:focus + label {
   background-color: #e8eef1;
   z-index: 2;
   position: absolute;
-  left: 703px;
+  left: 740px;
   top: 0px;
   width: 400px;
   height: 620px;
@@ -257,7 +257,7 @@ h4.details_label {
   background-color: rgba(64, 64, 65, 0.9);
   z-index: 2;
   position: absolute;
-  left: 703px;
+  left: 740px;
   top: 620px;
   width: 400px;
   height: 100px;
