@@ -88,12 +88,7 @@ Text Domain: CIOOS
 	max-width: 1640px!important;
 }
 
-@media screen and (min-width: 685px) and (max-width: 1485px) {
-		
-	.elementor-column.elementor-col-50, .elementor-column[data-col="50"] {
-		width: 80%!important;
-	}
-}
+
 
 /*****footer*****/
 
