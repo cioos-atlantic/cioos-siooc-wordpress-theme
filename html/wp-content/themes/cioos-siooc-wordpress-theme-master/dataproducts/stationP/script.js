@@ -30,7 +30,9 @@ function makeContour(dataset,showContours) {
     const svg = d3.select(".contour-chart")
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("viewBox", "0 0 960 300")
+        .attr("preserveAspectRatio", "xMinYMin meet");
 
     
 

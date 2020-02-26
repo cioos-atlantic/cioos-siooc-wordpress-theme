@@ -14,7 +14,9 @@ function makescatter(p26_long) {
     const svg = d3.select(".scatter1")
         .append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .attr("viewBox", "0 0 960 300")
+        .attr("preserveAspectRatio", "xMinYMin meet");
 
         const x = d3
         .scaleTime()
