@@ -20,10 +20,8 @@ function profilechart(allIOSBinned) {
 
     const svg = d3.select("#barsvg")
         // .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", "0 0 960 300")
-        .attr("preserveAspectRatio", "xMinYMin meet");
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMinYMin meet");;
 
     // svg.style("position", "absolute");
     // canvas.style.position = "absolute";
