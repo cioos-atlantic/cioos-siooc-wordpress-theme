@@ -20,7 +20,10 @@ function chart(summaryData) {
     const svg = d3.select(".bars")
     .append("svg")
     .attr("width", 960)
-    .attr("height", 300);
+    .attr("height", 300)
+    .attr("viewBox", "0 0 960 300")
+    .attr("preserveAspectRatio", "xMinYMin meet");
+    
 
     const width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
